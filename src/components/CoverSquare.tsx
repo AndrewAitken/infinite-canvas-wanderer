@@ -48,14 +48,31 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return albumCovers[index];
   };
 
+  // Get random offset for more organic positioning
+  const getRandomOffset = (gx: number, gy: number) => {
+    // Use grid coordinates as seed for deterministic randomness
+    const seed1 = Math.abs((gx * 17 + gy * 23) % 1000) / 1000;
+    const seed2 = Math.abs((gx * 31 + gy * 41) % 1000) / 1000;
+    
+    // Random offset range: -30 to +30 pixels
+    const offsetX = (seed1 - 0.5) * 60;
+    const offsetY = (seed2 - 0.5) * 60;
+    
+    return { x: offsetX, y: offsetY };
+  };
+
+  const randomOffset = getRandomOffset(gridX, gridY);
+  const finalX = x + randomOffset.x;
+  const finalY = y + randomOffset.y;
+
   // Calculate scale based on distance to edges
   const scale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
 
     // Calculate actual position on screen
-    const screenX = x + offset.x;
-    const screenY = y + offset.y;
-    const squareSize = 128; // Base square size
+    const screenX = finalX + offset.x;
+    const screenY = finalY + offset.y;
+    const squareSize = 260; // Updated square size
 
     // Calculate center of the square
     const centerX = screenX + squareSize / 2;
@@ -89,19 +106,19 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const easedDistance = 1 - Math.pow(1 - normalizedDistance, 2); // Ease-out quadratic
     
     return minScale + (maxScale - minScale) * easedDistance;
-  }, [x, y, offset, canvasSize]);
+  }, [finalX, finalY, offset, canvasSize]);
 
   const albumCover = getAlbumCover(gridX, gridY);
 
   return (
     <div
-      className="absolute w-32 h-32 rounded-lg shadow-lg 
+      className="absolute w-[260px] h-[260px] rounded-lg shadow-lg 
                   transform transition-transform duration-200 
                   hover:scale-105 hover:shadow-xl
                   border-2 border-white overflow-hidden"
       style={{
-        left: x,
-        top: y,
+        left: finalX,
+        top: finalY,
         transform: `scale(${scale})`,
         transformOrigin: 'center',
       }}

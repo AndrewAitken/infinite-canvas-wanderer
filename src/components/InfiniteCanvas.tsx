@@ -1,10 +1,9 @@
-
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
 import CoverSquare from './CoverSquare';
 
-const GRID_SIZE = 200; // Size of each grid cell in pixels
+const GRID_SIZE = 350; // Increased from 200 to 350 for more spacing
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {

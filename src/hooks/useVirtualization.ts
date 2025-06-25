@@ -37,8 +37,8 @@ export const useVirtualization = ({
     // Generate items for visible area
     for (let gridX = startGridX; gridX <= endGridX; gridX++) {
       for (let gridY = startGridY; gridY <= endGridY; gridY++) {
-        const x = gridX * gridSize + (gridSize - 128) / 2; // Center 128px squares in grid
-        const y = gridY * gridSize + (gridSize - 128) / 2;
+        const x = gridX * gridSize + (gridSize - 260) / 2; // Center 260px squares in grid
+        const y = gridY * gridSize + (gridSize - 260) / 2;
         
         items.push({
           x,
