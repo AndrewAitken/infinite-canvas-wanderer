@@ -1,3 +1,4 @@
+
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -84,8 +85,8 @@ const InfiniteCanvas: React.FC = () => {
     <>
       <div
         ref={canvasRef}
-        className={`fixed inset-0 overflow-hidden bg-stone-100 cursor-grab active:cursor-grabbing transition-all duration-300 ${
-          isPanelOpen ? 'backdrop-blur-sm bg-stone-100/80' : ''
+        className={`fixed inset-0 overflow-hidden bg-stone-100 dark:bg-stone-900 cursor-grab active:cursor-grabbing transition-all duration-300 ${
+          isPanelOpen ? 'backdrop-blur-sm bg-stone-100/80 dark:bg-stone-900/80' : ''
         }`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
