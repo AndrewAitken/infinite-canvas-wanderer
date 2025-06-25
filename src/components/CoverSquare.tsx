@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
@@ -16,6 +15,7 @@ interface CoverSquareProps {
     y: number;
   };
   onAlbumClick: (imageUrl: string) => void;
+  isMobile?: boolean;
 }
 
 const CoverSquare: React.FC<CoverSquareProps> = ({
@@ -25,7 +25,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   gridY,
   canvasSize,
   offset,
-  onAlbumClick
+  onAlbumClick,
+  isMobile = false
 }) => {
   // Array of album cover images
   const albumCovers = ['/lovable-uploads/c3f650ce-0d59-43cc-8e26-8c669e6de4c1.png',
@@ -87,15 +88,16 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return albumCovers[finalIndex];
   };
 
-  // Get random offset for more organic positioning
+  // Get random offset for more organic positioning (reduced for mobile)
   const getRandomOffset = (gx: number, gy: number) => {
     // Use grid coordinates as seed for deterministic randomness
     const seed1 = Math.abs((gx * 17 + gy * 23) % 1000) / 1000;
     const seed2 = Math.abs((gx * 31 + gy * 41) % 1000) / 1000;
 
-    // Random offset range: -30 to +30 pixels
-    const offsetX = (seed1 - 0.5) * 60;
-    const offsetY = (seed2 - 0.5) * 60;
+    // Reduced random offset range for mobile: -15 to +15 pixels, desktop: -30 to +30 pixels
+    const offsetRange = isMobile ? 30 : 60;
+    const offsetX = (seed1 - 0.5) * offsetRange;
+    const offsetY = (seed2 - 0.5) * offsetRange;
     return {
       x: offsetX,
       y: offsetY
@@ -106,13 +108,15 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
+  // Responsive square size - larger on mobile
+  const squareSize = isMobile ? 240 : 220;
+
   // Улучшенное вычисление scale с более плавным переходом для краев экрана
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
 
     const screenX = finalX + offset.x;
     const screenY = finalY + offset.y;
-    const squareSize = 260;
 
     const centerX = screenX + squareSize / 2;
     const centerY = screenY + squareSize / 2;
@@ -140,7 +144,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
 
     return minScale + (maxScale - minScale) * easedDistance;
-  }, [finalX, finalY, offset, canvasSize]);
+  }, [finalX, finalY, offset, canvasSize, squareSize]);
 
   const albumCover = getAlbumCover(gridX, gridY);
   const appearAnimation = useAppearAnimation({ gridX, gridY });
@@ -165,9 +169,11 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         style={{
           transform: `scale(${edgeScale})`,
           transformOrigin: 'center',
+          width: squareSize,
+          height: squareSize,
         }}
         onClick={handleClick}
-        className="w-[220px] h-[220px] rounded-lg shadow-lg 
+        className="rounded-lg shadow-lg 
                    transition-all duration-500 ease-out
                    hover:scale-105 hover:shadow-xl cursor-pointer
                    border-2 border-white overflow-hidden"
