@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 
 interface CoverSquareProps {
@@ -42,10 +41,24 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     '/lovable-uploads/6e5a3d1a-f4ef-417a-875a-57e4a2fb0a40.png', // Thundercat - Drunk
   ];
 
-  // Get album cover based on grid position
+  // Improved album cover selection with better distribution
   const getAlbumCover = (gx: number, gy: number) => {
-    const index = Math.abs((gx * 7 + gy * 13) % albumCovers.length);
-    return albumCovers[index];
+    // Use multiple large prime numbers for better hash distribution
+    const hash1 = Math.abs(gx * 97 + gy * 101) % 1009;
+    const hash2 = Math.abs(gx * 103 + gy * 107) % 1013;
+    const hash3 = Math.abs(gx * 109 + gy * 113) % 1019;
+    
+    // Combine hashes for better distribution
+    const combinedHash = (hash1 ^ hash2 ^ hash3) % albumCovers.length;
+    
+    // Add sector-based variation to avoid patterns
+    const sectorX = Math.floor(gx / 3);
+    const sectorY = Math.floor(gy / 3);
+    const sectorOffset = Math.abs(sectorX * 127 + sectorY * 131) % albumCovers.length;
+    
+    const finalIndex = (combinedHash + sectorOffset) % albumCovers.length;
+    
+    return albumCovers[finalIndex];
   };
 
   // Get random offset for more organic positioning
