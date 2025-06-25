@@ -58,6 +58,8 @@ const InfiniteCanvas: React.FC = () => {
             y={item.y}
             gridX={item.gridX}
             gridY={item.gridY}
+            canvasSize={canvasSize}
+            offset={offset}
           />
         ))}
       </div>
