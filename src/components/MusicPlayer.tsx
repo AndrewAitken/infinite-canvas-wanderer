@@ -30,7 +30,7 @@ const MusicPlayer: React.FC = () => {
   };
   return <>
       <audio ref={audioRef} src="/vanishinghope.mp3" loop preload="metadata" />
-      <Button onClick={togglePlayback} size="icon" variant="outline" className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm border-2 border-gray-300 hover:bg-white/90 hover:border-gray-400 transition-all duration-200 shadow-lg hover:shadow-xl">
+      <Button onClick={togglePlayback} size="icon" variant="outline" className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-transparent backdrop-blur-sm border-2 border-gray-100 hover:bg-white/90 hover:border-gray-200 transition-all duration-200 shadow-lg hover:shadow-xl">
         {isPlaying ? <Pause className="w-6 h-6 text-gray-700" /> : <Play className="w-6 h-6 text-gray-700 ml-0.5" />}
       </Button>
     </>;
