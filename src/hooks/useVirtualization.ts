@@ -34,9 +34,9 @@ export const useVirtualization = ({
     const startGridY = Math.floor(-offset.y / gridSize) - bufferSize;
     const endGridY = Math.ceil((-offset.y + canvasSize.height) / gridSize) + bufferSize;
 
-    // Calculate rectangle size with 3:4 aspect ratio
-    const rectWidth = gridSize < 300 ? 180 : 165; // Mobile gets wider rectangles
-    const rectHeight = gridSize < 300 ? 240 : 220;
+    // Increased rectangle size with 3:4 aspect ratio - minimum 200px width
+    const rectWidth = gridSize < 300 ? 210 : 200; // Mobile gets slightly wider rectangles
+    const rectHeight = gridSize < 300 ? 280 : 267;
 
     // Generate items for visible area
     for (let gridX = startGridX; gridX <= endGridX; gridX++) {

@@ -30,13 +30,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 }) => {
   // Array of RFD album cover images
   const albumCovers = [
-    '/06.06.2025.jpg',
-    '/16.05.2025.jpg',
-    '/2.jpg',
-    '/25.04.2025.jpg',
-    '/30.05.2025.jpg',
-    '/Frame 21.jpg',
-    '/Frame 22.jpg',
     '/RFD 06.09.2024.jpg',
     '/RFD01111024.jpg',
     '/RFD03102024.jpg',
@@ -58,14 +51,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     '/RFD29112024.jpg',
     '/RFD30082024.jpg',
     '/RFD31012025.jpg',
-    '/RFD_20.06.2025.jpg',
-    '/rfd_12.07.2024.jpg',
-    '/rfd_16.08.2024.jpg',
-    '/rfd_19.07.2024.jpg',
-    '/rfd_2.08.2024.jpg',
-    '/rfd_21.06.2024.jpg',
-    '/rfd_25.07.2024.jpg',
-    '/rfd_28.06.2024.jpg'
+    '/RFD_20.06.2025.jpg'
   ];
 
   // Improved album cover selection with better distribution
@@ -106,9 +92,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Responsive size with 3:4 aspect ratio (width:height)
-  const rectWidth = isMobile ? 180 : 165;
-  const rectHeight = isMobile ? 240 : 220;
+  // Increased size with 3:4 aspect ratio (width:height) - minimum 200px width
+  const rectWidth = isMobile ? 210 : 200;
+  const rectHeight = isMobile ? 280 : 267;
 
   // Улучшенное вычисление scale с более плавным переходом для краев экрана
   const edgeScale = useMemo(() => {
