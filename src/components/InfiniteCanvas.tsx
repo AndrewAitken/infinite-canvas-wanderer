@@ -3,7 +3,7 @@ import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
 import CoverSquare from './CoverSquare';
 import AlbumDetailPanel from './AlbumDetailPanel';
-import { getAlbumData, Album } from '../data/albumData';
+import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 
 const GRID_SIZE = 350; // Increased from 200 to 350 for more spacing
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
@@ -13,6 +13,9 @@ const InfiniteCanvas: React.FC = () => {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
+  
+  const allAlbums = getAllAlbums();
   
   // Update canvas size on window resize
   useEffect(() => {
@@ -41,9 +44,32 @@ const InfiniteCanvas: React.FC = () => {
 
   const handleAlbumClick = useCallback((imageUrl: string) => {
     const albumData = getAlbumData(imageUrl);
+    const albumIndex = getAlbumIndex(imageUrl);
+    
     setSelectedAlbum(albumData);
+    setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
     setIsPanelOpen(true);
   }, []);
+
+  const handleNextAlbum = useCallback(() => {
+    const nextIndex = getNextAlbumIndex(currentAlbumIndex);
+    const nextAlbum = getAlbumByIndex(nextIndex);
+    
+    if (nextAlbum) {
+      setSelectedAlbum(nextAlbum);
+      setCurrentAlbumIndex(nextIndex);
+    }
+  }, [currentAlbumIndex]);
+
+  const handlePreviousAlbum = useCallback(() => {
+    const prevIndex = getPreviousAlbumIndex(currentAlbumIndex);
+    const prevAlbum = getAlbumByIndex(prevIndex);
+    
+    if (prevAlbum) {
+      setSelectedAlbum(prevAlbum);
+      setCurrentAlbumIndex(prevIndex);
+    }
+  }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
     setIsPanelOpen(false);
@@ -87,6 +113,10 @@ const InfiniteCanvas: React.FC = () => {
         album={selectedAlbum}
         isOpen={isPanelOpen}
         onClose={handlePanelClose}
+        onNext={handleNextAlbum}
+        onPrevious={handlePreviousAlbum}
+        currentIndex={currentAlbumIndex}
+        totalCount={allAlbums.length}
       />
     </>
   );

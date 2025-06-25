@@ -1,4 +1,3 @@
-
 export interface Album {
   id: string;
   title: string;
@@ -29,6 +28,36 @@ export const albumData: Record<string, Album> = {
     description: 'Коллекция незабываемых треков, которые переносят слушателя в другое время и место. Каждая композиция - это история, рассказанная через музыку, создающая атмосферу ностальгии и глубоких эмоций.',
     imageUrl: '/lovable-uploads/821a0507-d6b1-4abd-8c07-3aa48ccdd9a6.png'
   }
+};
+
+// Get all albums as an array for navigation
+export const getAllAlbums = (): Album[] => {
+  return Object.values(albumData);
+};
+
+// Get album by index for navigation
+export const getAlbumByIndex = (index: number): Album | null => {
+  const albums = getAllAlbums();
+  if (index < 0 || index >= albums.length) return null;
+  return albums[index];
+};
+
+// Get index of album by imageUrl
+export const getAlbumIndex = (imageUrl: string): number => {
+  const albums = getAllAlbums();
+  return albums.findIndex(album => album.imageUrl === imageUrl);
+};
+
+// Get next album index (circular)
+export const getNextAlbumIndex = (currentIndex: number): number => {
+  const albums = getAllAlbums();
+  return (currentIndex + 1) % albums.length;
+};
+
+// Get previous album index (circular)
+export const getPreviousAlbumIndex = (currentIndex: number): number => {
+  const albums = getAllAlbums();
+  return currentIndex === 0 ? albums.length - 1 : currentIndex - 1;
 };
 
 // Fallback album for covers not in the data
