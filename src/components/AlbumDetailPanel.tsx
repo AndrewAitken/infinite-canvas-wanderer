@@ -1,9 +1,9 @@
+
 import React from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSwipe } from "@/hooks/useSwipe";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Album {
   id: string;
@@ -51,25 +51,6 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         />
       </div>
       
-      {/* Position indicator for mobile */}
-      {isMobile && totalCount > 1 && (
-        <div className="flex justify-center items-center space-x-2">
-          <div className="flex space-x-1">
-            {Array.from({ length: totalCount }, (_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                  index === currentIndex ? 'bg-primary' : 'bg-muted'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-sm text-muted-foreground ml-2">
-            {currentIndex + 1} из {totalCount}
-          </span>
-        </div>
-      )}
-      
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Описание</h3>
         <p className="text-muted-foreground leading-relaxed">
@@ -92,28 +73,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
             </DrawerDescription>
           </DrawerHeader>
           
-          <div className="mt-6 relative">
-            {/* Navigation arrows for mobile */}
-            {totalCount > 1 && (
-              <>
-                <button
-                  onClick={onPrevious}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg transition-all duration-200 hover:bg-white/90"
-                  aria-label="Предыдущий альбом"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                
-                <button
-                  onClick={onNext}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg transition-all duration-200 hover:bg-white/90"
-                  aria-label="Следующий альбом"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </>
-            )}
-            
+          <div className="mt-6">
             {content}
           </div>
         </DrawerContent>
