@@ -1,4 +1,7 @@
+
 import React, { useMemo } from 'react';
+import { useAppearAnimation } from '../hooks/useAppearAnimation';
+
 interface CoverSquareProps {
   x: number;
   y: number;
@@ -14,6 +17,7 @@ interface CoverSquareProps {
   };
   onAlbumClick: (imageUrl: string) => void;
 }
+
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
   y,
@@ -97,61 +101,84 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       y: offsetY
     };
   };
+
   const randomOffset = getRandomOffset(gridX, gridY);
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Calculate scale based on distance to edges
+  // Улучшенное вычисление scale с более плавным переходом
   const scale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
 
-    // Calculate actual position on screen
     const screenX = finalX + offset.x;
     const screenY = finalY + offset.y;
-    const squareSize = 260; // Updated square size
+    const squareSize = 260;
 
-    // Calculate center of the square
     const centerX = screenX + squareSize / 2;
     const centerY = screenY + squareSize / 2;
 
-    // Calculate distances to edges
     const distanceToLeft = centerX;
     const distanceToRight = canvasSize.width - centerX;
     const distanceToTop = centerY;
     const distanceToBottom = canvasSize.height - centerY;
 
-    // Find minimum distance to any edge
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
-    // Define fade zone (area where scaling begins)
-    const fadeZone = 200; // pixels from edge where scaling starts
-    const minScale = 0.3;
+    // Увеличена зона fade для более градуального перехода
+    const fadeZone = 300;
+    const minScale = 0.2;
     const maxScale = 1.0;
+    
     if (minDistance >= fadeZone) {
       return maxScale;
     }
 
-    // Calculate scale with smooth easing
+    // Более плавная cubic-bezier функция вместо квадратичной
     const normalizedDistance = Math.max(0, minDistance) / fadeZone;
-    const easedDistance = 1 - Math.pow(1 - normalizedDistance, 2); // Ease-out quadratic
+    // Используем smooth cubic-bezier easing
+    const t = normalizedDistance;
+    const easedDistance = t * t * (3 - 2 * t); // Smooth step function
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize]);
+
   const albumCover = getAlbumCover(gridX, gridY);
+  const appearAnimation = useAppearAnimation({ gridX, gridY });
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAlbumClick(albumCover);
   };
-  return <div style={{
-    left: finalX,
-    top: finalY,
-    transform: `scale(${scale})`,
-    transformOrigin: 'center'
-  }} onClick={handleClick} className="absolute w-[220px] h-[220px] rounded-lg shadow-lg \n                  transform transition-transform duration-200 \n                  hover:scale-105 hover:shadow-xl cursor-pointer\n                  border-2 border-white overflow-hidden">
-      <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} />
+
+  return (
+    <div
+      style={{
+        left: finalX,
+        top: finalY,
+        transform: `scale(${scale})`,
+        transformOrigin: 'center',
+        ...appearAnimation,
+      }}
+      onClick={handleClick}
+      className="absolute w-[220px] h-[220px] rounded-lg shadow-lg 
+                 transform transition-all duration-300 ease-out
+                 hover:scale-105 hover:shadow-xl cursor-pointer
+                 border-2 border-white overflow-hidden
+                 animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both]
+                 motion-reduce:animate-none"
+    >
+      <img 
+        src={albumCover} 
+        alt={`Album cover ${gridX},${gridY}`} 
+        className="w-full h-full object-cover" 
+        draggable={false}
+        loading="lazy"
+      />
       <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
         {gridX},{gridY}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default CoverSquare;
