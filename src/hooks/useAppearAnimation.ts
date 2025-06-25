@@ -10,7 +10,7 @@ interface UseAppearAnimationParams {
 export const useAppearAnimation = ({ gridX, gridY, delay = 0 }: UseAppearAnimationParams) => {
   return useMemo(() => {
     // Детерминированная рандомизация на основе координат грида
-    const seed1 = Math.abs((gridX * 17 + gy * 23) % 1000) / 1000;
+    const seed1 = Math.abs((gridX * 17 + gridY * 23) % 1000) / 1000;
     const seed2 = Math.abs((gridX * 31 + gridY * 41) % 1000) / 1000;
     const seed3 = Math.abs((gridX * 43 + gridY * 47) % 1000) / 1000;
     
