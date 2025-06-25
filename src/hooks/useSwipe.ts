@@ -1,5 +1,6 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { TouchEvent } from 'react';
 
 interface SwipeHandlers {
   onSwipeLeft?: () => void;
@@ -20,7 +21,7 @@ export const useSwipe = (handlers: SwipeHandlers, threshold: number = 50) => {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const touchEnd = useRef<{ x: number; y: number } | null>(null);
 
-  const handleTouchStart = (e: TouchEvent) => {
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     touchEnd.current = null;
     touchStart.current = {
       x: e.targetTouches[0].clientX,
@@ -29,7 +30,7 @@ export const useSwipe = (handlers: SwipeHandlers, threshold: number = 50) => {
     setSwipeState({ isSwiping: true, swipeDirection: null });
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     if (!touchStart.current) return;
     
     const currentTouch = {
@@ -47,7 +48,7 @@ export const useSwipe = (handlers: SwipeHandlers, threshold: number = 50) => {
     }
   };
 
-  const handleTouchEnd = (e: TouchEvent) => {
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
     if (!touchStart.current) return;
     
     touchEnd.current = {
