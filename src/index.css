@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,7 +103,7 @@
   }
 }
 
-/* Анимация появления из пустоты с более медленным bouncy эффектом */
+/* Анимация появления из пустоты с bouncy эффектом */
 @keyframes scale-from-zero {
   0% {
     transform: scale(0);
@@ -118,52 +119,11 @@
   }
 }
 
-/* Анимации для логотипа - обновленные тайминги */
-@keyframes logo-fade-in {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(2);
-  }
-}
-
-@keyframes logo-center-to-corner {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(2);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-}
-
 /* Поддержка prefers-reduced-motion для доступности */
 @media (prefers-reduced-motion: reduce) {
   @keyframes scale-from-zero {
     0% {
       opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes logo-fade-in {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes logo-center-to-corner {
-    0% {
-      opacity: 1;
     }
     100% {
       opacity: 1;
