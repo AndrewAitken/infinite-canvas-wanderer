@@ -16,9 +16,9 @@ const Header: React.FC<HeaderProps> = ({ isLogoInCenter, isLogoMoving }) => {
       }`}
       style={{
         animation: isLogoInCenter 
-          ? 'logo-fade-in 0.5s ease-out' 
+          ? 'logo-fade-in 1.8s ease-out' 
           : isLogoMoving 
-            ? 'logo-center-to-corner 0.8s cubic-bezier(0.4, 0, 0.2, 1)' 
+            ? 'logo-center-to-corner 1.2s cubic-bezier(0.4, 0, 0.2, 1)' 
             : 'none'
       }}
     >
@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ isLogoInCenter, isLogoMoving }) => {
           src="/lovable-uploads/1d1a0ade-b001-4b1f-951d-7f872bd0d945.png" 
           alt="RFD MUSEUM" 
           className={`w-auto transition-all duration-300 ${
-            isLogoInCenter ? 'h-12' : 'h-8'
+            isLogoInCenter ? 'h-24' : 'h-8'
           }`}
           draggable={false}
         />
