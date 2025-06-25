@@ -1,0 +1,68 @@
+
+import React, { useRef, useCallback, useEffect, useState } from 'react';
+import { useDrag } from '../hooks/useDrag';
+import { useVirtualization } from '../hooks/useVirtualization';
+import CoverSquare from './CoverSquare';
+
+const GRID_SIZE = 200; // Size of each grid cell in pixels
+const BUFFER_SIZE = 2; // Extra cells to render outside viewport
+
+const InfiniteCanvas: React.FC = () => {
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  
+  // Update canvas size on window resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (canvasRef.current) {
+        setCanvasSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }
+    };
+    
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  const { offset, isDragging, handleMouseDown, handleTouchStart } = useDrag();
+  
+  const visibleItems = useVirtualization({
+    offset,
+    canvasSize,
+    gridSize: GRID_SIZE,
+    bufferSize: BUFFER_SIZE,
+  });
+
+  return (
+    <div
+      ref={canvasRef}
+      className="fixed inset-0 overflow-hidden bg-gray-100 cursor-grab active:cursor-grabbing"
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+    >
+      <div
+        className="relative"
+        style={{
+          transform: `translate(${offset.x}px, ${offset.y}px)`,
+          transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+        }}
+      >
+        {visibleItems.map((item) => (
+          <CoverSquare
+            key={`${item.gridX}-${item.gridY}`}
+            x={item.x}
+            y={item.y}
+            gridX={item.gridX}
+            gridY={item.gridY}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default InfiniteCanvas;
