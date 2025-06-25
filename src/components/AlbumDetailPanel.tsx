@@ -2,7 +2,7 @@
 import React from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Album {
   id: string;
@@ -23,7 +23,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
   isOpen,
   onClose
 }) => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   
   if (!album) return null;
 
