@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Sheet,
@@ -31,7 +30,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[400px] sm:w-[540px]">
+      <SheetContent side="right" className="w-[560px] sm:w-[600px]">
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold">{album.title}</SheetTitle>
           <SheetDescription className="text-lg text-muted-foreground">
