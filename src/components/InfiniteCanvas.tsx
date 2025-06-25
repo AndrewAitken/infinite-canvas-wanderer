@@ -2,6 +2,8 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
 import CoverSquare from './CoverSquare';
+import AlbumDetailPanel from './AlbumDetailPanel';
+import { getAlbumData, Album } from '../data/albumData';
 
 const GRID_SIZE = 350; // Increased from 200 to 350 for more spacing
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
@@ -9,6 +11,8 @@ const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   
   // Update canvas size on window resize
   useEffect(() => {
@@ -35,34 +39,56 @@ const InfiniteCanvas: React.FC = () => {
     bufferSize: BUFFER_SIZE,
   });
 
+  const handleAlbumClick = useCallback((imageUrl: string) => {
+    const albumData = getAlbumData(imageUrl);
+    setSelectedAlbum(albumData);
+    setIsPanelOpen(true);
+  }, []);
+
+  const handlePanelClose = useCallback(() => {
+    setIsPanelOpen(false);
+    setSelectedAlbum(null);
+  }, []);
+
   return (
-    <div
-      ref={canvasRef}
-      className="fixed inset-0 overflow-hidden bg-gray-100 cursor-grab active:cursor-grabbing"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-    >
+    <>
       <div
-        className="relative"
-        style={{
-          transform: `translate(${offset.x}px, ${offset.y}px)`,
-          transition: isDragging ? 'none' : 'transform 0.3s ease-out',
-        }}
+        ref={canvasRef}
+        className={`fixed inset-0 overflow-hidden bg-gray-100 cursor-grab active:cursor-grabbing transition-all duration-300 ${
+          isPanelOpen ? 'backdrop-blur-sm bg-gray-100/80' : ''
+        }`}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        {visibleItems.map((item) => (
-          <CoverSquare
-            key={`${item.gridX}-${item.gridY}`}
-            x={item.x}
-            y={item.y}
-            gridX={item.gridX}
-            gridY={item.gridY}
-            canvasSize={canvasSize}
-            offset={offset}
-          />
-        ))}
+        <div
+          className="relative"
+          style={{
+            transform: `translate(${offset.x}px, ${offset.y}px)`,
+            transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+          }}
+        >
+          {visibleItems.map((item) => (
+            <CoverSquare
+              key={`${item.gridX}-${item.gridY}`}
+              x={item.x}
+              y={item.y}
+              gridX={item.gridX}
+              gridY={item.gridY}
+              canvasSize={canvasSize}
+              offset={offset}
+              onAlbumClick={handleAlbumClick}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+
+      <AlbumDetailPanel
+        album={selectedAlbum}
+        isOpen={isPanelOpen}
+        onClose={handlePanelClose}
+      />
+    </>
   );
 };
 

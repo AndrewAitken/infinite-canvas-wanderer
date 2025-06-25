@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 
 interface CoverSquareProps {
@@ -7,6 +8,7 @@ interface CoverSquareProps {
   gridY: number;
   canvasSize: { width: number; height: number };
   offset: { x: number; y: number };
+  onAlbumClick: (imageUrl: string) => void;
 }
 
 const CoverSquare: React.FC<CoverSquareProps> = ({ 
@@ -15,7 +17,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   gridX, 
   gridY, 
   canvasSize, 
-  offset 
+  offset,
+  onAlbumClick
 }) => {
   // Array of album cover images
   const albumCovers = [
@@ -123,11 +126,16 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
   const albumCover = getAlbumCover(gridX, gridY);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAlbumClick(albumCover);
+  };
+
   return (
     <div
       className="absolute w-[260px] h-[260px] rounded-lg shadow-lg 
                   transform transition-transform duration-200 
-                  hover:scale-105 hover:shadow-xl
+                  hover:scale-105 hover:shadow-xl cursor-pointer
                   border-2 border-white overflow-hidden"
       style={{
         left: finalX,
@@ -135,6 +143,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         transform: `scale(${scale})`,
         transformOrigin: 'center',
       }}
+      onClick={handleClick}
     >
       <img 
         src={albumCover} 
