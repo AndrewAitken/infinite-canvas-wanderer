@@ -1,12 +1,18 @@
 
 import InfiniteCanvas from "@/components/InfiniteCanvas";
 import Header from "@/components/Header";
+import { useLoadingSequence } from "@/hooks/useLoadingSequence";
 
 const Index = () => {
+  const { isLogoInCenter, isLogoMoving, shouldShowAlbums } = useLoadingSequence();
+
   return (
     <div className="relative">
-      <Header />
-      <InfiniteCanvas />
+      <Header 
+        isLogoInCenter={isLogoInCenter}
+        isLogoMoving={isLogoMoving}
+      />
+      <InfiniteCanvas shouldShowAlbums={shouldShowAlbums} />
     </div>
   );
 };

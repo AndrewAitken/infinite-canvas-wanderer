@@ -1,3 +1,4 @@
+
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -8,7 +9,11 @@ import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, ge
 const GRID_SIZE = 350; // Increased from 200 to 350 for more spacing
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
-const InfiniteCanvas: React.FC = () => {
+interface InfiniteCanvasProps {
+  shouldShowAlbums: boolean;
+}
+
+const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ shouldShowAlbums }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
@@ -94,7 +99,7 @@ const InfiniteCanvas: React.FC = () => {
             transition: isDragging ? 'none' : 'transform 0.3s ease-out',
           }}
         >
-          {visibleItems.map((item) => (
+          {shouldShowAlbums && visibleItems.map((item) => (
             <CoverSquare
               key={`${item.gridX}-${item.gridY}`}
               x={item.x}
