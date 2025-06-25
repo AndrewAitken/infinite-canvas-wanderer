@@ -30,6 +30,16 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     '/lovable-uploads/769a9d55-373e-4e6d-9baa-45017b442651.png', // Sgt Peppers
     '/lovable-uploads/65b38ebf-2e37-4b9e-a2e2-b8ffb4a8e91d.png', // CapriSongs
     '/lovable-uploads/9149a8f7-07cd-4978-afc9-17a8239bdb77.png', // Cyborg
+    '/lovable-uploads/b638bb5f-808f-409e-bf33-0aedf44bbe44.png', // Green Day - Dookie
+    '/lovable-uploads/2c376bc2-dc4e-4864-b98c-f1c50992694c.png', // Janelle Monae
+    '/lovable-uploads/3f9d29ce-e6cc-40a7-8636-b6092a7083f6.png', // Album with red hair
+    '/lovable-uploads/167bb702-7c23-48de-bf0c-e9bd91834de5.png', // Nirvana - Nevermind
+    '/lovable-uploads/c27bd43f-caa7-44ad-85fb-71800b14235c.png', // David Bowie - Aladdin Sane
+    '/lovable-uploads/79bcdddb-c637-40a2-817b-7425acfac2e8.png', // Madness - One Step Beyond
+    '/lovable-uploads/571c3acc-f0d4-42dd-8c6e-130482b05062.png', // Queen - News of the World
+    '/lovable-uploads/da72b035-70f8-4124-9f58-f3f3fa4db1f8.png', // ANTI - Rihanna
+    '/lovable-uploads/a20e6552-f93d-4cad-8efd-56649da8f2cf.png', // Childish Gambino - Awaken
+    '/lovable-uploads/6e5a3d1a-f4ef-417a-875a-57e4a2fb0a40.png', // Thundercat - Drunk
   ];
 
   // Get album cover based on grid position
