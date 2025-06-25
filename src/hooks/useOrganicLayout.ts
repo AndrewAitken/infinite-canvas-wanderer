@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 
 interface OrganicItem {
@@ -27,11 +26,11 @@ export const useOrganicLayout = ({
 
     const items: OrganicItem[] = [];
     
-    // Настройки для разных устройств
-    const minDistance = isMobile ? 100 : 120;
-    const baseSize = isMobile ? 200 : 180;
-    const sizeVariation = isMobile ? 80 : 100;
-    const density = isMobile ? 0.8 : 1.0;
+    // Увеличенные настройки для больших альбомов
+    const minDistance = isMobile ? 120 : 140;
+    const baseSize = isMobile ? 280 : 240; // Увеличили базовый размер
+    const sizeVariation = isMobile ? 120 : 140; // Увеличили вариацию размеров
+    const density = isMobile ? 0.7 : 0.8; // Немного уменьшили плотность
     
     // Расширенная область для генерации (с буфером)
     const bufferSize = 1000;
@@ -102,9 +101,9 @@ export const useOrganicLayout = ({
       const x = viewportLeft + Math.random() * (viewportRight - viewportLeft);
       const y = viewportTop + Math.random() * (viewportBottom - viewportTop);
       
-      // Случайный размер
-      const sizeVariationFactor = 0.7 + Math.random() * 0.6; // 0.7 - 1.3
-      const size = baseSize + (Math.random() - 0.5) * sizeVariation * sizeVariationFactor;
+      // Более сбалансированные размеры - больше крупных альбомов
+      const sizeVariationFactor = 0.8 + Math.random() * 0.5; // 0.8 - 1.3 (сдвинули в сторону больших размеров)
+      const size = baseSize + (Math.random() - 0.3) * sizeVariation * sizeVariationFactor; // Смещение к большим размерам
       
       if (isValidPosition(x, y, size)) {
         // Детерминированный выбор изображения на основе позиции
