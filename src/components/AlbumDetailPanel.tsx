@@ -1,13 +1,5 @@
-
 import React from 'react';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 interface Album {
   id: string;
   title: string;
@@ -15,22 +7,18 @@ interface Album {
   description: string;
   imageUrl: string;
 }
-
 interface AlbumDetailPanelProps {
   album: Album | null;
   isOpen: boolean;
   onClose: () => void;
 }
-
 const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
   album,
   isOpen,
-  onClose,
+  onClose
 }) => {
   if (!album) return null;
-
-  return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
+  return <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none">
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold">{album.title}</SheetTitle>
@@ -41,11 +29,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         
         <div className="mt-6 space-y-6">
           <div className="flex justify-center">
-            <img
-              src={album.imageUrl}
-              alt={`${album.title} cover`}
-              className="w-64 h-64 rounded-lg shadow-lg object-cover"
-            />
+            <img src={album.imageUrl} alt={`${album.title} cover`} className="w-[320px] h-[320px] rounded-[26px] shadow-lg object-cover" />
           </div>
           
           <div className="space-y-4">
@@ -56,8 +40,6 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
           </div>
         </div>
       </SheetContent>
-    </Sheet>
-  );
+    </Sheet>;
 };
-
 export default AlbumDetailPanel;
