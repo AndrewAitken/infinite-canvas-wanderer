@@ -1,3 +1,4 @@
+
 export interface Album {
   id: string;
   title: string;
@@ -7,26 +8,40 @@ export interface Album {
 }
 
 export const albumData: Record<string, Album> = {
-  '/lovable-uploads/c3f650ce-0d59-43cc-8e26-8c669e6de4c1.png': {
+  '/RFD 06.09.2024.jpg': {
     id: '1',
-    title: 'DAMN.',
-    artist: 'Kendrick Lamar',
-    description: 'Классический альбом, который сочетает в себе глубокие лирические размышления и инновационное звучание. Это произведение искусства, которое затрагивает важные социальные темы и демонстрирует невероятное мастерство исполнителя.',
-    imageUrl: '/lovable-uploads/c3f650ce-0d59-43cc-8e26-8c669e6de4c1.png'
+    title: 'RFD Session',
+    artist: 'Radio Free Dance',
+    description: 'Уникальная танцевальная сессия, которая объединяет электронные ритмы с живыми выступлениями. Это музыкальное путешествие через различные жанры электронной музыки, создающее атмосферу свободы и движения.',
+    imageUrl: '/RFD 06.09.2024.jpg'
   },
-  '/lovable-uploads/d431adb0-edeb-4ea4-8a10-31c1f0ce5a8b.png': {
+  '/RFD01111024.jpg': {
     id: '2',
-    title: 'The Dark Side of the Moon',
-    artist: 'Pink Floyd',
-    description: 'Легендарный альбом, который изменил представление о том, каким может быть рок-музыка. Концептуальное произведение, исследующее темы времени, смерти и человеческого опыта через призму психоделического звучания.',
-    imageUrl: '/lovable-uploads/d431adb0-edeb-4ea4-8a10-31c1f0ce5a8b.png'
+    title: 'Frequency Waves',
+    artist: 'RFD Collective',
+    description: 'Экспериментальный альбом, исследующий границы звука и ритма. Каждый трек представляет собой уникальное звуковое путешествие, сочетающее традиционные инструменты с современными электронными элементами.',
+    imageUrl: '/RFD01111024.jpg'
   },
-  '/lovable-uploads/821a0507-d6b1-4abd-8c07-3aa48ccdd9a6.png': {
+  '/RFD03102024.jpg': {
     id: '3',
-    title: 'Memories',
-    artist: 'Various Artists',
-    description: 'Коллекция незабываемых треков, которые переносят слушателя в другое время и место. Каждая композиция - это история, рассказанная через музыку, создающая атмосферу ностальгии и глубоких эмоций.',
-    imageUrl: '/lovable-uploads/821a0507-d6b1-4abd-8c07-3aa48ccdd9a6.png'
+    title: 'Urban Echoes',
+    artist: 'City Sounds',
+    description: 'Альбом, вдохновленный звуками города и его ритмами. Композиции отражают пульс современной жизни, от тихих утренних мелодий до энергичных ночных битов.',
+    imageUrl: '/RFD03102024.jpg'
+  },
+  '/16.05.2025.jpg': {
+    id: '4',
+    title: 'Future Memories',
+    artist: 'Time Capsule',
+    description: 'Концептуальный альбом о связи прошлого и будущего через музыку. Каждая композиция рассказывает историю о том, как воспоминания формируют наше будущее.',
+    imageUrl: '/16.05.2025.jpg'
+  },
+  '/RFD22112024.jpg': {
+    id: '5',
+    title: 'Late Night Sessions',
+    artist: 'Midnight Collective',
+    description: 'Интимная коллекция треков, записанных в поздние ночные часы. Атмосферная музыка для размышлений и глубокого погружения в себя.',
+    imageUrl: '/RFD22112024.jpg'
   }
 };
 
@@ -64,9 +79,9 @@ export const getPreviousAlbumIndex = (currentIndex: number): number => {
 export const getAlbumData = (imageUrl: string): Album => {
   return albumData[imageUrl] || {
     id: 'unknown',
-    title: 'Неизвестный альбом',
-    artist: 'Неизвестный исполнитель',
-    description: 'Это удивительное музыкальное произведение, которое демонстрирует уникальный стиль и творческий подход. Альбом сочетает в себе различные музыкальные направления и создает неповторимую атмосферу, погружая слушателя в мир звуков и эмоций.',
+    title: 'RFD Archive',
+    artist: 'Radio Free Dance',
+    description: 'Архивная запись из коллекции Radio Free Dance. Эта музыка представляет собой уникальное сочетание электронных и живых элементов, создавая неповторимую атмосферу танца и свободы движения.',
     imageUrl
   };
 };

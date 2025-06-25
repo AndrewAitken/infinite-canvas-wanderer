@@ -28,46 +28,44 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   onAlbumClick,
   isMobile = false
 }) => {
-  // Array of album cover images
-  const albumCovers = ['/lovable-uploads/c3f650ce-0d59-43cc-8e26-8c669e6de4c1.png',
-  // DAMN
-  '/lovable-uploads/d431adb0-edeb-4ea4-8a10-31c1f0ce5a8b.png',
-  // Pink Floyd
-  '/lovable-uploads/821a0507-d6b1-4abd-8c07-3aa48ccdd9a6.png',
-  // Memories
-  '/lovable-uploads/84f51610-4978-491e-89b4-a2efeadce87d.png',
-  // New Day
-  '/lovable-uploads/c2b1beee-fe93-4213-b0af-b93836b1ac29.png',
-  // Grace Jones
-  '/lovable-uploads/3d59861b-f261-4872-a059-a4d9ae7b0aa2.png',
-  // Red Square
-  '/lovable-uploads/542236e4-a7da-409e-899c-cc3c887ec75f.png',
-  // Blond
-  '/lovable-uploads/769a9d55-373e-4e6d-9baa-45017b442651.png',
-  // Sgt Peppers
-  '/lovable-uploads/65b38ebf-2e37-4b9e-a2e2-b8ffb4a8e91d.png',
-  // CapriSongs
-  '/lovable-uploads/9149a8f7-07cd-4978-afc9-17a8239bdb77.png',
-  // Cyborg
-  '/lovable-uploads/b638bb5f-808f-409e-bf33-0aedf44bbe44.png',
-  // Green Day - Dookie
-  '/lovable-uploads/2c376bc2-dc4e-4864-b98c-f1c50992694c.png',
-  // Janelle Monae
-  '/lovable-uploads/3f9d29ce-e6cc-40a7-8636-b6092a7083f6.png',
-  // Album with red hair
-  '/lovable-uploads/167bb702-7c23-48de-bf0c-e9bd91834de5.png',
-  // Nirvana - Nevermind
-  '/lovable-uploads/c27bd43f-caa7-44ad-85fb-71800b14235c.png',
-  // David Bowie - Aladdin Sane
-  '/lovable-uploads/79bcdddb-c637-40a2-817b-7425acfac2e8.png',
-  // Madness - One Step Beyond
-  '/lovable-uploads/571c3acc-f0d4-42dd-8c6e-130482b05062.png',
-  // Queen - News of the World
-  '/lovable-uploads/da72b035-70f8-4124-9f58-f3f3fa4db1f8.png',
-  // ANTI - Rihanna
-  '/lovable-uploads/a20e6552-f93d-4cad-8efd-56649da8f2cf.png',
-  // Childish Gambino - Awaken
-  '/lovable-uploads/6e5a3d1a-f4ef-417a-875a-57e4a2fb0a40.png' // Thundercat - Drunk
+  // Array of RFD album cover images
+  const albumCovers = [
+    '/06.06.2025.jpg',
+    '/16.05.2025.jpg',
+    '/2.jpg',
+    '/25.04.2025.jpg',
+    '/30.05.2025.jpg',
+    '/Frame 21.jpg',
+    '/Frame 22.jpg',
+    '/RFD 06.09.2024.jpg',
+    '/RFD01111024.jpg',
+    '/RFD03102024.jpg',
+    '/RFD04042025.jpg',
+    '/RFD08112024-1.jpg',
+    '/RFD08112024.jpg',
+    '/RFD13122024.jpg',
+    '/RFD14022025.jpg',
+    '/RFD14032025.jpg',
+    '/RFD17012025.jpg',
+    '/RFD181024.jpg',
+    '/RFD21032025.jpg',
+    '/RFD22112024.jpg',
+    '/RFD23082024.jpg',
+    '/RFD24012025.jpg',
+    '/RFD251024.jpg',
+    '/RFD27092024.jpg',
+    '/RFD28032025.jpg',
+    '/RFD29112024.jpg',
+    '/RFD30082024.jpg',
+    '/RFD31012025.jpg',
+    '/RFD_20.06.2025.jpg',
+    '/rfd_12.07.2024.jpg',
+    '/rfd_16.08.2024.jpg',
+    '/rfd_19.07.2024.jpg',
+    '/rfd_2.08.2024.jpg',
+    '/rfd_21.06.2024.jpg',
+    '/rfd_25.07.2024.jpg',
+    '/rfd_28.06.2024.jpg'
   ];
 
   // Improved album cover selection with better distribution
