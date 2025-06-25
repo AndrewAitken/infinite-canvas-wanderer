@@ -1,11 +1,14 @@
-
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
-import { useOrganicLayout } from '../hooks/useOrganicLayout';
-import OrganicCoverSquare from './OrganicCoverSquare';
+import { useVirtualization } from '../hooks/useVirtualization';
+import CoverSquare from './CoverSquare';
 import AlbumDetailPanel from './AlbumDetailPanel';
 import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 import { useIsMobile } from '../hooks/use-mobile';
+
+const GRID_SIZE_DESKTOP = 350;
+const GRID_SIZE_MOBILE = 280; // Reduced spacing for mobile
+const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -16,6 +19,7 @@ const InfiniteCanvas: React.FC = () => {
   const isMobile = useIsMobile();
   
   const allAlbums = getAllAlbums();
+  const gridSize = isMobile ? GRID_SIZE_MOBILE : GRID_SIZE_DESKTOP;
   
   // Update canvas size on window resize
   useEffect(() => {
@@ -35,10 +39,11 @@ const InfiniteCanvas: React.FC = () => {
 
   const { offset, isDragging, handleMouseDown, handleTouchStart } = useDrag();
   
-  const organicItems = useOrganicLayout({
+  const visibleItems = useVirtualization({
     offset,
     canvasSize,
-    isMobile,
+    gridSize,
+    bufferSize: BUFFER_SIZE,
   });
 
   const handleAlbumClick = useCallback((imageUrl: string) => {
@@ -93,17 +98,17 @@ const InfiniteCanvas: React.FC = () => {
             transition: isDragging ? 'none' : 'transform 0.3s ease-out',
           }}
         >
-          {organicItems.map((item) => (
-            <OrganicCoverSquare
-              key={item.id}
+          {visibleItems.map((item) => (
+            <CoverSquare
+              key={`${item.gridX}-${item.gridY}`}
               x={item.x}
               y={item.y}
-              size={item.size}
-              id={item.id}
-              imageIndex={item.imageIndex}
+              gridX={item.gridX}
+              gridY={item.gridY}
               canvasSize={canvasSize}
               offset={offset}
               onAlbumClick={handleAlbumClick}
+              isMobile={isMobile}
             />
           ))}
         </div>

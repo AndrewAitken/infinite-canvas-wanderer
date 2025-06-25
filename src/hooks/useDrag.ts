@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface DragState {
@@ -31,10 +32,8 @@ export const useDrag = (): DragState => {
     const deltaX = clientX - dragState.current.startX;
     const deltaY = clientY - dragState.current.startY;
     
-    // Замедлили прокрутку в 2 раза для лучшего контроля
-    const dampingFactor = 0.5;
-    const newX = dragState.current.startOffsetX + deltaX * dampingFactor;
-    const newY = dragState.current.startOffsetY + deltaY * dampingFactor;
+    const newX = dragState.current.startOffsetX + deltaX;
+    const newY = dragState.current.startOffsetY + deltaY;
 
     setOffset({ x: newX, y: newY });
   }, [isDragging]);
