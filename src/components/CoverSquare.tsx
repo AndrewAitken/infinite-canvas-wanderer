@@ -106,8 +106,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Responsive square size - larger on mobile
-  const squareSize = isMobile ? 240 : 220;
+  // Responsive size with 3:4 aspect ratio (width:height)
+  const rectWidth = isMobile ? 180 : 165;
+  const rectHeight = isMobile ? 240 : 220;
 
   // Улучшенное вычисление scale с более плавным переходом для краев экрана
   const edgeScale = useMemo(() => {
@@ -116,8 +117,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const screenX = finalX + offset.x;
     const screenY = finalY + offset.y;
 
-    const centerX = screenX + squareSize / 2;
-    const centerY = screenY + squareSize / 2;
+    const centerX = screenX + rectWidth / 2;
+    const centerY = screenY + rectHeight / 2;
 
     const distanceToLeft = centerX;
     const distanceToRight = canvasSize.width - centerX;
@@ -142,7 +143,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
 
     return minScale + (maxScale - minScale) * easedDistance;
-  }, [finalX, finalY, offset, canvasSize, squareSize]);
+  }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight]);
 
   const albumCover = getAlbumCover(gridX, gridY);
   const appearAnimation = useAppearAnimation({ gridX, gridY });
@@ -167,8 +168,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         style={{
           transform: `scale(${edgeScale})`,
           transformOrigin: 'center',
-          width: squareSize,
-          height: squareSize,
+          width: rectWidth,
+          height: rectHeight,
         }}
         onClick={handleClick}
         className="rounded-lg shadow-lg 

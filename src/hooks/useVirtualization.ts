@@ -34,14 +34,15 @@ export const useVirtualization = ({
     const startGridY = Math.floor(-offset.y / gridSize) - bufferSize;
     const endGridY = Math.ceil((-offset.y + canvasSize.height) / gridSize) + bufferSize;
 
-    // Calculate square size based on grid size (mobile uses smaller grid with larger squares)
-    const squareSize = gridSize < 300 ? 240 : 220; // Mobile gets larger squares
+    // Calculate rectangle size with 3:4 aspect ratio
+    const rectWidth = gridSize < 300 ? 180 : 165; // Mobile gets wider rectangles
+    const rectHeight = gridSize < 300 ? 240 : 220;
 
     // Generate items for visible area
     for (let gridX = startGridX; gridX <= endGridX; gridX++) {
       for (let gridY = startGridY; gridY <= endGridY; gridY++) {
-        const x = gridX * gridSize + (gridSize - squareSize) / 2; // Center squares in grid
-        const y = gridY * gridSize + (gridSize - squareSize) / 2;
+        const x = gridX * gridSize + (gridSize - rectWidth) / 2; // Center rectangles in grid
+        const y = gridY * gridSize + (gridSize - rectHeight) / 2;
         
         items.push({
           x,
