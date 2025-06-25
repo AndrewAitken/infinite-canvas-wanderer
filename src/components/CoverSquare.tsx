@@ -106,8 +106,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Улучшенное вычисление scale с более плавным переходом
-  const scale = useMemo(() => {
+  // Улучшенное вычисление scale с более плавным переходом для краев экрана
+  const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
 
     const screenX = finalX + offset.x;
@@ -125,8 +125,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
     // Увеличена зона fade для более градуального перехода
-    const fadeZone = 300;
-    const minScale = 0.2;
+    const fadeZone = 350;
+    const minScale = 0.15;
     const maxScale = 1.0;
     
     if (minDistance >= fadeZone) {
@@ -135,9 +135,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
     // Более плавная cubic-bezier функция вместо квадратичной
     const normalizedDistance = Math.max(0, minDistance) / fadeZone;
-    // Используем smooth cubic-bezier easing
+    // Используем smooth cubic-bezier easing для очень плавного перехода
     const t = normalizedDistance;
-    const easedDistance = t * t * (3 - 2 * t); // Smooth step function
+    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize]);
@@ -151,31 +151,37 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   };
 
   return (
+    // Outer container - handles appear animation only
     <div
       style={{
         left: finalX,
         top: finalY,
-        transform: `scale(${scale})`,
-        transformOrigin: 'center',
         ...appearAnimation,
       }}
-      onClick={handleClick}
-      className="absolute w-[220px] h-[220px] rounded-lg shadow-lg 
-                 transform transition-all duration-300 ease-out
-                 hover:scale-105 hover:shadow-xl cursor-pointer
-                 border-2 border-white overflow-hidden
-                 animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both]
-                 motion-reduce:animate-none"
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
-      <img 
-        src={albumCover} 
-        alt={`Album cover ${gridX},${gridY}`} 
-        className="w-full h-full object-cover" 
-        draggable={false}
-        loading="lazy"
-      />
-      <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-        {gridX},{gridY}
+      {/* Inner container - handles edge scaling only */}
+      <div
+        style={{
+          transform: `scale(${edgeScale})`,
+          transformOrigin: 'center',
+        }}
+        onClick={handleClick}
+        className="w-[220px] h-[220px] rounded-lg shadow-lg 
+                   transition-all duration-500 ease-out
+                   hover:scale-105 hover:shadow-xl cursor-pointer
+                   border-2 border-white overflow-hidden"
+      >
+        <img 
+          src={albumCover} 
+          alt={`Album cover ${gridX},${gridY}`} 
+          className="w-full h-full object-cover" 
+          draggable={false}
+          loading="lazy"
+        />
+        <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+          {gridX},{gridY}
+        </div>
       </div>
     </div>
   );
