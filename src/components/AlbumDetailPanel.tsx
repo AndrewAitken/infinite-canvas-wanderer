@@ -19,7 +19,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
 }) => {
   if (!album) return null;
   return <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none">
+      <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none my-[12px] mx-[12px] h-auto rounded-2xl">
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold">{album.title}</SheetTitle>
           <SheetDescription className="text-lg text-muted-foreground">
