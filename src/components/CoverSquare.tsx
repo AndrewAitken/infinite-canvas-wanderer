@@ -7,7 +7,7 @@ interface CoverSquareProps {
   y: number;
   gridX: number;
   gridY: number;
-  pointIndex?: number;
+  pointIndex?: number; // Новый пропс для индекса точки
   canvasSize: {
     width: number;
     height: number;
@@ -19,7 +19,6 @@ interface CoverSquareProps {
   onAlbumClick: (imageUrl: string) => void;
   isMobile?: boolean;
   isTablet?: boolean;
-  nearbyAlbums?: string[]; // Список соседних обложек для избежания повторений
 }
 
 const CoverSquare: React.FC<CoverSquareProps> = ({
@@ -32,34 +31,21 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   offset,
   onAlbumClick,
   isMobile = false,
-  isTablet = false,
-  nearbyAlbums = []
+  isTablet = false
 }) => {
   // Array of RFD album cover images
   const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
 
-  // Improved album cover selection avoiding nearby duplicates
-  const getAlbumCover = (gx: number, gy: number, pIndex: number, nearby: string[]) => {
-    // Создаем несколько вариантов хэшей для выбора
-    const hashes = [];
-    for (let i = 0; i < 10; i++) {
-      const hash1 = Math.abs(gx * (97 + i) + gy * (101 + i) + pIndex * (89 + i)) % 1009;
-      const hash2 = Math.abs(gx * (103 + i) + gy * (107 + i) + pIndex * (91 + i)) % 1013;
-      const hash3 = Math.abs(gx * (109 + i) + gy * (113 + i) + pIndex * (93 + i)) % 1019;
-      const combinedHash = (hash1 ^ hash2 ^ hash3) % albumCovers.length;
-      hashes.push(combinedHash);
-    }
-    
-    // Выбираем первую обложку, которой нет среди соседей
-    for (const hashIndex of hashes) {
-      const candidate = albumCovers[hashIndex];
-      if (!nearby.includes(candidate)) {
-        return candidate;
-      }
-    }
-    
-    // Если все варианты заняты, возвращаем первый (крайний случай)
-    return albumCovers[hashes[0]];
+  // Improved album cover selection with point index
+  const getAlbumCover = (gx: number, gy: number, pIndex: number) => {
+    // Используем координаты сектора и индекс точки для выбора обложки
+    const hash1 = Math.abs(gx * 97 + gy * 101 + pIndex * 89) % 1009;
+    const hash2 = Math.abs(gx * 103 + gy * 107 + pIndex * 91) % 1013;
+    const hash3 = Math.abs(gx * 109 + gy * 113 + pIndex * 93) % 1019;
+
+    // Combine hashes for better distribution
+    const combinedHash = (hash1 ^ hash2 ^ hash3) % albumCovers.length;
+    return albumCovers[combinedHash];
   };
 
   // Размеры элемента
@@ -98,9 +84,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
 
-  const albumCover = getAlbumCover(gridX, gridY, pointIndex, nearbyAlbums);
+  const albumCover = getAlbumCover(gridX, gridY, pointIndex);
   const appearAnimation = useAppearAnimation({
-    gridX: gridX + pointIndex,
+    gridX: gridX + pointIndex, // Уникальный seed для анимации
     gridY: gridY + pointIndex * 2
   });
 

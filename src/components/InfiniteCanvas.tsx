@@ -25,7 +25,7 @@ const InfiniteCanvas: React.FC = () => {
   const allAlbums = getAllAlbums();
   
   // Определяем размер сетки в зависимости от устройства
-  const gridSize = isMobile ? 500 : isTablet ? 450 : 550;
+  const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
   // Update canvas size on window resize
   useEffect(() => {
@@ -117,7 +117,6 @@ const InfiniteCanvas: React.FC = () => {
               onAlbumClick={handleAlbumClick}
               isMobile={isMobile}
               isTablet={isTablet}
-              nearbyAlbums={item.nearbyAlbums}
             />
           ))}
         </div>

@@ -10,7 +10,7 @@ export class PoissonDiskSampler {
   private sectorSize: number;
   private maxAttempts: number;
 
-  constructor(minDistance: number = 450, sectorSize: number = 800, maxAttempts: number = 30) {
+  constructor(minDistance: number = 350, sectorSize: number = 800, maxAttempts: number = 30) {
     this.minDistance = minDistance;
     this.sectorSize = sectorSize;
     this.maxAttempts = maxAttempts;
@@ -27,8 +27,8 @@ export class PoissonDiskSampler {
     const points: Point[] = [];
     const seed = sectorX * 1000 + sectorY;
     
-    // Уменьшаем количество точек на сектор для лучшего распределения
-    const targetPoints = Math.floor(1 + this.seededRandom(seed + 1) * 2); // 1-3 точки на сектор
+    // Количество попыток генерации точек в секторе
+    const targetPoints = Math.floor(2 + this.seededRandom(seed + 1) * 2); // 2-4 точки на сектор
     
     for (let attempt = 0; attempt < this.maxAttempts && points.length < targetPoints; attempt++) {
       const x = sectorX * this.sectorSize + this.seededRandom(seed + attempt * 2) * this.sectorSize;
