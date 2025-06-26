@@ -5,7 +5,6 @@ import { Button } from './ui/button';
 
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -16,47 +15,9 @@ const MusicPlayer: React.FC = () => {
       setIsPlaying(false);
     };
 
-    const tryAutoplay = async () => {
-      try {
-        // Устанавливаем громкость и другие настройки
-        audio.volume = 0.7;
-        await audio.play();
-        setIsPlaying(true);
-        console.log('Music started automatically');
-      } catch (error) {
-        console.log('Autoplay blocked, waiting for user interaction');
-        
-        const handleFirstInteraction = async () => {
-          if (!hasUserInteracted) {
-            setHasUserInteracted(true);
-            try {
-              await audio.play();
-              setIsPlaying(true);
-              console.log('Music started after user interaction');
-            } catch (err) {
-              console.error('Error playing audio after interaction:', err);
-            }
-          }
-          document.removeEventListener('click', handleFirstInteraction);
-          document.removeEventListener('keydown', handleFirstInteraction);
-          document.removeEventListener('touchstart', handleFirstInteraction);
-        };
-
-        document.addEventListener('click', handleFirstInteraction, { once: true });
-        document.addEventListener('keydown', handleFirstInteraction, { once: true });
-        document.addEventListener('touchstart', handleFirstInteraction, { once: true });
-      }
-    };
-
     audio.addEventListener('ended', handleEnded);
-    
-    // Пытаемся запустить музыку сразу при загрузке
-    tryAutoplay();
-
-    return () => {
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [hasUserInteracted]);
+    return () => audio.removeEventListener('ended', handleEnded);
+  }, []);
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -69,7 +30,6 @@ const MusicPlayer: React.FC = () => {
       } else {
         await audio.play();
         setIsPlaying(true);
-        setHasUserInteracted(true);
       }
     } catch (error) {
       console.error('Error playing audio:', error);
@@ -78,13 +38,7 @@ const MusicPlayer: React.FC = () => {
 
   return (
     <>
-      <audio 
-        ref={audioRef} 
-        src="/bgRFD.mp3" 
-        loop 
-        preload="auto"
-        autoPlay
-      />
+      <audio ref={audioRef} src="/bgRFD.mp3" loop preload="metadata" />
       <Button
         onClick={togglePlayback}
         size="icon"
