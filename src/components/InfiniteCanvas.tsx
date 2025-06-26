@@ -6,9 +6,9 @@ import AlbumDetailPanel from './AlbumDetailPanel';
 import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 import { useIsMobile } from '../hooks/use-mobile';
 
-// Увеличиваем размер сетки для более равномерных отступов
-const GRID_SIZE_DESKTOP = 280; // Уменьшено с 350 до 280
-const GRID_SIZE_MOBILE = 280; // Увеличено с 260 до 280 для равномерности
+// Увеличиваем размер сетки для обеспечения отступов минимум 100px
+const GRID_SIZE_DESKTOP = 400; // Увеличено с 280 до 400 (248px элемент + ~152px отступы)
+const GRID_SIZE_MOBILE = 400; // Увеличено с 280 до 400 (250px элемент + ~150px отступы)
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
