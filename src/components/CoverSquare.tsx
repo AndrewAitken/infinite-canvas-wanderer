@@ -96,7 +96,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const rectWidth = isMobile ? 250 : 248;
   const rectHeight = isMobile ? 350 : 331;
 
-  // Улучшенное вычисление scale с более плавным переходом для краев экрана
+  // Улучшенное вычисление scale с увеличенным минимальным масштабом для мобила
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
 
@@ -115,7 +115,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
     // Увеличена зона fade для более градуального перехода
     const fadeZone = 350;
-    const minScale = 0.15;
+    // Увеличенный минимальный масштаб для мобила - с 0.15 до 0.4
+    const minScale = isMobile ? 0.4 : 0.15;
     const maxScale = 1.0;
     
     if (minDistance >= fadeZone) {
@@ -129,7 +130,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
 
     return minScale + (maxScale - minScale) * easedDistance;
-  }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight]);
+  }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
 
   const albumCover = getAlbumCover(gridX, gridY);
   const appearAnimation = useAppearAnimation({ gridX, gridY });
