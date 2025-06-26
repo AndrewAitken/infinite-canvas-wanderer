@@ -15,15 +15,15 @@ export const useAppearAnimation = ({ gridX, gridY, delay = 0 }: UseAppearAnimati
     const seed3 = Math.abs((gridX * 47 + gridY * 53) % 1000) / 1000;
     const seed4 = Math.abs((gridX * 61 + gridY * 67) % 1000) / 1000;
     
-    // Увеличенная случайная задержка от 0 до 3000ms (3 секунды)
-    const randomDelay = seed1 * 3000;
+    // Очень медленная случайная задержка от 0 до 8 секунд
+    const randomDelay = seed1 * 8000;
     
-    // Увеличенная случайная длительность от 1200ms до 2400ms
-    const randomDuration = 1200 + (seed2 * 1200);
+    // Очень медленная случайная длительность от 3 до 6 секунд
+    const randomDuration = 3000 + (seed2 * 3000);
     
-    // Параметры для диагонального движения
-    const diagonalDistance = 100 + (seed3 * 200); // 100-300px расстояние
-    const diagonalDuration = 1500 + (seed4 * 1000); // 1.5-2.5 секунды
+    // Параметры для диагонального движения - увеличенное расстояние
+    const diagonalDistance = 150 + (seed3 * 150); // 150-300px расстояние
+    const diagonalDuration = 3000 + (seed4 * 2000); // 3-5 секунд
     
     // Добавляем базовую задержку если передана
     const totalDelay = delay + randomDelay;

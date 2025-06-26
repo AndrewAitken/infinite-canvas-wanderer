@@ -18,12 +18,14 @@ const MusicPlayer: React.FC = () => {
 
     const tryAutoplay = async () => {
       try {
+        // Устанавливаем громкость и другие настройки
+        audio.volume = 0.7;
         await audio.play();
         setIsPlaying(true);
         console.log('Music started automatically');
       } catch (error) {
         console.log('Autoplay blocked, waiting for user interaction');
-        // Добавляем слушатель для первого взаимодействия пользователя
+        
         const handleFirstInteraction = async () => {
           if (!hasUserInteracted) {
             setHasUserInteracted(true);
@@ -35,26 +37,24 @@ const MusicPlayer: React.FC = () => {
               console.error('Error playing audio after interaction:', err);
             }
           }
-          // Удаляем слушатели после первого взаимодействия
           document.removeEventListener('click', handleFirstInteraction);
           document.removeEventListener('keydown', handleFirstInteraction);
           document.removeEventListener('touchstart', handleFirstInteraction);
         };
 
-        document.addEventListener('click', handleFirstInteraction);
-        document.addEventListener('keydown', handleFirstInteraction);
-        document.addEventListener('touchstart', handleFirstInteraction);
+        document.addEventListener('click', handleFirstInteraction, { once: true });
+        document.addEventListener('keydown', handleFirstInteraction, { once: true });
+        document.addEventListener('touchstart', handleFirstInteraction, { once: true });
       }
     };
 
     audio.addEventListener('ended', handleEnded);
     
-    // Пытаемся запустить музыку автоматически после небольшой задержки
-    const autoplayTimer = setTimeout(tryAutoplay, 1000);
+    // Пытаемся запустить музыку сразу при загрузке
+    tryAutoplay();
 
     return () => {
       audio.removeEventListener('ended', handleEnded);
-      clearTimeout(autoplayTimer);
     };
   }, [hasUserInteracted]);
 
@@ -78,7 +78,13 @@ const MusicPlayer: React.FC = () => {
 
   return (
     <>
-      <audio ref={audioRef} src="/bgRFD.mp3" loop preload="metadata" />
+      <audio 
+        ref={audioRef} 
+        src="/bgRFD.mp3" 
+        loop 
+        preload="auto"
+        autoPlay
+      />
       <Button
         onClick={togglePlayback}
         size="icon"

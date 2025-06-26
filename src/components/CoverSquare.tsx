@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
@@ -134,7 +133,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         top: finalY,
         ...appearAnimation
       }} 
-      className="absolute animate-[scale-from-zero-with-slide_var(--appear-duration,1.8s)_cubic-bezier(0.25,0.46,0.45,0.94)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
+      className="absolute animate-[scale-from-zero-with-slide_var(--appear-duration,4s)_cubic-bezier(0.25,0.46,0.45,0.94)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
       {/* Inner container - handles edge scaling only */}
       <div 
