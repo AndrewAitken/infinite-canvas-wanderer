@@ -38,7 +38,7 @@ const MusicPlayer: React.FC = () => {
 
   return (
     <>
-      <audio ref={audioRef} src="/vanishinghope.mp3" loop preload="metadata" />
+      <audio ref={audioRef} src="/bgRFD.mp3" loop preload="metadata" />
       <Button
         onClick={togglePlayback}
         size="icon"
