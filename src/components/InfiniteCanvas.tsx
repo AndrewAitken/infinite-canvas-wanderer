@@ -43,7 +43,7 @@ const InfiniteCanvas: React.FC = () => {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  const { offset, isDragging, handleMouseDown, handleTouchStart } = useDrag();
+  const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag();
   
   const visibleItems = useVirtualization({
     offset,
@@ -95,13 +95,13 @@ const InfiniteCanvas: React.FC = () => {
         }`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        style={{ cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab' }}
       >
         <div
           className="relative"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
-            transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+            transition: isDragging || isMomentum ? 'none' : 'transform 0.3s ease-out',
           }}
         >
           {visibleItems.map((item) => (
