@@ -1,3 +1,4 @@
+
 import React, { useMemo, useRef, useLayoutEffect, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 import { useMousePosition } from '../hooks/useMousePosition';
@@ -35,7 +36,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const elementRef = useRef<HTMLDivElement>(null);
   const [elementBounds, setElementBounds] = useState({ x: 0, y: 0, width: 0, height: 0 });
   
-  // Получаем позицию мыши
+  // Получаем позицию мыши только если не мобильное устройство
   const mousePosition = useMousePosition();
   
   // Array of RFD album cover images
@@ -59,7 +60,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return albumCovers[finalIndex];
   };
 
-  // Get random offset for more organic positioning (учитываем планшет)
+  // Get random offset for more organic positioning
   const getRandomOffset = (gx: number, gy: number) => {
     // Use grid coordinates as seed for deterministic randomness
     const seed1 = Math.abs((gx * 17 + gy * 23) % 1000) / 1000;
@@ -82,15 +83,16 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       y: offsetY
     };
   };
+
   const randomOffset = getRandomOffset(gridX, gridY);
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Размеры элемента остаются те же
+  // Размеры элемента
   const rectWidth = isMobile ? 250 : 248;
   const rectHeight = isMobile ? 350 : 331;
 
-  // Улучшенное вычисление scale с увеличенным минимальным масштабом для мобила
+  // Edge scale calculation
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
     const screenX = finalX + offset.x;
@@ -103,23 +105,20 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const distanceToBottom = canvasSize.height - centerY;
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
-    // Увеличена зона fade для более градуального перехода
     const fadeZone = 350;
-    // Увеличенный минимальный масштаб для мобила - с 0.15 до 0.4
     const minScale = isMobile ? 0.4 : 0.15;
     const maxScale = 1.0;
     if (minDistance >= fadeZone) {
       return maxScale;
     }
 
-    // Более плавная cubic-bezier функция вместо квадратичной
     const normalizedDistance = Math.max(0, minDistance) / fadeZone;
-    // Используем smooth cubic-bezier easing для очень плавного перехода
     const t = normalizedDistance;
-    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
+    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10);
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
+
   const albumCover = getAlbumCover(gridX, gridY);
   const appearAnimation = useAppearAnimation({
     gridX,
@@ -158,16 +157,18 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   };
 
   return (
-    // Outer container - handles appear animation only
     <div 
       style={{
+        position: 'absolute',
         left: finalX,
         top: finalY,
-        ...appearAnimation
+        opacity: appearAnimation.opacity || 1,
+        transform: appearAnimation.transform || 'scale(1)',
+        animationDelay: appearAnimation.animationDelay,
+        animationDuration: appearAnimation.animationDuration,
       }} 
-      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
+      className="animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
-      {/* Inner container - handles edge scaling and 3D transform */}
       <div 
         ref={elementRef}
         style={{
@@ -190,7 +191,12 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
           alt={`Album cover ${gridX},${gridY}`} 
           className="w-full h-full object-cover" 
           draggable={false} 
-          loading="lazy" 
+          loading="lazy"
+          onError={(e) => {
+            console.log(`Failed to load image: ${albumCover}`);
+            // Fallback to a different image if one fails
+            e.currentTarget.src = '/RFD 06.09.2024.jpg';
+          }}
         />
       </div>
     </div>

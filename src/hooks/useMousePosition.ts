@@ -13,17 +13,21 @@ export const useMousePosition = () => {
     let animationFrameId: number;
 
     const updateMousePosition = (e: MouseEvent) => {
+      // Cancel previous frame if it exists
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
 
+      // Use requestAnimationFrame for smooth updates
       animationFrameId = requestAnimationFrame(() => {
         setMousePosition({ x: e.clientX, y: e.clientY });
       });
     };
 
+    // Add event listener
     window.addEventListener('mousemove', updateMousePosition);
 
+    // Cleanup function
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
       if (animationFrameId) {
