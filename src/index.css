@@ -221,25 +221,54 @@
   }
 }
 
-/* Анимация появления из пустоты с bouncy эффектом */
-@keyframes scale-from-zero {
+/* Анимация диагонального движения из нижнего правого угла в верхний левый */
+@keyframes diagonal-slide-in {
   0% {
-    transform: scale(0);
+    transform: translate(var(--diagonal-distance, 150px), var(--diagonal-distance, 150px)) scale(0);
     opacity: 0;
   }
   60% {
-    transform: scale(1.05);
+    transform: translate(0, 0) scale(1.05);
     opacity: 0.8;
   }
   100% {
-    transform: scale(1);
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Обновленная анимация появления из пустоты с диагональным движением */
+@keyframes scale-from-zero-with-slide {
+  0% {
+    transform: translate(var(--diagonal-distance, 150px), var(--diagonal-distance, 150px)) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(calc(var(--diagonal-distance, 150px) * 0.3), calc(var(--diagonal-distance, 150px) * 0.3)) scale(0.7);
+    opacity: 0.5;
+  }
+  80% {
+    transform: translate(0, 0) scale(1.08);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
     opacity: 1;
   }
 }
 
 /* Поддержка prefers-reduced-motion для доступности */
 @media (prefers-reduced-motion: reduce) {
-  @keyframes scale-from-zero {
+  @keyframes scale-from-zero-with-slide {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes diagonal-slide-in {
     0% {
       opacity: 0;
     }
