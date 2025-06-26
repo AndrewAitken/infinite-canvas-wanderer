@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause } from 'lucide-react';
-import { Button } from './ui/button';
 
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -39,22 +38,19 @@ const MusicPlayer: React.FC = () => {
   return (
     <>
       <audio ref={audioRef} src="/vanishinghope.mp3" loop preload="metadata" />
-      <Button
-        onClick={togglePlayback}
-        size="icon"
-        variant="outline"
-        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/30 backdrop-blur-md border-2 border-gray-100 hover:bg-white/40 hover:border-gray-200 dark:bg-stone-800/30 dark:border-stone-700 dark:hover:bg-stone-800/40 dark:hover:border-stone-600 transition-all duration-200"
-        style={{
-          WebkitBackdropFilter: 'blur(12px)',
-          backdropFilter: 'blur(12px)'
-        }}
-      >
-        {isPlaying ? (
-          <Pause className="w-6 h-6 text-gray-700 dark:text-white" />
-        ) : (
-          <Play className="w-6 h-6 text-gray-700 dark:text-white ml-0.5" />
-        )}
-      </Button>
+      <div className="fixed bottom-6 left-6 z-50 glass-button-wrap">
+        <button
+          onClick={togglePlayback}
+          className="glass-button"
+        >
+          {isPlaying ? (
+            <Pause className="w-6 h-6 glass-button-icon" />
+          ) : (
+            <Play className="w-6 h-6 glass-button-icon ml-0.5" />
+          )}
+        </button>
+        <div className="glass-button-shadow"></div>
+      </div>
     </>
   );
 };

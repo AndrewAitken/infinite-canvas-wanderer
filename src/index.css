@@ -238,3 +238,291 @@
     }
   }
 }
+
+/* ========== GLASS MORPHISM BUTTON STYLES ========== */
+
+/* CSS Custom Properties for Glass Morphism */
+@property --angle-1 {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -75deg;
+}
+
+@property --angle-2 {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -45deg;
+}
+
+:root {
+  --glass-anim-hover-time: 400ms;
+  --glass-anim-hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --glass-border-width: 1px;
+  --glass-shadow-cutoff-fix: 1rem;
+}
+
+/* Glass Button Wrap Container */
+.glass-button-wrap {
+  position: relative;
+  z-index: 2;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  transition: all var(--glass-anim-hover-time) var(--glass-anim-hover-ease);
+}
+
+/* Glass Button Shadow Container */
+.glass-button-shadow {
+  position: absolute;
+  width: calc(100% + var(--glass-shadow-cutoff-fix));
+  height: calc(100% + var(--glass-shadow-cutoff-fix));
+  top: calc(0% - var(--glass-shadow-cutoff-fix) / 2);
+  left: calc(0% - var(--glass-shadow-cutoff-fix) / 2);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Shadow Effect */
+.glass-button-shadow::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+  width: calc(100% - var(--glass-shadow-cutoff-fix) - 0.125rem);
+  height: calc(100% - var(--glass-shadow-cutoff-fix) - 0.125rem);
+  top: calc(var(--glass-shadow-cutoff-fix) / 2 - 0.25rem);
+  left: calc(var(--glass-shadow-cutoff-fix) / 2 - 0.4375rem);
+  padding: 0.0625rem;
+  box-sizing: border-box;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: all var(--glass-anim-hover-time) var(--glass-anim-hover-ease);
+  overflow: visible;
+  opacity: 1;
+}
+
+/* Glass Button Base Styles */
+.glass-button {
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  pointer-events: auto;
+  z-index: 3;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.05)
+  );
+  border-radius: 50%;
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.05),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.5),
+    0 0.25rem 0.125rem -0.125rem rgba(0, 0, 0, 0.2),
+    0 0 0 0.125rem inset rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all var(--glass-anim-hover-time) var(--glass-anim-hover-ease);
+}
+
+/* Dark theme adaptations */
+.dark .glass-button {
+  background: linear-gradient(
+    -75deg,
+    rgba(25, 24, 23, 0.3),
+    rgba(255, 255, 255, 0.1),
+    rgba(25, 24, 23, 0.3)
+  );
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.2),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.1),
+    0 0.25rem 0.125rem -0.125rem rgba(0, 0, 0, 0.4),
+    0 0 0 0.125rem inset rgba(255, 255, 255, 0.1);
+}
+
+.glass-button:hover {
+  transform: scale(0.975);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.05),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.5),
+    0 0.15rem 0.05rem -0.1rem rgba(0, 0, 0, 0.25),
+    0 0 0 0.05rem inset rgba(255, 255, 255, 0.5);
+}
+
+.dark .glass-button:hover {
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.2),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.1),
+    0 0.15rem 0.05rem -0.1rem rgba(0, 0, 0, 0.4),
+    0 0 0 0.05rem inset rgba(255, 255, 255, 0.2);
+}
+
+/* Shimmer Effect */
+.glass-button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  width: calc(100% - var(--glass-border-width));
+  height: calc(100% - var(--glass-border-width));
+  top: calc(0% + var(--glass-border-width) / 2);
+  left: calc(0% + var(--glass-border-width) / 2);
+  box-sizing: border-box;
+  border-radius: 50%;
+  overflow: clip;
+  background: linear-gradient(
+    var(--angle-2),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 40% 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  z-index: 3;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  transition: background-position calc(var(--glass-anim-hover-time) * 1.25)
+      var(--glass-anim-hover-ease),
+    --angle-2 calc(var(--glass-anim-hover-time) * 1.25) var(--glass-anim-hover-ease);
+}
+
+.glass-button:hover::after {
+  background-position: 25% 50%;
+}
+
+.glass-button:active::after {
+  background-position: 50% 15%;
+  --angle-2: -15deg;
+}
+
+/* Border Animation */
+.glass-button::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 50%;
+  width: calc(100% + var(--glass-border-width));
+  height: calc(100% + var(--glass-border-width));
+  top: calc(0% - var(--glass-border-width) / 2);
+  left: calc(0% - var(--glass-border-width) / 2);
+  padding: var(--glass-border-width);
+  box-sizing: border-box;
+  background: conic-gradient(
+      from var(--angle-1) at 50% 50%,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0) 5% 40%,
+      rgba(0, 0, 0, 0.5) 50%,
+      rgba(0, 0, 0, 0) 60% 95%,
+      rgba(0, 0, 0, 0.5)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: all var(--glass-anim-hover-time) var(--glass-anim-hover-ease),
+    --angle-1 500ms ease;
+  box-shadow: inset 0 0 0 calc(var(--glass-border-width) / 2) rgba(255, 255, 255, 0.5);
+}
+
+.dark .glass-button::before {
+  background: conic-gradient(
+      from var(--angle-1) at 50% 50%,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0) 5% 40%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 60% 95%,
+      rgba(255, 255, 255, 0.3)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2));
+  box-shadow: inset 0 0 0 calc(var(--glass-border-width) / 2) rgba(255, 255, 255, 0.2);
+}
+
+.glass-button:hover::before {
+  --angle-1: -125deg;
+}
+
+.glass-button:active::before {
+  --angle-1: -75deg;
+}
+
+/* Icon Styles */
+.glass-button-icon {
+  position: relative;
+  z-index: 4;
+  color: #374151;
+  transition: all var(--glass-anim-hover-time) var(--glass-anim-hover-ease);
+}
+
+.dark .glass-button-icon {
+  color: #ffffff;
+}
+
+/* Shadow Hover Effects */
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow {
+  filter: blur(1px);
+  -webkit-filter: blur(1px);
+  transition: filter var(--glass-anim-hover-time) var(--glass-anim-hover-ease);
+}
+
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow::after {
+  top: calc(var(--glass-shadow-cutoff-fix) / 2 - 0.4375rem);
+  opacity: 1;
+}
+
+/* 3D Rotation Effect */
+.glass-button-wrap:has(.glass-button:active) {
+  transform: rotate3d(1, 0, 0, 25deg);
+}
+
+.glass-button-wrap:has(.glass-button:active) .glass-button {
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.05),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.5),
+    0 0.125rem 0.125rem -0.125rem rgba(0, 0, 0, 0.2),
+    0 0 0 0.125rem inset rgba(255, 255, 255, 0.2),
+    0 0.225rem 0.05rem 0 rgba(0, 0, 0, 0.05),
+    0 0.25rem 0 0 rgba(255, 255, 255, 0.75),
+    inset 0 0.25rem 0.05rem 0 rgba(0, 0, 0, 0.15);
+}
+
+.dark .glass-button-wrap:has(.glass-button:active) .glass-button {
+  box-shadow: inset 0 0.125rem 0.125rem rgba(0, 0, 0, 0.2),
+    inset 0 -0.125rem 0.125rem rgba(255, 255, 255, 0.1),
+    0 0.125rem 0.125rem -0.125rem rgba(0, 0, 0, 0.4),
+    0 0 0 0.125rem inset rgba(255, 255, 255, 0.1),
+    0 0.225rem 0.05rem 0 rgba(0, 0, 0, 0.2),
+    0 0.25rem 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 0.25rem 0.05rem 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-button-wrap:has(.glass-button:active) .glass-button-shadow {
+  filter: blur(3px);
+  -webkit-filter: blur(3px);
+}
+
+.glass-button-wrap:has(.glass-button:active) .glass-button-shadow::after {
+  top: calc(var(--glass-shadow-cutoff-fix) / 2 - 0.25rem);
+  opacity: 0.75;
+}
+
+/* Touch Devices */
+@media (hover: none) and (pointer: coarse) {
+  .glass-button::after,
+  .glass-button:active::after {
+    --angle-2: -45deg;
+  }
+  
+  .glass-button::before,
+  .glass-button:hover::before,
+  .glass-button:active::before {
+    --angle-1: -75deg;
+  }
+}
