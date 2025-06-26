@@ -1,9 +1,11 @@
 import React from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSwipe } from "@/hooks/useSwipe";
+
 interface Album {
   id: string;
   title: string;
@@ -87,7 +89,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
     </div>;
   if (isMobile) {
     return <Drawer open={isOpen} onOpenChange={onClose}>
-        <DrawerContent className="px-4 pb-8 font-ys" {...swipeHandlers}>
+        <DrawerContent className="px-4 pb-8 font-ys max-h-[90vh]" {...swipeHandlers}>
           <DrawerHeader className="text-center">
             <DrawerTitle className="text-2xl font-bold transition-all duration-300 font-ys">
               {album.title}
@@ -97,9 +99,11 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
             </DrawerDescription>
           </DrawerHeader>
           
-          <div className="mt-6">
-            {content}
-          </div>
+          <ScrollArea className="flex-1 mt-6">
+            <div className="pb-4">
+              {content}
+            </div>
+          </ScrollArea>
         </DrawerContent>
       </Drawer>;
   }
