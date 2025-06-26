@@ -1,5 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useLayoutEffect, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
+import { useMousePosition } from '../hooks/useMousePosition';
+import { use3DTransform } from '../hooks/use3DTransform';
+
 interface CoverSquareProps {
   x: number;
   y: number;
@@ -17,6 +20,7 @@ interface CoverSquareProps {
   isMobile?: boolean;
   isTablet?: boolean;
 }
+
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
   y,
@@ -28,6 +32,12 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   isMobile = false,
   isTablet = false
 }) => {
+  const elementRef = useRef<HTMLDivElement>(null);
+  const [elementBounds, setElementBounds] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  
+  // Получаем позицию мыши
+  const mousePosition = useMousePosition();
+  
   // Array of RFD album cover images
   const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
 
@@ -115,31 +125,76 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     gridX,
     gridY
   });
+  
+  // Обновляем границы элемента при изменении позиции
+  useLayoutEffect(() => {
+    if (elementRef.current) {
+      const rect = elementRef.current.getBoundingClientRect();
+      setElementBounds({
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height
+      });
+    }
+  }, [finalX, finalY, offset, edgeScale]);
+
+  // Рассчитываем 3D трансформацию (отключаем на мобильных устройствах)
+  const transform3D = use3DTransform({
+    mouseX: mousePosition.x,
+    mouseY: mousePosition.y,
+    elementX: elementBounds.x,
+    elementY: elementBounds.y,
+    elementWidth: elementBounds.width,
+    elementHeight: elementBounds.height,
+    maxRotation: isMobile ? 0 : 15,
+    maxDistance: isMobile ? 0 : 300,
+    scaleEffect: isMobile ? 0 : 0.02
+  });
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAlbumClick(albumCover);
   };
+
   return (
     // Outer container - handles appear animation only
-    <div style={{
-      left: finalX,
-      top: finalY,
-      ...appearAnimation
-    }} className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none">
-      {/* Inner container - handles edge scaling only */}
-      <div style={{
-        transform: `scale(${edgeScale})`,
-        transformOrigin: 'center',
-        width: rectWidth,
-        height: rectHeight
-      }} onClick={handleClick} className="rounded-xl shadow-lg 
-                   transition-all duration-500 ease-out
-                   hover:scale-105 hover:shadow-xl cursor-pointer
-                   overflow-hidden">
-        <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
-        
+    <div 
+      style={{
+        left: finalX,
+        top: finalY,
+        ...appearAnimation
+      }} 
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
+    >
+      {/* Inner container - handles edge scaling and 3D transform */}
+      <div 
+        ref={elementRef}
+        style={{
+          transform: `scale(${edgeScale}) ${transform3D.transform}`,
+          transformOrigin: 'center',
+          transformStyle: 'preserve-3d',
+          width: rectWidth,
+          height: rectHeight,
+          transition: isMobile ? 'transform 0.5s ease-out' : 'transform 0.2s ease-out'
+        }} 
+        onClick={handleClick} 
+        className={`rounded-xl shadow-lg overflow-hidden cursor-pointer ${
+          transform3D.isHovered && !isMobile 
+            ? 'shadow-2xl' 
+            : 'hover:shadow-xl'
+        }`}
+      >
+        <img 
+          src={albumCover} 
+          alt={`Album cover ${gridX},${gridY}`} 
+          className="w-full h-full object-cover" 
+          draggable={false} 
+          loading="lazy" 
+        />
       </div>
     </div>
   );
 };
+
 export default CoverSquare;
