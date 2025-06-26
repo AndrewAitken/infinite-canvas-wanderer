@@ -10,37 +10,37 @@ export interface Album {
 export const albumData: Record<string, Album> = {
   '/RFD 06.09.2024.jpg': {
     id: '1',
-    title: 'RFD Session',
-    artist: 'Radio Free Dance',
-    description: 'Уникальная танцевальная сессия, которая объединяет электронные ритмы с живыми выступлениями. Это музыкальное путешествие через различные жанры электронной музыки, создающее атмосферу свободы и движения.',
+    title: '#1',
+    artist: 'RFD',
+    description: '#1',
     imageUrl: '/RFD 06.09.2024.jpg'
   },
   '/RFD01111024.jpg': {
     id: '2',
-    title: 'Frequency Waves',
-    artist: 'RFD Collective',
-    description: 'Экспериментальный альбом, исследующий границы звука и ритма. Каждый трек представляет собой уникальное звуковое путешествие, сочетающее традиционные инструменты с современными электронными элементами.',
+    title: '#2',
+    artist: 'RFD',
+    description: '#2',
     imageUrl: '/RFD01111024.jpg'
   },
   '/RFD03102024.jpg': {
     id: '3',
-    title: 'Urban Echoes',
-    artist: 'City Sounds',
-    description: 'Альбом, вдохновленный звуками города и его ритмами. Композиции отражают пульс современной жизни, от тихих утренних мелодий до энергичных ночных битов.',
+    title: '#3',
+    artist: 'RFD',
+    description: '#3',
     imageUrl: '/RFD03102024.jpg'
   },
   '/16.05.2025.jpg': {
     id: '4',
-    title: 'Future Memories',
-    artist: 'Time Capsule',
-    description: 'Концептуальный альбом о связи прошлого и будущего через музыку. Каждая композиция рассказывает историю о том, как воспоминания формируют наше будущее.',
+    title: '#4',
+    artist: 'RFD',
+    description: '#4',
     imageUrl: '/16.05.2025.jpg'
   },
   '/RFD22112024.jpg': {
     id: '5',
-    title: 'Late Night Sessions',
-    artist: 'Midnight Collective',
-    description: 'Интимная коллекция треков, записанных в поздние ночные часы. Атмосферная музыка для размышлений и глубокого погружения в себя.',
+    title: '#5',
+    artist: 'RFD',
+    description: '#5',
     imageUrl: '/RFD22112024.jpg'
   }
 };
@@ -77,11 +77,23 @@ export const getPreviousAlbumIndex = (currentIndex: number): number => {
 
 // Fallback album for covers not in the data
 export const getAlbumData = (imageUrl: string): Album => {
-  return albumData[imageUrl] || {
+  const existingAlbum = albumData[imageUrl];
+  if (existingAlbum) {
+    return existingAlbum;
+  }
+  
+  // Generate a simple number for unknown albums based on hash
+  const hash = Math.abs(imageUrl.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0));
+  const albumNumber = (hash % 999) + 1;
+  
+  return {
     id: 'unknown',
-    title: 'RFD Archive',
-    artist: 'Radio Free Dance',
-    description: 'Архивная запись из коллекции Radio Free Dance. Эта музыка представляет собой уникальное сочетание электронных и живых элементов, создавая неповторимую атмосферу танца и свободы движения.',
+    title: `#${albumNumber}`,
+    artist: 'RFD',
+    description: `#${albumNumber}`,
     imageUrl
   };
 };

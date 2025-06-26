@@ -42,8 +42,8 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
       </div>
       
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold font-ys">Описание</h3>
-        <p className="text-muted-foreground leading-relaxed font-ys">
+        <h3 className="text-lg font-semibold font-ys">Номер</h3>
+        <p className="text-lg text-muted-foreground font-ys">
           {album.description}
         </p>
       </div>
