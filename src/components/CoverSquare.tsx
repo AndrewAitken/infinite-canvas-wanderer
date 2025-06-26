@@ -1,4 +1,3 @@
-
 import React, { useMemo, useRef, useLayoutEffect, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 import { useMousePosition } from '../hooks/useMousePosition';
@@ -138,14 +137,14 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     }
   }, [finalX, finalY, offset, edgeScale]);
 
-  // Рассчитываем 3D трансформацию (отключаем на мобильных устройствах)
+  // Рассчитываем 3D трансформацию с безопасными значениями по умолчанию
   const transform3D = use3DTransform({
     mouseX: mousePosition.x,
     mouseY: mousePosition.y,
-    elementX: elementBounds.x,
-    elementY: elementBounds.y,
-    elementWidth: elementBounds.width,
-    elementHeight: elementBounds.height,
+    elementX: elementBounds.x || 0,
+    elementY: elementBounds.y || 0,
+    elementWidth: elementBounds.width || rectWidth,
+    elementHeight: elementBounds.height || rectHeight,
     maxRotation: isMobile ? 0 : 15,
     maxDistance: isMobile ? 0 : 300,
     scaleEffect: isMobile ? 0 : 0.02
@@ -162,41 +161,46 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         position: 'absolute',
         left: finalX,
         top: finalY,
-        animationDelay: appearAnimation.animationDelay,
-        animationDuration: appearAnimation.animationDuration,
-        ...appearAnimation // Включаем CSS custom properties
+        perspective: '1000px',
+        transformStyle: 'preserve-3d',
+        ...appearAnimation
       }} 
       className="animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
       <div 
         ref={elementRef}
         style={{
-          transform: `scale(${edgeScale}) ${transform3D.transform}`,
-          transformOrigin: 'center',
-          transformStyle: 'preserve-3d',
           width: rectWidth,
           height: rectHeight,
-          transition: isMobile ? 'transform 0.5s ease-out' : 'transform 0.2s ease-out'
+          transform: `scale(${edgeScale})`,
+          transformOrigin: 'center',
+          transition: 'transform 0.3s ease-out'
         }} 
-        onClick={handleClick} 
-        className={`rounded-xl shadow-lg overflow-hidden cursor-pointer ${
-          transform3D.isHovered && !isMobile 
-            ? 'shadow-2xl' 
-            : 'hover:shadow-xl'
-        }`}
+        className="rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl"
       >
-        <img 
-          src={albumCover} 
-          alt={`Album cover ${gridX},${gridY}`} 
-          className="w-full h-full object-cover" 
-          draggable={false} 
-          loading="lazy"
-          onError={(e) => {
-            console.log(`Failed to load image: ${albumCover}`);
-            // Fallback to a different image if one fails
-            e.currentTarget.src = '/RFD 06.09.2024.jpg';
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            transform: isMobile ? 'none' : transform3D.transform,
+            transformStyle: 'preserve-3d',
+            transition: isMobile ? 'none' : 'transform 0.2s ease-out'
           }}
-        />
+          onClick={handleClick}
+          className={transform3D.isHovered && !isMobile ? 'shadow-2xl' : ''}
+        >
+          <img 
+            src={albumCover} 
+            alt={`Album cover ${gridX},${gridY}`} 
+            className="w-full h-full object-cover" 
+            draggable={false} 
+            loading="lazy"
+            onError={(e) => {
+              console.log(`Failed to load image: ${albumCover}`);
+              e.currentTarget.src = '/RFD 06.09.2024.jpg';
+            }}
+          />
+        </div>
       </div>
     </div>
   );
