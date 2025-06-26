@@ -1,4 +1,3 @@
-
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
@@ -23,10 +22,12 @@ interface AlbumDetailPanelProps {
   onPrevious?: () => void;
   currentIndex?: number;
   totalCount?: number;
+  showStaticImage?: boolean;
 }
 
 export interface AlbumDetailPanelRef {
   getImagePosition: () => { x: number; y: number } | null;
+  getImageSize: () => { width: number; height: number };
 }
 
 const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(({
@@ -36,7 +37,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
   onNext,
   onPrevious,
   currentIndex = 0,
-  totalCount = 1
+  totalCount = 1,
+  showStaticImage = true
 }, ref) => {
   const isMobile = useIsMobile();
   const imageRef = useRef<HTMLImageElement>(null);
@@ -58,6 +60,11 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
         };
       }
       return null;
+    },
+    getImageSize: () => {
+      return isMobile 
+        ? { width: 240, height: 320 }
+        : { width: 300, height: 400 };
     }
   }));
 
@@ -84,7 +91,11 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
           ref={imageRef}
           src={album.imageUrl} 
           alt={`${album.title} cover`} 
-          className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[12px] shadow-lg object-cover transition-all duration-300" 
+          className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[12px] shadow-lg object-cover transition-all duration-300"
+          style={{
+            opacity: showStaticImage ? 1 : 0,
+            transition: 'opacity 200ms ease-out'
+          }}
         />
       </div>
       

@@ -1,4 +1,3 @@
-
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -24,11 +23,13 @@ const InfiniteCanvas: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
   const [hiddenImageKey, setHiddenImageKey] = useState<string | null>(null);
+  const [showStaticImage, setShowStaticImage] = useState(false);
+  const [originalClickPosition, setOriginalClickPosition] = useState<{ x: number; y: number } | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
   const allAlbums = getAllAlbums();
-  const { animationState, startFlyingAnimation, stopFlyingAnimation } = useFlyingAnimation();
+  const { animationState, startFlyingAnimation, setAnimationPhase, stopFlyingAnimation } = useFlyingAnimation();
   
   // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
@@ -62,22 +63,43 @@ const InfiniteCanvas: React.FC = () => {
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
     
+    // Store original click position for reverse animation
+    setOriginalClickPosition(clickPosition);
+    
     // Hide the clicked image
     const imageKey = `${clickPosition.x}-${clickPosition.y}-${imageUrl}`;
     setHiddenImageKey(imageKey);
     
-    // Start flying animation after a short delay to get panel position
+    // Set album data and open panel
+    setSelectedAlbum(albumData);
+    setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
+    setIsPanelOpen(true);
+    setShowStaticImage(false);
+    
+    // Start flying animation after panel opens and we can get target position
     setTimeout(() => {
       const panelImagePos = panelRef.current?.getImagePosition();
       if (panelImagePos) {
         startFlyingAnimation(imageUrl, clickPosition, panelImagePos, false);
       }
-    }, 100);
-    
-    setSelectedAlbum(albumData);
-    setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
-    setIsPanelOpen(true);
+    }, 150);
   }, [startFlyingAnimation]);
+
+  const handleFlyingAnimationReachTarget = useCallback(() => {
+    // Show static image in panel when flying animation reaches target
+    setShowStaticImage(true);
+    setAnimationPhase('showing-in-panel');
+  }, [setAnimationPhase]);
+
+  const handleFlyingAnimationComplete = useCallback(() => {
+    stopFlyingAnimation();
+    
+    // If it was a reverse animation, show the original image
+    if (animationState.isReverse) {
+      setHiddenImageKey(null);
+      setOriginalClickPosition(null);
+    }
+  }, [stopFlyingAnimation, animationState.isReverse]);
 
   const handleNextAlbum = useCallback(() => {
     const nextIndex = getNextAlbumIndex(currentAlbumIndex);
@@ -86,6 +108,7 @@ const InfiniteCanvas: React.FC = () => {
     if (nextAlbum) {
       setSelectedAlbum(nextAlbum);
       setCurrentAlbumIndex(nextIndex);
+      setShowStaticImage(true); // Show immediately for navigation
     }
   }, [currentAlbumIndex]);
 
@@ -96,32 +119,29 @@ const InfiniteCanvas: React.FC = () => {
     if (prevAlbum) {
       setSelectedAlbum(prevAlbum);
       setCurrentAlbumIndex(prevIndex);
+      setShowStaticImage(true); // Show immediately for navigation
     }
   }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
+    // Hide static image first
+    setShowStaticImage(false);
+    
     // Start reverse flying animation
-    if (selectedAlbum && panelRef.current) {
+    if (selectedAlbum && panelRef.current && originalClickPosition) {
       const panelImagePos = panelRef.current.getImagePosition();
-      if (panelImagePos && hiddenImageKey) {
-        // Extract original position from hiddenImageKey (simplified approach)
-        const [x, y] = hiddenImageKey.split('-').slice(0, 2).map(Number);
-        startFlyingAnimation(selectedAlbum.imageUrl, panelImagePos, { x, y }, true);
+      if (panelImagePos) {
+        setAnimationPhase('flying-back');
         
-        // Show original image after animation completes
         setTimeout(() => {
-          setHiddenImageKey(null);
-        }, 900);
+          startFlyingAnimation(selectedAlbum.imageUrl, panelImagePos, originalClickPosition, true);
+        }, 100);
       }
     }
     
     setIsPanelOpen(false);
     setSelectedAlbum(null);
-  }, [selectedAlbum, hiddenImageKey, startFlyingAnimation]);
-
-  const handleAnimationComplete = useCallback(() => {
-    stopFlyingAnimation();
-  }, [stopFlyingAnimation]);
+  }, [selectedAlbum, originalClickPosition, startFlyingAnimation, setAnimationPhase]);
 
   return (
     <>
@@ -171,7 +191,9 @@ const InfiniteCanvas: React.FC = () => {
         endPosition={animationState.endPosition}
         isVisible={animationState.isActive}
         isReverse={animationState.isReverse}
-        onComplete={handleAnimationComplete}
+        onComplete={handleFlyingAnimationComplete}
+        onReachTarget={handleFlyingAnimationReachTarget}
+        targetImageSize={panelRef.current?.getImageSize() || { width: 300, height: 400 }}
       />
 
       <AlbumDetailPanel
@@ -183,6 +205,7 @@ const InfiniteCanvas: React.FC = () => {
         onPrevious={handlePreviousAlbum}
         currentIndex={currentAlbumIndex}
         totalCount={allAlbums.length}
+        showStaticImage={showStaticImage}
       />
     </>
   );

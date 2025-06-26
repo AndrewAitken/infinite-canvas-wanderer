@@ -12,6 +12,7 @@ interface FlyingAnimationState {
   startPosition: Position;
   endPosition: Position;
   isReverse: boolean;
+  phase: 'flying-to-panel' | 'showing-in-panel' | 'flying-back' | 'completed';
 }
 
 export const useFlyingAnimation = () => {
@@ -20,7 +21,8 @@ export const useFlyingAnimation = () => {
     imageUrl: '',
     startPosition: { x: 0, y: 0 },
     endPosition: { x: 0, y: 0 },
-    isReverse: false
+    isReverse: false,
+    phase: 'completed'
   });
 
   const animationTimeoutRef = useRef<NodeJS.Timeout>();
@@ -36,25 +38,37 @@ export const useFlyingAnimation = () => {
       clearTimeout(animationTimeoutRef.current);
     }
 
+    const phase = isReverse ? 'flying-back' : 'flying-to-panel';
+
     setAnimationState({
       isActive: true,
       imageUrl,
       startPosition: startPos,
       endPosition: endPos,
-      isReverse
+      isReverse,
+      phase
     });
+  }, []);
+
+  const setAnimationPhase = useCallback((phase: FlyingAnimationState['phase']) => {
+    setAnimationState(prev => ({
+      ...prev,
+      phase
+    }));
   }, []);
 
   const stopFlyingAnimation = useCallback(() => {
     setAnimationState(prev => ({
       ...prev,
-      isActive: false
+      isActive: false,
+      phase: 'completed'
     }));
   }, []);
 
   return {
     animationState,
     startFlyingAnimation,
+    setAnimationPhase,
     stopFlyingAnimation
   };
 };
