@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -25,6 +26,13 @@ const MusicPlayer: React.FC = () => {
     if (!audio) return;
 
     try {
+      // При первом взаимодействии запрашиваем разрешение на воспроизведение
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true);
+        // Инициализируем аудио элемент
+        audio.load();
+      }
+
       if (isPlaying) {
         audio.pause();
         setIsPlaying(false);
@@ -34,6 +42,8 @@ const MusicPlayer: React.FC = () => {
       }
     } catch (error) {
       console.error('Error playing audio:', error);
+      // Если ошибка, сбрасываем состояние взаимодействия для повторной попытки
+      setHasUserInteracted(false);
     }
   };
 
