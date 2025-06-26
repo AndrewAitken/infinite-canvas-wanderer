@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
+
 interface CoverSquareProps {
   x: number;
   y: number;
@@ -17,6 +18,7 @@ interface CoverSquareProps {
   isMobile?: boolean;
   isTablet?: boolean;
 }
+
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
   y,
@@ -120,26 +122,35 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     onAlbumClick(albumCover);
   };
   return (
-    // Outer container - handles appear animation only
-    <div style={{
-      left: finalX,
-      top: finalY,
-      ...appearAnimation
-    }} className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none">
-      {/* Inner container - handles edge scaling only */}
-      <div style={{
-        transform: `scale(${edgeScale})`,
-        transformOrigin: 'center',
-        width: rectWidth,
-        height: rectHeight
-      }} onClick={handleClick} className="rounded-xl shadow-lg 
+    // Outer container - handles appear animation and positioning
+    <div 
+      style={{
+        left: finalX,
+        top: finalY,
+        ...appearAnimation
+      }} 
+      className="absolute animate-[scale-from-zero_var(--appear-duration,2s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
+    >
+      {/* Inner container - handles edge scaling and diagonal floating */}
+      <div 
+        style={{
+          transform: `scale(${edgeScale})`,
+          transformOrigin: 'center',
+          width: rectWidth,
+          height: rectHeight,
+          animation: `diagonal-float var(--diagonal-duration, 10s) ease-in-out infinite`
+        }} 
+        onClick={handleClick} 
+        className="rounded-xl shadow-lg 
                    transition-all duration-500 ease-out
                    hover:scale-105 hover:shadow-xl cursor-pointer
-                   overflow-hidden">
+                   overflow-hidden motion-reduce:animate-none"
+      >
         <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
         
       </div>
     </div>
   );
 };
+
 export default CoverSquare;
