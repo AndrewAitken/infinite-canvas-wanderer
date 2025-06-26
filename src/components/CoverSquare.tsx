@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 interface CoverSquareProps {
@@ -135,7 +136,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       }} onClick={handleClick} className="rounded-lg shadow-lg 
                    transition-all duration-500 ease-out
                    hover:scale-105 hover:shadow-xl cursor-pointer
-                   border-8 border-white overflow-hidden">
+                   overflow-hidden">
         <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
         
       </div>
