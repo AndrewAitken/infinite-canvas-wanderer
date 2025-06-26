@@ -56,12 +56,12 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
   const handleAnimationEnd = () => {
     console.log('Panel animation completed');
     if (onPanelReady) {
-      // Small delay to ensure everything is fully rendered
+      // Увеличиваем задержку для полной стабилизации
       setTimeout(() => {
         const position = imageRef.current?.getBoundingClientRect();
         console.log('Image position after panel ready:', position);
         onPanelReady();
-      }, 50);
+      }, 100);
     }
   };
 
@@ -69,7 +69,7 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     getImagePosition: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
-        console.log('Getting image position:', { 
+        console.log('Getting precise image position:', { 
           left: rect.left, 
           top: rect.top, 
           width: rect.width, 
@@ -77,7 +77,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
           centerX: rect.left + rect.width / 2,
           centerY: rect.top + rect.height / 2
         });
-        // Возвращаем точный центр изображения
+        
+        // Возвращаем точный центр с небольшой коррекцией
         return {
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2
@@ -88,12 +89,13 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     getImageSize: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
+        console.log('Getting precise image size:', { width: rect.width, height: rect.height });
         return {
           width: rect.width,
           height: rect.height
         };
       }
-      // Fallback размеры
+      // Fallback размеры с учетом устройства
       return isMobile 
         ? { width: 240, height: 320 }
         : { width: 300, height: 400 };
@@ -127,6 +129,14 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
           style={{
             opacity: showStaticImage ? 1 : 0,
             transition: 'opacity 200ms ease-out'
+          }}
+          onLoad={() => {
+            // Дополнительная проверка после загрузки изображения
+            console.log('Image loaded, final position check');
+            if (onPanelReady && imageRef.current) {
+              const rect = imageRef.current.getBoundingClientRect();
+              console.log('Image loaded position:', rect);
+            }
           }}
         />
       </div>

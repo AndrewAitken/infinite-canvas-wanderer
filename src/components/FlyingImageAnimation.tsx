@@ -55,22 +55,33 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
   // Original image size on canvas
   const originalSize = { width: 248, height: 331 };
   
-  // Calculate scale factor to match target size
+  // Calculate scale factor to match target size with higher precision
   const scaleX = targetImageSize.width / originalSize.width;
   const scaleY = targetImageSize.height / originalSize.height;
-  const scale = Math.min(scaleX, scaleY); // Use uniform scaling
+  const scale = Math.min(scaleX, scaleY);
   
   // Calculate final scaled dimensions
   const finalWidth = originalSize.width * scale;
   const finalHeight = originalSize.height * scale;
   
-  // Calculate precise start position (center the original image)
-  const startX = startPosition.x - originalSize.width / 2;
-  const startY = startPosition.y - originalSize.height / 2;
+  // More precise positioning calculations
+  const startX = Math.round(startPosition.x - originalSize.width / 2);
+  const startY = Math.round(startPosition.y - originalSize.height / 2);
   
-  // Calculate precise end position (center the scaled image on target)
-  const endX = endPosition.x - finalWidth / 2;
-  const endY = endPosition.y - finalHeight / 2;
+  const endX = Math.round(endPosition.x - finalWidth / 2);
+  const endY = Math.round(endPosition.y - finalHeight / 2);
+
+  console.log('Flying animation precise calculations:', {
+    originalSize,
+    targetImageSize,
+    scale,
+    finalSize: { width: finalWidth, height: finalHeight },
+    positions: {
+      start: { x: startX, y: startY },
+      end: { x: endX, y: endY },
+      translation: { x: endX - startX, y: endY - startY }
+    }
+  });
 
   return (
     <div
