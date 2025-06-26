@@ -161,13 +161,13 @@
   }
 
   .dark {
-    --background: 12 6% 9%;
+    --background: 25 8% 16%;
     --foreground: 25 5% 96%;
 
-    --card: 12 6% 9%;
+    --card: 25 8% 16%;
     --card-foreground: 25 5% 96%;
 
-    --popover: 12 6% 9%;
+    --popover: 25 8% 16%;
     --popover-foreground: 25 5% 96%;
 
     --primary: 25 5% 96%;
@@ -189,10 +189,10 @@
     --input: 13 5% 15%;
     --ring: 25 5% 70%;
 
-    --sidebar-background: 12 6% 9%;
+    --sidebar-background: 25 8% 16%;
     --sidebar-foreground: 25 5% 96%;
     --sidebar-primary: 25 5% 96%;
-    --sidebar-primary-foreground: 12 6% 9%;
+    --sidebar-primary-foreground: 25 8% 16%;
     --sidebar-accent: 13 5% 15%;
     --sidebar-accent-foreground: 25 5% 96%;
     --sidebar-border: 13 5% 15%;
