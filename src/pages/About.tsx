@@ -6,12 +6,12 @@ import ScrollReveal from '../components/ScrollReveal';
 
 const About: React.FC = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-stone-100 font-ys">
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <ScrollReveal>
           <Link 
             to="/" 
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-12"
+            className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-300 transition-colors mb-12"
           >
             <ArrowLeft className="w-4 h-4" />
             Вернуться к галерее
@@ -19,158 +19,212 @@ const About: React.FC = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={200}>
-          <h1 className="text-5xl font-bold mb-8 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            Как создавался RFD MUSEUM
+          <h1 className="text-5xl font-bold mb-8 text-stone-50">
+            История создания RFD MUSEUM
           </h1>
         </ScrollReveal>
 
         <ScrollReveal delay={400}>
-          <p className="text-xl text-gray-300 mb-12 leading-relaxed">
-            История создания интерактивной галереи музыкальных обложек с помощью Lovable AI
+          <p className="text-xl text-stone-300 mb-16 leading-relaxed">
+            Рассказ о том, как интерактивная галерея музыкальных обложек была создана с помощью искусственного интеллекта
           </p>
         </ScrollReveal>
 
-        <div className="space-y-16">
-          <ScrollReveal delay={600}>
-            <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">🤖 Магия Lovable AI</h2>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Этот проект был создан с помощью Lovable - революционного AI-редактора для веб-приложений. 
-                Вместо месяцев разработки, весь сайт был построен через естественный диалог с ИИ. 
-                Каждая функция, каждая анимация, каждый компонент создавались в реальном времени через простые инструкции.
-              </p>
-            </section>
+        <div className="space-y-20">
+          <ScrollReveal delay={600} stagger={true}>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Всё началось с простой идеи — создать интерактивную галерею для музыкальных обложек. 
+              Но вместо традиционной разработки, я решил попробовать что-то революционное.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Lovable AI стал моим партнёром в этом проекте. Через естественный диалог на русском языке 
+              я описывал желаемые функции, а ИИ мгновенно воплощал их в код.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed">
+              Каждая строчка кода, каждая анимация, каждый компонент — всё создавалось в реальном времени 
+              через простые инструкции. Это было похоже на магию.
+            </p>
           </ScrollReveal>
 
           <ScrollReveal delay={800}>
             <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">⚛️ Современный Tech Stack</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-gray-900 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-3 text-blue-400">Frontend</h3>
-                  <ul className="text-gray-300 space-y-2">
-                    <li>• React 18 с TypeScript</li>
-                    <li>• Vite для быстрой сборки</li>
-                    <li>• Tailwind CSS для стилизации</li>
-                    <li>• Shadcn/ui компоненты</li>
-                  </ul>
-                </div>
-                <div className="bg-gray-900 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-3 text-green-400">Специальные возможности</h3>
-                  <ul className="text-gray-300 space-y-2">
-                    <li>• React Query для данных</li>
-                    <li>• React Router для навигации</li>
-                    <li>• Lucide React иконки</li>
-                    <li>• Next Themes для тем</li>
-                  </ul>
+              <h2 className="text-3xl font-semibold mb-8 text-stone-100">Технологический фундамент</h2>
+              <div className="bg-stone-900/50 p-8 rounded-xl border border-stone-800">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-xl font-medium mb-4 text-stone-200">Основа</h3>
+                    <ul className="text-stone-300 space-y-2">
+                      <li>React 18 с TypeScript</li>
+                      <li>Vite для быстрой сборки</li>
+                      <li>Tailwind CSS для стилизации</li>
+                      <li>Shadcn/ui компоненты</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-medium mb-4 text-stone-200">Расширения</h3>
+                    <ul className="text-stone-300 space-y-2">
+                      <li>React Query для данных</li>
+                      <li>React Router для навигации</li>
+                      <li>Lucide React для иконок</li>
+                      <li>Next Themes для переключения тем</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </section>
           </ScrollReveal>
 
-          <ScrollReveal delay={1000}>
-            <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">🎨 Уникальные функции</h2>
-              <div className="space-y-6">
-                <div className="bg-gray-900 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-3 text-purple-400">Виртуализация бесконечного канваса</h3>
-                  <p className="text-gray-300">
-                    Создана система виртуализации, которая отображает только видимые элементы, 
-                    позволяя показывать тысячи обложек без потери производительности.
-                  </p>
-                </div>
-                <div className="bg-gray-900 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-3 text-yellow-400">Алгоритм Poisson Disk Sampling</h3>
-                  <p className="text-gray-300">
-                    Математический алгоритм для создания естественного, но структурированного размещения элементов 
-                    с минимальным расстоянием между ними.
-                  </p>
-                </div>
-                <div className="bg-gray-900 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-3 text-red-400">Детерминированная рандомизация</h3>
-                  <p className="text-gray-300">
-                    Система генерации "случайных" позиций и анимаций, которые остаются стабильными 
-                    между перезагрузками страницы.
-                  </p>
-                </div>
-              </div>
-            </section>
+          <ScrollReveal delay={1000} stagger={true}>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Самой сложной частью стала реализация бесконечного канваса. Нужно было показать 
+              сотни обложек одновременно, но без потери производительности.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Lovable AI предложил элегантное решение — виртуализацию. Система отображает только 
+              те элементы, которые видны пользователю в данный момент.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed">
+              Для естественного размещения элементов мы использовали алгоритм Poisson Disk Sampling — 
+              математическую модель, которая создаёт органичное, но структурированное расположение.
+            </p>
           </ScrollReveal>
 
           <ScrollReveal delay={1200}>
             <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">🎵 Аудио система</h2>
-              <p className="text-gray-300 leading-relaxed text-lg mb-4">
-                Интегрирована продвинутая аудио система с:
-              </p>
-              <ul className="text-gray-300 space-y-2 ml-6">
-                <li>• Умной обработкой разрешений браузера на автовоспроизведение</li>
-                <li>• Toast-уведомлениями для лучшего UX</li>
-                <li>• Состояниями загрузки и обработкой ошибок</li>
-                <li>• Элегантным плавающим плеером с blur-эффектом</li>
-              </ul>
+              <h2 className="text-3xl font-semibold mb-8 text-stone-100">Уникальные решения</h2>
+              <div className="space-y-6">
+                <div className="bg-stone-900/50 p-6 rounded-xl border border-stone-800">
+                  <h3 className="text-xl font-medium mb-3 text-stone-200">Виртуализация бесконечного канваса</h3>
+                  <p className="text-stone-300 leading-relaxed">
+                    Система отображает только видимые элементы, позволяя показывать тысячи обложек 
+                    без потери производительности. Элементы динамически создаются и удаляются 
+                    при прокрутке.
+                  </p>
+                </div>
+                <div className="bg-stone-900/50 p-6 rounded-xl border border-stone-800">
+                  <h3 className="text-xl font-medium mb-3 text-stone-200">Алгоритм Poisson Disk Sampling</h3>
+                  <p className="text-stone-300 leading-relaxed">
+                    Математический алгоритм для создания естественного размещения элементов 
+                    с минимальным расстоянием между ними. Каждая обложка имеет своё уникальное 
+                    место в пространстве.
+                  </p>
+                </div>
+                <div className="bg-stone-900/50 p-6 rounded-xl border border-stone-800">
+                  <h3 className="text-xl font-medium mb-3 text-stone-200">Детерминированная рандомизация</h3>
+                  <p className="text-stone-300 leading-relaxed">
+                    Позиции и анимации генерируются псевдослучайно, но остаются стабильными 
+                    между перезагрузками. Каждый пользователь видит одну и ту же композицию.
+                  </p>
+                </div>
+              </div>
             </section>
           </ScrollReveal>
 
-          <ScrollReveal delay={1400}>
-            <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">✨ Анимации и интерактивность</h2>
-              <div className="space-y-4">
-                <p className="text-gray-300 leading-relaxed text-lg">
-                  Каждое взаимодействие продумано до мелочей:
-                </p>
-                <ul className="text-gray-300 space-y-2 ml-6">
-                  <li>• Плавные переходы между светлой и темной темами</li>
-                  <li>• Анимации появления элементов при скролле</li>
-                  <li>• Hover-эффекты с backdrop-blur</li>
-                  <li>• Летающие анимации обложек</li>
-                  <li>• Smooth scrolling и momentum</li>
-                </ul>
-              </div>
-            </section>
+          <ScrollReveal delay={1400} stagger={true}>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Интеграция аудио стала особым вызовом. Современные браузеры блокируют автовоспроизведение, 
+              поэтому нужно было элегантно обработать разрешения пользователя.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Мы создали интеллектуальную систему с toast-уведомлениями, которая мягко направляет 
+              пользователя к взаимодействию с аудио.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed">
+              Плавающий плеер с эффектом размытия появляется только тогда, когда это действительно нужно.
+            </p>
           </ScrollReveal>
 
           <ScrollReveal delay={1600}>
             <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">📱 Адаптивный дизайн</h2>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Сайт полностью адаптивен и работает на всех устройствах - от мобильных телефонов 
-                до больших десктопных мониторов. Используются современные CSS Grid и Flexbox 
-                для создания гибких макетов.
-              </p>
-            </section>
-          </ScrollReveal>
-
-          <ScrollReveal delay={1800}>
-            <section>
-              <h2 className="text-3xl font-semibold mb-6 text-white">🚀 Производительность</h2>
-              <div className="bg-gray-900 p-6 rounded-lg">
-                <ul className="text-gray-300 space-y-3">
-                  <li>• <strong className="text-white">Lazy Loading:</strong> Изображения загружаются по мере необходимости</li>
-                  <li>• <strong className="text-white">Виртуализация:</strong> Рендерятся только видимые элементы</li>
-                  <li>• <strong className="text-white">Мемоизация:</strong> React hooks оптимизированы для избежания лишних пересчетов</li>
-                  <li>• <strong className="text-white">Webpack оптимизация:</strong> Сборка оптимизирована для продакшена</li>
-                </ul>
+              <h2 className="text-3xl font-semibold mb-8 text-stone-100">Детали взаимодействия</h2>
+              <div className="bg-stone-900/50 p-8 rounded-xl border border-stone-800">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-2 h-2 bg-stone-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-stone-300">Плавные переходы между светлой и тёмной темами</p>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-2 h-2 bg-stone-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-stone-300">Анимации появления элементов при скролле</p>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-2 h-2 bg-stone-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-stone-300">Hover-эффекты с backdrop-blur</p>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-2 h-2 bg-stone-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-stone-300">Летающие анимации обложек</p>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-2 h-2 bg-stone-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-stone-300">Адаптивный дизайн для всех устройств</p>
+                  </div>
+                </div>
               </div>
             </section>
           </ScrollReveal>
 
+          <ScrollReveal delay={1800} stagger={true}>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Каждая деталь интерфейса была продумана до мелочей. Мы использовали современные 
+              CSS-возможности для создания эффектов, которые раньше требовали JavaScript.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Система тем интегрирована на глубоком уровне — каждый элемент плавно адаптируется 
+              к выбранной пользователем схеме.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed">
+              Результат — интерфейс, который чувствуется естественным и отзывчивым на любом устройстве.
+            </p>
+          </ScrollReveal>
+
           <ScrollReveal delay={2000}>
-            <section className="border-t border-gray-800 pt-12">
-              <h2 className="text-3xl font-semibold mb-6 text-white">💡 Философия проекта</h2>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                RFD MUSEUM - это не просто галерея музыкальных обложек. Это демонстрация того, 
-                как современные технологии и ИИ могут создавать по-настоящему уникальные 
-                пользовательские интерфейсы. Каждый элемент здесь служит цели создания 
-                незабываемого опыта взаимодействия с музыкальным контентом.
-              </p>
+            <section>
+              <h2 className="text-3xl font-semibold mb-8 text-stone-100">Производительность</h2>
+              <div className="bg-stone-900/50 p-8 rounded-xl border border-stone-800">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-xl font-medium mb-4 text-stone-200">Оптимизации</h3>
+                    <ul className="text-stone-300 space-y-3">
+                      <li>Lazy Loading изображений</li>
+                      <li>Виртуализация элементов</li>
+                      <li>Мемоизация React hooks</li>
+                      <li>Оптимизированная сборка</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-medium mb-4 text-stone-200">Результаты</h3>
+                    <ul className="text-stone-300 space-y-3">
+                      <li>Мгновенная загрузка</li>
+                      <li>Плавная прокрутка</li>
+                      <li>Стабильная работа</li>
+                      <li>Низкое потребление памяти</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </section>
           </ScrollReveal>
 
-          <ScrollReveal delay={2200}>
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                Создано с ❤️ с помощью Lovable AI
+          <ScrollReveal delay={2200} stagger={true}>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              RFD MUSEUM — это больше, чем просто галерея. Это демонстрация возможностей 
+              современных веб-технологий и искусственного интеллекта.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed mb-6">
+              Каждый элемент здесь служит цели создания уникального пользовательского опыта. 
+              От математических алгоритмов до тонких анимаций.
+            </p>
+            <p className="text-lg text-stone-200 leading-relaxed">
+              Это пример того, как ИИ может стать креативным партнёром в создании 
+              по-настоящему инновационных интерфейсов.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal delay={2400}>
+            <div className="text-center py-16 border-t border-stone-800">
+              <p className="text-stone-400 text-lg">
+                Создано с помощью Lovable AI
               </p>
             </div>
           </ScrollReveal>
