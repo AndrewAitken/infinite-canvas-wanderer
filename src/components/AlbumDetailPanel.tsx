@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSwipe } from "@/hooks/useSwipe";
+
 interface Album {
   id: string;
   title: string;
@@ -10,6 +12,7 @@ interface Album {
   description: string;
   imageUrl: string;
 }
+
 interface AlbumDetailPanelProps {
   album: Album | null;
   isOpen: boolean;
@@ -19,6 +22,7 @@ interface AlbumDetailPanelProps {
   currentIndex?: number;
   totalCount?: number;
 }
+
 const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
   album,
   isOpen,
@@ -35,27 +39,30 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
     onSwipeLeft: onNext,
     onSwipeRight: onPrevious
   });
+
   if (!album) return null;
-  const content = <div className="space-y-6">
+
+  const content = <div className="space-y-6 font-ys">
       <div className="flex justify-center">
         <img src={album.imageUrl} alt={`${album.title} cover`} className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[12px] shadow-lg object-cover transition-all duration-300" />
       </div>
       
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Описание</h3>
-        <p className="text-muted-foreground leading-relaxed">
+        <h3 className="text-lg font-semibold font-ys">Описание</h3>
+        <p className="text-muted-foreground leading-relaxed font-ys">
           {album.description}
         </p>
       </div>
     </div>;
+
   if (isMobile) {
     return <Drawer open={isOpen} onOpenChange={onClose}>
-        <DrawerContent className="px-4 pb-8" {...swipeHandlers}>
+        <DrawerContent className="px-4 pb-8 font-ys" {...swipeHandlers}>
           <DrawerHeader className="text-center">
-            <DrawerTitle className="text-2xl font-bold transition-all duration-300">
+            <DrawerTitle className="text-2xl font-bold transition-all duration-300 font-ys">
               {album.title}
             </DrawerTitle>
-            <DrawerDescription className="text-lg text-muted-foreground transition-all duration-300">
+            <DrawerDescription className="text-lg text-muted-foreground transition-all duration-300 font-ys">
               {album.artist}
             </DrawerDescription>
           </DrawerHeader>
@@ -66,11 +73,12 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         </DrawerContent>
       </Drawer>;
   }
+
   return <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none h-auto my-[24px] mx-[24px] rounded-3xl">
+      <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none h-auto my-[24px] mx-[24px] rounded-3xl font-ys">
         <SheetHeader>
-          <SheetTitle className="text-2xl font-bold">{album.title}</SheetTitle>
-          <SheetDescription className="text-lg text-muted-foreground">
+          <SheetTitle className="text-2xl font-bold font-ys">{album.title}</SheetTitle>
+          <SheetDescription className="text-lg text-muted-foreground font-ys">
             {album.artist}
           </SheetDescription>
         </SheetHeader>
@@ -81,4 +89,5 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
       </SheetContent>
     </Sheet>;
 };
+
 export default AlbumDetailPanel;
