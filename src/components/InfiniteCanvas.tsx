@@ -5,6 +5,7 @@ import { useFlyingAnimation } from '../hooks/useFlyingAnimation';
 import CoverSquare from './CoverSquare';
 import AlbumDetailPanel, { AlbumDetailPanelRef } from './AlbumDetailPanel';
 import FlyingImageAnimation from './FlyingImageAnimation';
+import GridToggle from './GridToggle';
 import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
@@ -28,6 +29,8 @@ const InfiniteCanvas: React.FC = () => {
     imageUrl: string;
     clickPosition: { x: number; y: number };
   } | null>(null);
+  const [isGridAligned, setIsGridAligned] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
@@ -60,7 +63,18 @@ const InfiniteCanvas: React.FC = () => {
     canvasSize,
     gridSize,
     bufferSize: BUFFER_SIZE,
+    isGridAligned,
   });
+
+  const handleGridToggle = useCallback(() => {
+    setIsTransitioning(true);
+    setIsGridAligned(prev => !prev);
+    
+    // Завершаем анимацию через 800ms
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 800);
+  }, []);
 
   const handlePanelReady = useCallback(() => {
     console.log('Panel is ready, starting animation');
@@ -195,9 +209,18 @@ const InfiniteCanvas: React.FC = () => {
                 isMobile={isMobile}
                 isTablet={isTablet}
                 isHidden={isHidden}
+                isTransitioning={isTransitioning}
               />
             );
           })}
+        </div>
+
+        {/* Grid Toggle Button */}
+        <div className="fixed bottom-4 right-4 z-50">
+          <GridToggle 
+            isGridAligned={isGridAligned}
+            onToggle={handleGridToggle}
+          />
         </div>
       </div>
 

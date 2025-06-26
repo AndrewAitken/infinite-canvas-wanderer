@@ -20,6 +20,7 @@ interface CoverSquareProps {
   isMobile?: boolean;
   isTablet?: boolean;
   isHidden?: boolean;
+  isTransitioning?: boolean;
 }
 
 const CoverSquare: React.FC<CoverSquareProps> = ({
@@ -33,7 +34,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   onAlbumClick,
   isMobile = false,
   isTablet = false,
-  isHidden = false
+  isHidden = false,
+  isTransitioning = false
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
   
@@ -114,9 +116,10 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         left: finalX,
         top: finalY,
         opacity: isHidden ? 0 : 1,
+        transition: isTransitioning ? 'left 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), top 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 300ms' : 'opacity 300ms',
         ...appearAnimation
       }} 
-      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none transition-opacity duration-300"
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
       <div style={{
         transform: `scale(${edgeScale})`,
