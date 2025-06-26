@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,6 +14,7 @@ interface Album {
   description: string;
   imageUrl: string;
 }
+
 interface AlbumDetailPanelProps {
   album: Album | null;
   isOpen: boolean;
@@ -22,7 +24,12 @@ interface AlbumDetailPanelProps {
   currentIndex?: number;
   totalCount?: number;
 }
-const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
+
+export interface AlbumDetailPanelRef {
+  getImagePosition: () => { x: number; y: number } | null;
+}
+
+const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(({
   album,
   isOpen,
   onClose,
@@ -30,14 +37,30 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
   onPrevious,
   currentIndex = 0,
   totalCount = 1
-}) => {
+}, ref) => {
   const isMobile = useIsMobile();
+  const imageRef = useRef<HTMLImageElement>(null);
+  
   const {
     swipeHandlers
   } = useSwipe({
     onSwipeLeft: onNext,
     onSwipeRight: onPrevious
   });
+
+  useImperativeHandle(ref, () => ({
+    getImagePosition: () => {
+      if (imageRef.current) {
+        const rect = imageRef.current.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+      }
+      return null;
+    }
+  }));
+
   if (!album) return null;
 
   // Mock participants data
@@ -54,9 +77,15 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
     role: "Design Researcher",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
   }];
+
   const content = <div className="space-y-6 font-ys">
       <div className="flex justify-center">
-        <img src={album.imageUrl} alt={`${album.title} cover`} className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[12px] shadow-lg object-cover transition-all duration-300" />
+        <img 
+          ref={imageRef}
+          src={album.imageUrl} 
+          alt={`${album.title} cover`} 
+          className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[12px] shadow-lg object-cover transition-all duration-300" 
+        />
       </div>
       
       <div className="space-y-4">
@@ -87,6 +116,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         </div>
       </div>
     </div>;
+
   if (isMobile) {
     return <Drawer open={isOpen} onOpenChange={onClose}>
         <DrawerContent className="px-4 pb-8 font-ys max-h-[90vh]" {...swipeHandlers}>
@@ -107,6 +137,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         </DrawerContent>
       </Drawer>;
   }
+
   return <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none h-auto my-[24px] mx-[24px] rounded-3xl font-ys">
         <SheetHeader>
@@ -121,5 +152,8 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
         </div>
       </SheetContent>
     </Sheet>;
-};
+});
+
+AlbumDetailPanel.displayName = 'AlbumDetailPanel';
+
 export default AlbumDetailPanel;

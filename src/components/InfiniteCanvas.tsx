@@ -1,8 +1,11 @@
+
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
+import { useFlyingAnimation } from '../hooks/useFlyingAnimation';
 import CoverSquare from './CoverSquare';
-import AlbumDetailPanel from './AlbumDetailPanel';
+import AlbumDetailPanel, { AlbumDetailPanelRef } from './AlbumDetailPanel';
+import FlyingImageAnimation from './FlyingImageAnimation';
 import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
@@ -15,14 +18,17 @@ const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<AlbumDetailPanelRef>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
+  const [hiddenImageKey, setHiddenImageKey] = useState<string | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
   const allAlbums = getAllAlbums();
+  const { animationState, startFlyingAnimation, stopFlyingAnimation } = useFlyingAnimation();
   
   // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
@@ -52,14 +58,26 @@ const InfiniteCanvas: React.FC = () => {
     bufferSize: BUFFER_SIZE,
   });
 
-  const handleAlbumClick = useCallback((imageUrl: string) => {
+  const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
+    
+    // Hide the clicked image
+    const imageKey = `${clickPosition.x}-${clickPosition.y}-${imageUrl}`;
+    setHiddenImageKey(imageKey);
+    
+    // Start flying animation after a short delay to get panel position
+    setTimeout(() => {
+      const panelImagePos = panelRef.current?.getImagePosition();
+      if (panelImagePos) {
+        startFlyingAnimation(imageUrl, clickPosition, panelImagePos, false);
+      }
+    }, 100);
     
     setSelectedAlbum(albumData);
     setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
     setIsPanelOpen(true);
-  }, []);
+  }, [startFlyingAnimation]);
 
   const handleNextAlbum = useCallback(() => {
     const nextIndex = getNextAlbumIndex(currentAlbumIndex);
@@ -82,9 +100,28 @@ const InfiniteCanvas: React.FC = () => {
   }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
+    // Start reverse flying animation
+    if (selectedAlbum && panelRef.current) {
+      const panelImagePos = panelRef.current.getImagePosition();
+      if (panelImagePos && hiddenImageKey) {
+        // Extract original position from hiddenImageKey (simplified approach)
+        const [x, y] = hiddenImageKey.split('-').slice(0, 2).map(Number);
+        startFlyingAnimation(selectedAlbum.imageUrl, panelImagePos, { x, y }, true);
+        
+        // Show original image after animation completes
+        setTimeout(() => {
+          setHiddenImageKey(null);
+        }, 900);
+      }
+    }
+    
     setIsPanelOpen(false);
     setSelectedAlbum(null);
-  }, []);
+  }, [selectedAlbum, hiddenImageKey, startFlyingAnimation]);
+
+  const handleAnimationComplete = useCallback(() => {
+    stopFlyingAnimation();
+  }, [stopFlyingAnimation]);
 
   return (
     <>
@@ -104,25 +141,41 @@ const InfiniteCanvas: React.FC = () => {
             transition: isDragging || isMomentum ? 'none' : 'transform 0.3s ease-out',
           }}
         >
-          {visibleItems.map((item) => (
-            <CoverSquare
-              key={`${item.gridX}-${item.gridY}-${item.pointIndex}`}
-              x={item.x}
-              y={item.y}
-              gridX={item.gridX}
-              gridY={item.gridY}
-              pointIndex={item.pointIndex}
-              canvasSize={canvasSize}
-              offset={offset}
-              onAlbumClick={handleAlbumClick}
-              isMobile={isMobile}
-              isTablet={isTablet}
-            />
-          ))}
+          {visibleItems.map((item) => {
+            const itemKey = `${item.gridX}-${item.gridY}-${item.pointIndex}`;
+            const isHidden = hiddenImageKey?.includes(itemKey) || false;
+            
+            return (
+              <CoverSquare
+                key={itemKey}
+                x={item.x}
+                y={item.y}
+                gridX={item.gridX}
+                gridY={item.gridY}
+                pointIndex={item.pointIndex}
+                canvasSize={canvasSize}
+                offset={offset}
+                onAlbumClick={handleAlbumClick}
+                isMobile={isMobile}
+                isTablet={isTablet}
+                isHidden={isHidden}
+              />
+            );
+          })}
         </div>
       </div>
 
+      <FlyingImageAnimation
+        imageUrl={animationState.imageUrl}
+        startPosition={animationState.startPosition}
+        endPosition={animationState.endPosition}
+        isVisible={animationState.isActive}
+        isReverse={animationState.isReverse}
+        onComplete={handleAnimationComplete}
+      />
+
       <AlbumDetailPanel
+        ref={panelRef}
         album={selectedAlbum}
         isOpen={isPanelOpen}
         onClose={handlePanelClose}

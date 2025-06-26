@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
 interface CoverSquareProps {
@@ -7,7 +7,7 @@ interface CoverSquareProps {
   y: number;
   gridX: number;
   gridY: number;
-  pointIndex?: number; // Новый пропс для индекса точки
+  pointIndex?: number;
   canvasSize: {
     width: number;
     height: number;
@@ -16,9 +16,10 @@ interface CoverSquareProps {
     x: number;
     y: number;
   };
-  onAlbumClick: (imageUrl: string) => void;
+  onAlbumClick: (imageUrl: string, clickPosition: { x: number; y: number }) => void;
   isMobile?: boolean;
   isTablet?: boolean;
+  isHidden?: boolean;
 }
 
 const CoverSquare: React.FC<CoverSquareProps> = ({
@@ -31,8 +32,11 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   offset,
   onAlbumClick,
   isMobile = false,
-  isTablet = false
+  isTablet = false,
+  isHidden = false
 }) => {
+  const elementRef = useRef<HTMLDivElement>(null);
+  
   // Array of RFD album cover images
   const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
 
@@ -92,15 +96,28 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onAlbumClick(albumCover);
+    
+    if (elementRef.current) {
+      const rect = elementRef.current.getBoundingClientRect();
+      const clickPosition = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+      onAlbumClick(albumCover, clickPosition);
+    }
   };
 
   return (
-    <div style={{
-      left: finalX,
-      top: finalY,
-      ...appearAnimation
-    }} className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none">
+    <div 
+      ref={elementRef}
+      style={{
+        left: finalX,
+        top: finalY,
+        opacity: isHidden ? 0 : 1,
+        ...appearAnimation
+      }} 
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none transition-opacity duration-300"
+    >
       <div style={{
         transform: `scale(${edgeScale})`,
         transformOrigin: 'center',
