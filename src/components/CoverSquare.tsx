@@ -1,8 +1,5 @@
-import React, { useMemo, useRef, useLayoutEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
-import { useMousePosition } from '../hooks/useMousePosition';
-import { use3DTransform } from '../hooks/use3DTransform';
-
 interface CoverSquareProps {
   x: number;
   y: number;
@@ -20,7 +17,6 @@ interface CoverSquareProps {
   isMobile?: boolean;
   isTablet?: boolean;
 }
-
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
   y,
@@ -32,12 +28,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   isMobile = false,
   isTablet = false
 }) => {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const [elementBounds, setElementBounds] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  
-  // Получаем позицию мыши только если не мобильное устройство
-  const mousePosition = useMousePosition();
-  
   // Array of RFD album cover images
   const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
 
@@ -59,7 +49,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return albumCovers[finalIndex];
   };
 
-  // Get random offset for more organic positioning
+  // Get random offset for more organic positioning (учитываем планшет)
   const getRandomOffset = (gx: number, gy: number) => {
     // Use grid coordinates as seed for deterministic randomness
     const seed1 = Math.abs((gx * 17 + gy * 23) % 1000) / 1000;
@@ -82,16 +72,15 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       y: offsetY
     };
   };
-
   const randomOffset = getRandomOffset(gridX, gridY);
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Размеры элемента
+  // Размеры элемента остаются те же
   const rectWidth = isMobile ? 250 : 248;
   const rectHeight = isMobile ? 350 : 331;
 
-  // Edge scale calculation
+  // Улучшенное вычисление scale с увеличенным минимальным масштабом для мобила
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
     const screenX = finalX + offset.x;
@@ -104,106 +93,53 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     const distanceToBottom = canvasSize.height - centerY;
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
+    // Увеличена зона fade для более градуального перехода
     const fadeZone = 350;
+    // Увеличенный минимальный масштаб для мобила - с 0.15 до 0.4
     const minScale = isMobile ? 0.4 : 0.15;
     const maxScale = 1.0;
     if (minDistance >= fadeZone) {
       return maxScale;
     }
 
+    // Более плавная cubic-bezier функция вместо квадратичной
     const normalizedDistance = Math.max(0, minDistance) / fadeZone;
+    // Используем smooth cubic-bezier easing для очень плавного перехода
     const t = normalizedDistance;
-    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10);
+    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10); // Quintic smoothstep function
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
-
   const albumCover = getAlbumCover(gridX, gridY);
   const appearAnimation = useAppearAnimation({
     gridX,
     gridY
   });
-  
-  // Обновляем границы элемента при изменении позиции
-  useLayoutEffect(() => {
-    if (elementRef.current) {
-      const rect = elementRef.current.getBoundingClientRect();
-      setElementBounds({
-        x: rect.left,
-        y: rect.top,
-        width: rect.width,
-        height: rect.height
-      });
-    }
-  }, [finalX, finalY, offset, edgeScale]);
-
-  // Рассчитываем 3D трансформацию с безопасными значениями по умолчанию
-  const transform3D = use3DTransform({
-    mouseX: mousePosition.x,
-    mouseY: mousePosition.y,
-    elementX: elementBounds.x || 0,
-    elementY: elementBounds.y || 0,
-    elementWidth: elementBounds.width || rectWidth,
-    elementHeight: elementBounds.height || rectHeight,
-    maxRotation: isMobile ? 0 : 15,
-    maxDistance: isMobile ? 0 : 300,
-    scaleEffect: isMobile ? 0 : 0.02
-  });
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAlbumClick(albumCover);
   };
-
   return (
-    <div 
-      style={{
-        position: 'absolute',
-        left: finalX,
-        top: finalY,
-        perspective: '1000px',
-        transformStyle: 'preserve-3d',
-        ...appearAnimation
-      }} 
-      className="animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
-    >
-      <div 
-        ref={elementRef}
-        style={{
-          width: rectWidth,
-          height: rectHeight,
-          transform: `scale(${edgeScale})`,
-          transformOrigin: 'center',
-          transition: 'transform 0.3s ease-out'
-        }} 
-        className="rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl"
-      >
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            transform: isMobile ? 'none' : transform3D.transform,
-            transformStyle: 'preserve-3d',
-            transition: isMobile ? 'none' : 'transform 0.2s ease-out'
-          }}
-          onClick={handleClick}
-          className={transform3D.isHovered && !isMobile ? 'shadow-2xl' : ''}
-        >
-          <img 
-            src={albumCover} 
-            alt={`Album cover ${gridX},${gridY}`} 
-            className="w-full h-full object-cover" 
-            draggable={false} 
-            loading="lazy"
-            onError={(e) => {
-              console.log(`Failed to load image: ${albumCover}`);
-              e.currentTarget.src = '/RFD 06.09.2024.jpg';
-            }}
-          />
-        </div>
+    // Outer container - handles appear animation only
+    <div style={{
+      left: finalX,
+      top: finalY,
+      ...appearAnimation
+    }} className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none">
+      {/* Inner container - handles edge scaling only */}
+      <div style={{
+        transform: `scale(${edgeScale})`,
+        transformOrigin: 'center',
+        width: rectWidth,
+        height: rectHeight
+      }} onClick={handleClick} className="rounded-xl shadow-lg 
+                   transition-all duration-500 ease-out
+                   hover:scale-105 hover:shadow-xl cursor-pointer
+                   overflow-hidden">
+        <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
+        
       </div>
     </div>
   );
 };
-
 export default CoverSquare;
