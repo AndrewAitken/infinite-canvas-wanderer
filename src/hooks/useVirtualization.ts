@@ -40,30 +40,30 @@ export const useVirtualization = ({
     const endSectorY = Math.ceil((-offset.y + canvasSize.height) / sectorSize) + bufferSize;
 
     if (isGridAligned) {
-      // Строгая сетка с равными отступами
+      // Строгая сетка с достаточными отступами
+      // Размеры элементов: 248-250px ширина, 331-350px высота
+      const elementWidth = 248;
+      const elementHeight = 331;
+      const minHorizontalGap = 80; // минимальный отступ слева-справа
+      const minVerticalGap = 80; // минимальный отступ сверху-снизу
+      
+      // Общий шаг сетки с учетом размера элемента и отступов
+      const gridStepX = elementWidth + minHorizontalGap;
+      const gridStepY = elementHeight + minVerticalGap;
+      
       for (let sectorX = startSectorX; sectorX <= endSectorX; sectorX++) {
         for (let sectorY = startSectorY; sectorY <= endSectorY; sectorY++) {
-          // Размещаем точки в регулярной сетке внутри сектора
-          const pointsPerRow = 2;
-          const pointsPerCol = 2;
-          const spacing = sectorSize / (pointsPerRow + 1);
+          // Размещаем одну точку в центре каждого сектора с учетом шага сетки
+          const x = sectorX * gridStepX + elementWidth / 2;
+          const y = sectorY * gridStepY + elementHeight / 2;
           
-          let pointIndex = 0;
-          for (let row = 0; row < pointsPerRow; row++) {
-            for (let col = 0; col < pointsPerCol; col++) {
-              const x = sectorX * sectorSize + spacing * (col + 1);
-              const y = sectorY * sectorSize + spacing * (row + 1);
-              
-              items.push({
-                x,
-                y,
-                gridX: sectorX,
-                gridY: sectorY,
-                pointIndex,
-              });
-              pointIndex++;
-            }
-          }
+          items.push({
+            x,
+            y,
+            gridX: sectorX,
+            gridY: sectorY,
+            pointIndex: 0,
+          });
         }
       }
     } else {
