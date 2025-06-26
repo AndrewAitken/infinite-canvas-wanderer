@@ -9,7 +9,6 @@ interface FlyingImageAnimationProps {
   onComplete: () => void;
   onReachTarget?: () => void;
   duration?: number;
-  isReverse?: boolean;
   targetImageSize?: { width: number; height: number };
 }
 
@@ -20,8 +19,7 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
   isVisible,
   onComplete,
   onReachTarget,
-  duration = 800,
-  isReverse = false,
+  duration = 600,
   targetImageSize = { width: 300, height: 400 }
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -33,8 +31,8 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
         setIsAnimating(true);
       }, 50);
 
-      // Notify when target is reached (for forward animation)
-      const reachTargetTimer = !isReverse && onReachTarget ? setTimeout(() => {
+      // Notify when target is reached
+      const reachTargetTimer = onReachTarget ? setTimeout(() => {
         onReachTarget();
       }, duration - 50) : null;
 
@@ -50,31 +48,39 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
         clearTimeout(completeTimer);
       };
     }
-  }, [isVisible, duration, onComplete, onReachTarget, isReverse]);
+  }, [isVisible, duration, onComplete, onReachTarget]);
 
   if (!isVisible) return null;
 
-  const fromPos = isReverse ? endPosition : startPosition;
-  const toPos = isReverse ? startPosition : endPosition;
-
-  // Calculate scale based on direction
-  const startScale = isReverse ? 
-    (targetImageSize.width / 248) : 1; // Start from target size when reverse
-  const endScale = isReverse ? 
-    1 : (targetImageSize.width / 248); // End at target size when forward
+  // Original image size on canvas
+  const originalSize = { width: 248, height: 331 };
+  
+  // Calculate precise positioning - center the original image on start position
+  const startX = startPosition.x - originalSize.width / 2;
+  const startY = startPosition.y - originalSize.height / 2;
+  
+  // Calculate end position to center the scaled image on target position
+  const endScale = targetImageSize.width / originalSize.width;
+  const scaledSize = {
+    width: originalSize.width * endScale,
+    height: originalSize.height * endScale
+  };
+  
+  const endX = endPosition.x - scaledSize.width / 2;
+  const endY = endPosition.y - scaledSize.height / 2;
 
   return (
     <div
       className="fixed z-[100] pointer-events-none"
       style={{
-        left: fromPos.x - 124, // Center the 248px wide image
-        top: fromPos.y - 165.5, // Center the 331px tall image
+        left: startX,
+        top: startY,
         transform: isAnimating 
-          ? `translate(${toPos.x - fromPos.x}px, ${toPos.y - fromPos.y}px) scale(${endScale})`
-          : `translate(0px, 0px) scale(${startScale})`,
+          ? `translate(${endX - startX}px, ${endY - startY}px) scale(${endScale})`
+          : `translate(0px, 0px) scale(1)`,
         transition: `transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
-        width: '248px',
-        height: '331px'
+        width: `${originalSize.width}px`,
+        height: `${originalSize.height}px`
       }}
     >
       <img 

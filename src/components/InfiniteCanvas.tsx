@@ -24,7 +24,6 @@ const InfiniteCanvas: React.FC = () => {
   const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
   const [hiddenImageKey, setHiddenImageKey] = useState<string | null>(null);
   const [showStaticImage, setShowStaticImage] = useState(false);
-  const [originalClickPosition, setOriginalClickPosition] = useState<{ x: number; y: number } | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
@@ -63,9 +62,6 @@ const InfiniteCanvas: React.FC = () => {
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
     
-    // Store original click position for reverse animation
-    setOriginalClickPosition(clickPosition);
-    
     // Hide the clicked image
     const imageKey = `${clickPosition.x}-${clickPosition.y}-${imageUrl}`;
     setHiddenImageKey(imageKey);
@@ -80,9 +76,9 @@ const InfiniteCanvas: React.FC = () => {
     setTimeout(() => {
       const panelImagePos = panelRef.current?.getImagePosition();
       if (panelImagePos) {
-        startFlyingAnimation(imageUrl, clickPosition, panelImagePos, false);
+        startFlyingAnimation(imageUrl, clickPosition, panelImagePos);
       }
-    }, 150);
+    }, 100);
   }, [startFlyingAnimation]);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
@@ -93,13 +89,7 @@ const InfiniteCanvas: React.FC = () => {
 
   const handleFlyingAnimationComplete = useCallback(() => {
     stopFlyingAnimation();
-    
-    // If it was a reverse animation, show the original image
-    if (animationState.isReverse) {
-      setHiddenImageKey(null);
-      setOriginalClickPosition(null);
-    }
-  }, [stopFlyingAnimation, animationState.isReverse]);
+  }, [stopFlyingAnimation]);
 
   const handleNextAlbum = useCallback(() => {
     const nextIndex = getNextAlbumIndex(currentAlbumIndex);
@@ -124,24 +114,12 @@ const InfiniteCanvas: React.FC = () => {
   }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
-    // Hide static image first
-    setShowStaticImage(false);
-    
-    // Start reverse flying animation
-    if (selectedAlbum && panelRef.current && originalClickPosition) {
-      const panelImagePos = panelRef.current.getImagePosition();
-      if (panelImagePos) {
-        setAnimationPhase('flying-back');
-        
-        setTimeout(() => {
-          startFlyingAnimation(selectedAlbum.imageUrl, panelImagePos, originalClickPosition, true);
-        }, 100);
-      }
-    }
-    
+    // Simply close panel and show the hidden image back
     setIsPanelOpen(false);
     setSelectedAlbum(null);
-  }, [selectedAlbum, originalClickPosition, startFlyingAnimation, setAnimationPhase]);
+    setShowStaticImage(false);
+    setHiddenImageKey(null); // Show the original image back
+  }, []);
 
   return (
     <>
@@ -190,7 +168,6 @@ const InfiniteCanvas: React.FC = () => {
         startPosition={animationState.startPosition}
         endPosition={animationState.endPosition}
         isVisible={animationState.isActive}
-        isReverse={animationState.isReverse}
         onComplete={handleFlyingAnimationComplete}
         onReachTarget={handleFlyingAnimationReachTarget}
         targetImageSize={panelRef.current?.getImageSize() || { width: 300, height: 400 }}
