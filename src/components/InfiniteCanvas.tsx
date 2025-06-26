@@ -8,9 +8,9 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
 
 // Размеры сетки с учетом планшета
-const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
-const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
-const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
+const GRID_SIZE_DESKTOP = 500; // Увеличено с 400 до 500
+const GRID_SIZE_TABLET = 400; // Увеличено с 312 до 400  
+const GRID_SIZE_MOBILE = 420; // Увеличено с 346 до 420
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
