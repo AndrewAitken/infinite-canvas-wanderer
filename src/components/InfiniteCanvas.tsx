@@ -24,6 +24,10 @@ const InfiniteCanvas: React.FC = () => {
   const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
   const [hiddenImageKey, setHiddenImageKey] = useState<string | null>(null);
   const [showStaticImage, setShowStaticImage] = useState(false);
+  const [pendingAnimation, setPendingAnimation] = useState<{
+    imageUrl: string;
+    clickPosition: { x: number; y: number };
+  } | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
@@ -58,6 +62,44 @@ const InfiniteCanvas: React.FC = () => {
     bufferSize: BUFFER_SIZE,
   });
 
+  const handlePanelReady = useCallback(() => {
+    console.log('Panel is ready, starting animation');
+    
+    if (pendingAnimation) {
+      const panelImagePos = panelRef.current?.getImagePosition();
+      const panelImageSize = panelRef.current?.getImageSize();
+      
+      if (panelImagePos && panelImageSize) {
+        console.log('Start position:', pendingAnimation.clickPosition);
+        console.log('Target position:', panelImagePos);
+        console.log('Target size:', panelImageSize);
+        
+        startFlyingAnimation(
+          pendingAnimation.imageUrl, 
+          pendingAnimation.clickPosition, 
+          panelImagePos
+        );
+        setPendingAnimation(null);
+      } else {
+        console.warn('Could not get panel image position or size');
+        // Fallback with increased delay
+        setTimeout(() => {
+          const fallbackPos = panelRef.current?.getImagePosition();
+          const fallbackSize = panelRef.current?.getImageSize();
+          if (fallbackPos && fallbackSize) {
+            console.log('Fallback animation start');
+            startFlyingAnimation(
+              pendingAnimation.imageUrl, 
+              pendingAnimation.clickPosition, 
+              fallbackPos
+            );
+          }
+          setPendingAnimation(null);
+        }, 600);
+      }
+    }
+  }, [pendingAnimation, startFlyingAnimation]);
+
   const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
@@ -72,20 +114,9 @@ const InfiniteCanvas: React.FC = () => {
     setIsPanelOpen(true);
     setShowStaticImage(false);
     
-    // Start flying animation after panel opens and we can get target position
-    setTimeout(() => {
-      const panelImagePos = panelRef.current?.getImagePosition();
-      const panelImageSize = panelRef.current?.getImageSize();
-      
-      if (panelImagePos && panelImageSize) {
-        console.log('Start position:', clickPosition);
-        console.log('Target position:', panelImagePos);
-        console.log('Target size:', panelImageSize);
-        
-        startFlyingAnimation(imageUrl, clickPosition, panelImagePos);
-      }
-    }, 150); // Увеличил задержку для более точного позиционирования
-  }, [startFlyingAnimation]);
+    // Store animation data to be used when panel is ready
+    setPendingAnimation({ imageUrl, clickPosition });
+  }, []);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
     // Show static image in panel when flying animation reaches target
@@ -125,6 +156,7 @@ const InfiniteCanvas: React.FC = () => {
     setSelectedAlbum(null);
     setShowStaticImage(false);
     setHiddenImageKey(null); // Show the original image back
+    setPendingAnimation(null); // Clear any pending animation
   }, []);
 
   return (
@@ -189,6 +221,7 @@ const InfiniteCanvas: React.FC = () => {
         currentIndex={currentAlbumIndex}
         totalCount={allAlbums.length}
         showStaticImage={showStaticImage}
+        onPanelReady={handlePanelReady}
       />
     </>
   );

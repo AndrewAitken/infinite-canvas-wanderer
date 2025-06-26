@@ -23,6 +23,7 @@ interface AlbumDetailPanelProps {
   currentIndex?: number;
   totalCount?: number;
   showStaticImage?: boolean;
+  onPanelReady?: () => void;
 }
 
 export interface AlbumDetailPanelRef {
@@ -38,7 +39,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
   onPrevious,
   currentIndex = 0,
   totalCount = 1,
-  showStaticImage = true
+  showStaticImage = true,
+  onPanelReady
 }, ref) => {
   const isMobile = useIsMobile();
   const imageRef = useRef<HTMLImageElement>(null);
@@ -50,10 +52,31 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     onSwipeRight: onPrevious
   });
 
+  // Handle panel animation completion
+  const handleAnimationEnd = () => {
+    console.log('Panel animation completed');
+    if (onPanelReady) {
+      // Small delay to ensure everything is fully rendered
+      setTimeout(() => {
+        const position = imageRef.current?.getBoundingClientRect();
+        console.log('Image position after panel ready:', position);
+        onPanelReady();
+      }, 50);
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     getImagePosition: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
+        console.log('Getting image position:', { 
+          left: rect.left, 
+          top: rect.top, 
+          width: rect.width, 
+          height: rect.height,
+          centerX: rect.left + rect.width / 2,
+          centerY: rect.top + rect.height / 2
+        });
         // Возвращаем точный центр изображения
         return {
           x: rect.left + rect.width / 2,
@@ -139,7 +162,11 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
 
   if (isMobile) {
     return <Drawer open={isOpen} onOpenChange={onClose}>
-        <DrawerContent className="px-4 pb-8 font-ys max-h-[90vh]" {...swipeHandlers}>
+        <DrawerContent 
+          className="px-4 pb-8 font-ys max-h-[90vh]" 
+          {...swipeHandlers}
+          onAnimationEnd={handleAnimationEnd}
+        >
           <DrawerHeader className="text-center">
             <DrawerTitle className="text-2xl font-bold transition-all duration-300 font-ys">
               {album.title}
@@ -159,7 +186,11 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
   }
 
   return <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none h-auto my-[24px] mx-[24px] rounded-3xl font-ys">
+      <SheetContent 
+        side="right" 
+        className="w-[560px] sm:w-[600px] min-w-[560px] max-w-none h-auto my-[24px] mx-[24px] rounded-3xl font-ys"
+        onAnimationEnd={handleAnimationEnd}
+      >
         <SheetHeader>
           <SheetTitle className="font-ys font-extrabold text-3xl">{album.title}</SheetTitle>
           <SheetDescription className="text-muted-foreground font-ys text-xs">
