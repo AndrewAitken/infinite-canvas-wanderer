@@ -162,10 +162,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         position: 'absolute',
         left: finalX,
         top: finalY,
-        opacity: appearAnimation.opacity || 1,
-        transform: appearAnimation.transform || 'scale(1)',
         animationDelay: appearAnimation.animationDelay,
         animationDuration: appearAnimation.animationDuration,
+        ...appearAnimation // Включаем CSS custom properties
       }} 
       className="animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
