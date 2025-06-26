@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 interface CoverSquareProps {
@@ -133,7 +132,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         transformOrigin: 'center',
         width: rectWidth,
         height: rectHeight
-      }} onClick={handleClick} className="rounded-lg shadow-lg 
+      }} onClick={handleClick} className="rounded-xl shadow-lg 
                    transition-all duration-500 ease-out
                    hover:scale-105 hover:shadow-xl cursor-pointer
                    overflow-hidden">
