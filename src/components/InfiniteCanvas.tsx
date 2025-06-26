@@ -1,4 +1,3 @@
-
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -8,7 +7,7 @@ import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, ge
 import { useIsMobile } from '../hooks/use-mobile';
 
 const GRID_SIZE_DESKTOP = 350;
-const GRID_SIZE_MOBILE = 280; // Reduced spacing for mobile
+const GRID_SIZE_MOBILE = 260; // Уменьшенные отступы для мобильной версии
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {

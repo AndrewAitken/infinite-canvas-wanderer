@@ -1,4 +1,5 @@
 
+
 import { useMemo } from 'react';
 
 interface VirtualizationParams {
@@ -34,9 +35,9 @@ export const useVirtualization = ({
     const startGridY = Math.floor(-offset.y / gridSize) - bufferSize;
     const endGridY = Math.ceil((-offset.y + canvasSize.height) / gridSize) + bufferSize;
 
-    // Updated rectangle size with 3:4 aspect ratio - mobile: 224px width, desktop: 248px width
-    const rectWidth = gridSize < 300 ? 224 : 248; // Mobile gets 224px, desktop gets 248px
-    const rectHeight = gridSize < 300 ? 299 : 331; // Maintaining 3:4 ratio
+    // Увеличенный размер для мобильной версии - мобиль: 250px ширина, 350px высота
+    const rectWidth = gridSize < 300 ? 250 : 248;
+    const rectHeight = gridSize < 300 ? 350 : 331;
 
     // Generate items for visible area
     for (let gridX = startGridX; gridX <= endGridX; gridX++) {
@@ -56,3 +57,4 @@ export const useVirtualization = ({
     return items;
   }, [offset, canvasSize, gridSize, bufferSize]);
 };
+
