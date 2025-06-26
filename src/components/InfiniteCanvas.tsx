@@ -5,10 +5,12 @@ import CoverSquare from './CoverSquare';
 import AlbumDetailPanel from './AlbumDetailPanel';
 import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, getPreviousAlbumIndex, getAlbumByIndex } from '../data/albumData';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useIsTablet } from '../hooks/use-tablet';
 
-// Увеличиваем размер сетки для обеспечения отступов минимум 100px
-const GRID_SIZE_DESKTOP = 400; // Увеличено с 280 до 400 (248px элемент + ~152px отступы)
-const GRID_SIZE_MOBILE = 400; // Увеличено с 280 до 400 (250px элемент + ~150px отступы)
+// Размеры сетки с учетом планшета
+const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
+const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
+const GRID_SIZE_MOBILE = 400; // 250px элемент + ~150px отступы
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
@@ -18,9 +20,12 @@ const InfiniteCanvas: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [currentAlbumIndex, setCurrentAlbumIndex] = useState(0);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   
   const allAlbums = getAllAlbums();
-  const gridSize = isMobile ? GRID_SIZE_MOBILE : GRID_SIZE_DESKTOP;
+  
+  // Определяем размер сетки в зависимости от устройства
+  const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
   // Update canvas size on window resize
   useEffect(() => {
@@ -110,6 +115,7 @@ const InfiniteCanvas: React.FC = () => {
               offset={offset}
               onAlbumClick={handleAlbumClick}
               isMobile={isMobile}
+              isTablet={isTablet}
             />
           ))}
         </div>

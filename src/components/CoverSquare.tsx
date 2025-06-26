@@ -15,6 +15,7 @@ interface CoverSquareProps {
   };
   onAlbumClick: (imageUrl: string) => void;
   isMobile?: boolean;
+  isTablet?: boolean;
 }
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
@@ -24,7 +25,8 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   canvasSize,
   offset,
   onAlbumClick,
-  isMobile = false
+  isMobile = false,
+  isTablet = false
 }) => {
   // Array of RFD album cover images
   const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
@@ -47,14 +49,22 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     return albumCovers[finalIndex];
   };
 
-  // Get random offset for more organic positioning (reduced for mobile)
+  // Get random offset for more organic positioning (учитываем планшет)
   const getRandomOffset = (gx: number, gy: number) => {
     // Use grid coordinates as seed for deterministic randomness
     const seed1 = Math.abs((gx * 17 + gy * 23) % 1000) / 1000;
     const seed2 = Math.abs((gx * 31 + gy * 41) % 1000) / 1000;
 
-    // Reduced random offset range for mobile: -15 to +15 pixels, desktop: -30 to +30 pixels
-    const offsetRange = isMobile ? 30 : 60;
+    // Разные диапазоны смещения для разных устройств
+    let offsetRange;
+    if (isMobile) {
+      offsetRange = 30; // -15 to +15 pixels
+    } else if (isTablet) {
+      offsetRange = 24; // -12 to +12 pixels для планшета
+    } else {
+      offsetRange = 60; // -30 to +30 pixels для десктопа
+    }
+    
     const offsetX = (seed1 - 0.5) * offsetRange;
     const offsetY = (seed2 - 0.5) * offsetRange;
     return {
@@ -66,7 +76,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Увеличенный размер для мобильной версии - мобиль: 250px ширина, 350px высота
+  // Размеры элемента остаются те же
   const rectWidth = isMobile ? 250 : 248;
   const rectHeight = isMobile ? 350 : 331;
 
