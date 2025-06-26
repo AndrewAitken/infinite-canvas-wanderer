@@ -92,9 +92,9 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
 
-  // Increased size with 3:4 aspect ratio (width:height) - minimum 200px width
-  const rectWidth = isMobile ? 210 : 200;
-  const rectHeight = isMobile ? 280 : 267;
+  // Updated size with 3:4 aspect ratio - mobile: 224px width, desktop: 248px width
+  const rectWidth = isMobile ? 224 : 248;
+  const rectHeight = isMobile ? 299 : 331; // Maintaining 3:4 ratio
 
   // Улучшенное вычисление scale с более плавным переходом для краев экрана
   const edgeScale = useMemo(() => {
