@@ -10,6 +10,7 @@ const Header: React.FC = () => {
           src="/lovable-uploads/1d1a0ade-b001-4b1f-951d-7f872bd0d945.png" 
           alt="RFD MUSEUM" 
           className="h-8 w-auto dark:invert"
+          style={{ mixBlendMode: 'difference' }}
           draggable={false}
         />
       </div>
