@@ -106,11 +106,12 @@ const InfiniteCanvas: React.FC = () => {
         >
           {visibleItems.map((item) => (
             <CoverSquare
-              key={`${item.gridX}-${item.gridY}`}
+              key={`${item.gridX}-${item.gridY}-${item.pointIndex}`}
               x={item.x}
               y={item.y}
               gridX={item.gridX}
               gridY={item.gridY}
+              pointIndex={item.pointIndex}
               canvasSize={canvasSize}
               offset={offset}
               onAlbumClick={handleAlbumClick}
