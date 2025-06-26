@@ -38,7 +38,7 @@ const AlbumDetailPanel: React.FC<AlbumDetailPanelProps> = ({
   if (!album) return null;
   const content = <div className="space-y-6">
       <div className="flex justify-center">
-        <img src={album.imageUrl} alt={`${album.title} cover`} className="w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] rounded-[26px] shadow-lg object-cover transition-all duration-300" />
+        <img src={album.imageUrl} alt={`${album.title} cover`} className="w-[240px] h-[320px] sm:w-[300px] sm:h-[400px] rounded-[26px] shadow-lg object-cover transition-all duration-300" />
       </div>
       
       <div className="space-y-4">
