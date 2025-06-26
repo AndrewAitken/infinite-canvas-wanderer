@@ -1,3 +1,4 @@
+
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -10,7 +11,7 @@ import { useIsTablet } from '../hooks/use-tablet';
 // Размеры сетки с учетом планшета
 const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
 const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
-const GRID_SIZE_MOBILE = 400; // 250px элемент + ~150px отступы
+const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
 const InfiniteCanvas: React.FC = () => {
