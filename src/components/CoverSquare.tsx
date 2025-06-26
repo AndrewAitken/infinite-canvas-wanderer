@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
-
 interface CoverSquareProps {
   x: number;
   y: number;
@@ -17,7 +16,6 @@ interface CoverSquareProps {
   onAlbumClick: (imageUrl: string) => void;
   isMobile?: boolean;
 }
-
 const CoverSquare: React.FC<CoverSquareProps> = ({
   x,
   y,
@@ -29,30 +27,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   isMobile = false
 }) => {
   // Array of RFD album cover images
-  const albumCovers = [
-    '/RFD 06.09.2024.jpg',
-    '/RFD01111024.jpg',
-    '/RFD03102024.jpg',
-    '/RFD04042025.jpg',
-    '/RFD08112024-1.jpg',
-    '/RFD08112024.jpg',
-    '/RFD13122024.jpg',
-    '/RFD14022025.jpg',
-    '/RFD14032025.jpg',
-    '/RFD17012025.jpg',
-    '/RFD181024.jpg',
-    '/RFD21032025.jpg',
-    '/RFD22112024.jpg',
-    '/RFD23082024.jpg',
-    '/RFD24012025.jpg',
-    '/RFD251024.jpg',
-    '/RFD27092024.jpg',
-    '/RFD28032025.jpg',
-    '/RFD29112024.jpg',
-    '/RFD30082024.jpg',
-    '/RFD31012025.jpg',
-    '/RFD_20.06.2025.jpg'
-  ];
+  const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
 
   // Improved album cover selection with better distribution
   const getAlbumCover = (gx: number, gy: number) => {
@@ -87,7 +62,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       y: offsetY
     };
   };
-
   const randomOffset = getRandomOffset(gridX, gridY);
   const finalX = x + randomOffset.x;
   const finalY = y + randomOffset.y;
@@ -99,18 +73,14 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   // Улучшенное вычисление scale с увеличенным минимальным масштабом для мобила
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
-
     const screenX = finalX + offset.x;
     const screenY = finalY + offset.y;
-
     const centerX = screenX + rectWidth / 2;
     const centerY = screenY + rectHeight / 2;
-
     const distanceToLeft = centerX;
     const distanceToRight = canvasSize.width - centerX;
     const distanceToTop = centerY;
     const distanceToBottom = canvasSize.height - centerY;
-
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
     // Увеличена зона fade для более градуального перехода
@@ -118,7 +88,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     // Увеличенный минимальный масштаб для мобила - с 0.15 до 0.4
     const minScale = isMobile ? 0.4 : 0.15;
     const maxScale = 1.0;
-    
     if (minDistance >= fadeZone) {
       return maxScale;
     }
@@ -131,52 +100,36 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
-
   const albumCover = getAlbumCover(gridX, gridY);
-  const appearAnimation = useAppearAnimation({ gridX, gridY });
-
+  const appearAnimation = useAppearAnimation({
+    gridX,
+    gridY
+  });
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAlbumClick(albumCover);
   };
-
   return (
     // Outer container - handles appear animation only
-    <div
-      style={{
-        left: finalX,
-        top: finalY,
-        ...appearAnimation,
-      }}
-      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
-    >
+    <div style={{
+      left: finalX,
+      top: finalY,
+      ...appearAnimation
+    }} className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none">
       {/* Inner container - handles edge scaling only */}
-      <div
-        style={{
-          transform: `scale(${edgeScale})`,
-          transformOrigin: 'center',
-          width: rectWidth,
-          height: rectHeight,
-        }}
-        onClick={handleClick}
-        className="rounded-lg shadow-lg 
+      <div style={{
+        transform: `scale(${edgeScale})`,
+        transformOrigin: 'center',
+        width: rectWidth,
+        height: rectHeight
+      }} onClick={handleClick} className="rounded-lg shadow-lg 
                    transition-all duration-500 ease-out
                    hover:scale-105 hover:shadow-xl cursor-pointer
-                   border-2 border-white overflow-hidden"
-      >
-        <img 
-          src={albumCover} 
-          alt={`Album cover ${gridX},${gridY}`} 
-          className="w-full h-full object-cover" 
-          draggable={false}
-          loading="lazy"
-        />
-        <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-          {gridX},{gridY}
-        </div>
+                   border-2 border-white overflow-hidden">
+        <img src={albumCover} alt={`Album cover ${gridX},${gridY}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
+        
       </div>
     </div>
   );
 };
-
 export default CoverSquare;
