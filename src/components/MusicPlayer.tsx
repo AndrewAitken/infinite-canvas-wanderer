@@ -43,7 +43,11 @@ const MusicPlayer: React.FC = () => {
         onClick={togglePlayback}
         size="icon"
         variant="outline"
-        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/80 backdrop-blur-sm border-2 border-gray-100 hover:bg-white/90 hover:border-gray-200 dark:bg-stone-800/80 dark:border-stone-700 dark:hover:bg-stone-800/90 dark:hover:border-stone-600 transition-all duration-200"
+        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/30 backdrop-blur-md border-2 border-gray-100 hover:bg-white/40 hover:border-gray-200 dark:bg-stone-800/30 dark:border-stone-700 dark:hover:bg-stone-800/40 dark:hover:border-stone-600 transition-all duration-200"
+        style={{
+          WebkitBackdropFilter: 'blur(12px)',
+          backdropFilter: 'blur(12px)'
+        }}
       >
         {isPlaying ? (
           <Pause className="w-6 h-6 text-gray-700 dark:text-stone-200" />
