@@ -50,9 +50,9 @@ const MusicPlayer: React.FC = () => {
         }}
       >
         {isPlaying ? (
-          <Pause className="w-6 h-6 text-gray-700 dark:text-stone-200" />
+          <Pause className="w-6 h-6 text-white" />
         ) : (
-          <Play className="w-6 h-6 text-gray-700 dark:text-stone-200 ml-0.5" />
+          <Play className="w-6 h-6 text-white ml-0.5" />
         )}
       </Button>
     </>
