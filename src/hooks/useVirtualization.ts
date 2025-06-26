@@ -1,5 +1,4 @@
 
-
 import { useMemo } from 'react';
 
 interface VirtualizationParams {
@@ -35,15 +34,19 @@ export const useVirtualization = ({
     const startGridY = Math.floor(-offset.y / gridSize) - bufferSize;
     const endGridY = Math.ceil((-offset.y + canvasSize.height) / gridSize) + bufferSize;
 
-    // Увеличенный размер для мобильной версии - мобиль: 250px ширина, 350px высота
+    // Размеры элементов
     const rectWidth = gridSize < 300 ? 250 : 248;
     const rectHeight = gridSize < 300 ? 350 : 331;
+
+    // Рассчитываем равномерные отступы
+    const paddingX = (gridSize - rectWidth) / 2;
+    const paddingY = (gridSize - rectHeight) / 2;
 
     // Generate items for visible area
     for (let gridX = startGridX; gridX <= endGridX; gridX++) {
       for (let gridY = startGridY; gridY <= endGridY; gridY++) {
-        const x = gridX * gridSize + (gridSize - rectWidth) / 2; // Center rectangles in grid
-        const y = gridY * gridSize + (gridSize - rectHeight) / 2;
+        const x = gridX * gridSize + paddingX;
+        const y = gridY * gridSize + paddingY;
         
         items.push({
           x,
@@ -57,4 +60,3 @@ export const useVirtualization = ({
     return items;
   }, [offset, canvasSize, gridSize, bufferSize]);
 };
-
