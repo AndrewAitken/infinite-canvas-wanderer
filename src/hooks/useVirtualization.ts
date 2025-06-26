@@ -31,8 +31,8 @@ export const useVirtualization = ({
     const items: VirtualItem[] = [];
     const sectorSize = gridSize; // 400px сектор
 
-    // Увеличиваем минимальное расстояние для предотвращения наложений
-    const minDistance = sectorSize < 350 ? 380 : 450;
+    // Определяем минимальное расстояние в зависимости от размера устройства
+    const minDistance = sectorSize < 350 ? 280 : 350;
     const sampler = new PoissonDiskSampler(minDistance, sectorSize);
     
     // Вычисляем видимые секторы
