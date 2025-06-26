@@ -55,19 +55,22 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
   // Original image size on canvas
   const originalSize = { width: 248, height: 331 };
   
-  // Calculate precise positioning - center the original image on start position
+  // Calculate scale factor to match target size
+  const scaleX = targetImageSize.width / originalSize.width;
+  const scaleY = targetImageSize.height / originalSize.height;
+  const scale = Math.min(scaleX, scaleY); // Use uniform scaling
+  
+  // Calculate final scaled dimensions
+  const finalWidth = originalSize.width * scale;
+  const finalHeight = originalSize.height * scale;
+  
+  // Calculate precise start position (center the original image)
   const startX = startPosition.x - originalSize.width / 2;
   const startY = startPosition.y - originalSize.height / 2;
   
-  // Calculate end position to center the scaled image on target position
-  const endScale = targetImageSize.width / originalSize.width;
-  const scaledSize = {
-    width: originalSize.width * endScale,
-    height: originalSize.height * endScale
-  };
-  
-  const endX = endPosition.x - scaledSize.width / 2;
-  const endY = endPosition.y - scaledSize.height / 2;
+  // Calculate precise end position (center the scaled image on target)
+  const endX = endPosition.x - finalWidth / 2;
+  const endY = endPosition.y - finalHeight / 2;
 
   return (
     <div
@@ -75,12 +78,13 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
       style={{
         left: startX,
         top: startY,
+        width: `${originalSize.width}px`,
+        height: `${originalSize.height}px`,
         transform: isAnimating 
-          ? `translate(${endX - startX}px, ${endY - startY}px) scale(${endScale})`
+          ? `translate(${endX - startX}px, ${endY - startY}px) scale(${scale})`
           : `translate(0px, 0px) scale(1)`,
         transition: `transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
-        width: `${originalSize.width}px`,
-        height: `${originalSize.height}px`
+        transformOrigin: 'center center'
       }}
     >
       <img 

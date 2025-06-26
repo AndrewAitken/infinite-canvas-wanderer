@@ -54,6 +54,7 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     getImagePosition: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
+        // Возвращаем точный центр изображения
         return {
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2
@@ -62,6 +63,14 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
       return null;
     },
     getImageSize: () => {
+      if (imageRef.current) {
+        const rect = imageRef.current.getBoundingClientRect();
+        return {
+          width: rect.width,
+          height: rect.height
+        };
+      }
+      // Fallback размеры
       return isMobile 
         ? { width: 240, height: 320 }
         : { width: 300, height: 400 };

@@ -75,10 +75,16 @@ const InfiniteCanvas: React.FC = () => {
     // Start flying animation after panel opens and we can get target position
     setTimeout(() => {
       const panelImagePos = panelRef.current?.getImagePosition();
-      if (panelImagePos) {
+      const panelImageSize = panelRef.current?.getImageSize();
+      
+      if (panelImagePos && panelImageSize) {
+        console.log('Start position:', clickPosition);
+        console.log('Target position:', panelImagePos);
+        console.log('Target size:', panelImageSize);
+        
         startFlyingAnimation(imageUrl, clickPosition, panelImagePos);
       }
-    }, 100);
+    }, 150); // Увеличил задержку для более точного позиционирования
   }, [startFlyingAnimation]);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
