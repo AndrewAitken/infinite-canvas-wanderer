@@ -7,8 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [audioPermissionRequested, setAudioPermissionRequested] = useState(false);
+  const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
+  const [audioError, setAudioError] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
 
@@ -20,45 +20,57 @@ const MusicPlayer: React.FC = () => {
       setIsPlaying(false);
     };
 
-    audio.addEventListener('ended', handleEnded);
-    return () => audio.removeEventListener('ended', handleEnded);
-  }, []);
+    const handleCanPlay = () => {
+      setAudioError(false);
+      setIsLoading(false);
+    };
 
-  const requestAudioPermission = async () => {
-    if (!audioPermissionRequested) {
+    const handleError = () => {
+      console.error('Audio loading error');
+      setAudioError(true);
+      setIsLoading(false);
+      setIsPlaying(false);
       toast({
-        title: "Разрешение на воспроизведение",
-        description: "Нажмите кнопку воспроизведения для запуска музыки. Браузер может запросить разрешение на автовоспроизведение.",
+        title: "Ошибка загрузки",
+        description: "Не удалось загрузить аудиофайл. Проверьте подключение к интернету.",
+        variant: "destructive",
       });
-      setAudioPermissionRequested(true);
-    }
-  };
+    };
+
+    const handleLoadStart = () => {
+      setIsLoading(true);
+    };
+
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('loadstart', handleLoadStart);
+
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('loadstart', handleLoadStart);
+    };
+  }, [toast]);
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || audioError) return;
 
     try {
       setIsLoading(true);
-      
-      // При первом взаимодействии запрашиваем разрешение и показуем уведомление
-      if (!hasUserInteracted) {
-        await requestAudioPermission();
-        setHasUserInteracted(true);
-        // Инициализируем аудио элемент
-        audio.load();
-      }
 
       if (isPlaying) {
         audio.pause();
         setIsPlaying(false);
       } else {
-        // Пытаемся воспроизвести звук
         await audio.play();
         setIsPlaying(true);
         
-        // Показываем успешное уведомление при первом воспроизведении
-        if (audioPermissionRequested && !isPlaying) {
+        // Показать уведомление только при первом успешном запуске
+        if (!hasPlayedOnce) {
+          setHasPlayedOnce(true);
           toast({
             title: "Музыка запущена",
             description: "Наслаждайтесь прослушиванием!",
@@ -66,19 +78,14 @@ const MusicPlayer: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('Error playing audio:', error);
+      console.error('Playback error:', error);
+      setIsPlaying(false);
       
-      // Показываем пользователю понятное сообщение об ошибке
       toast({
         title: "Ошибка воспроизведения",
-        description: "Не удалось запустить музыку. Возможно, браузер заблокировал автовоспроизведение. Попробуйте нажать кнопку еще раз.",
+        description: "Не удалось запустить музыку. Попробуйте еще раз.",
         variant: "destructive",
       });
-      
-      // Сбрасываем состояния для повторной попытки
-      setHasUserInteracted(false);
-      setAudioPermissionRequested(false);
-      setIsPlaying(false);
     } finally {
       setIsLoading(false);
     }
@@ -86,10 +93,15 @@ const MusicPlayer: React.FC = () => {
 
   return (
     <>
-      <audio ref={audioRef} src="/Flawed Mangoes Swimming.mp3" loop preload="metadata" />
+      <audio 
+        ref={audioRef} 
+        src="/Flawed Mangoes Swimming.mp3" 
+        loop 
+        preload="auto"
+      />
       <Button
         onClick={togglePlayback}
-        disabled={isLoading}
+        disabled={isLoading || audioError}
         size="icon"
         variant="outline"
         className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/30 backdrop-blur-md border-2 border-gray-100 hover:bg-white/40 hover:border-gray-200 dark:bg-stone-800/30 dark:border-stone-700 dark:hover:bg-stone-800/40 dark:hover:border-stone-600 transition-all duration-200"
