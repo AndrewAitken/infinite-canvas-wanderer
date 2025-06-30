@@ -1,3 +1,4 @@
+
 import React, { useMemo, useRef, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
@@ -15,7 +16,7 @@ interface CoverSquareProps {
     x: number;
     y: number;
   };
-  onAlbumClick: (imageUrl: string, clickPosition: { x: number; y: number }) => void;
+  onAlbumClick: (imageUrl: string) => void;
   isMobile?: boolean;
   isTablet?: boolean;
   isHidden?: boolean;
@@ -157,15 +158,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    if (elementRef.current) {
-      const rect = elementRef.current.getBoundingClientRect();
-      const clickPosition = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-      };
-      onAlbumClick(albumCover, clickPosition);
-    }
+    onAlbumClick(albumCover);
   };
 
   return (
