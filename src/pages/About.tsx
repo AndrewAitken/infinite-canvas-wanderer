@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal';
-
 const About: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-background text-foreground font-ys">
+  return <div className="min-h-screen bg-background text-foreground font-ys">
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <ScrollReveal>
           <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-12">
@@ -196,7 +193,7 @@ const About: React.FC = () => {
           <ScrollReveal delay={2400}>
             <div className="text-center py-12 border-t border-border">
               <div className="mb-6">
-                <img src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png" alt="AntoshkinBaskirov" className="w-16 h-16 rounded-full mx-auto mb-4 object-cover" />
+                <img src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png" alt="AntoshkinBaskirov" className="w-auto h-16 rounded-full mx-auto mb-4 object-cover" />
                 <h3 className="text-xl font-medium text-foreground">AntoshkinBashkirov</h3>
               </div>
               <p className="text-muted-foreground">
@@ -206,8 +203,6 @@ const About: React.FC = () => {
           </ScrollReveal>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default About;
