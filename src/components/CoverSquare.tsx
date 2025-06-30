@@ -1,4 +1,3 @@
-
 import React, { useMemo, useRef } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 import SimpleImage from './SimpleImage';
@@ -149,7 +148,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         transition: isTransitioning ? 'left 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), top 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 300ms' : 'opacity 300ms',
         ...appearAnimation
       }} 
-      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.4s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
       <div style={{
         transform: `scale(${edgeScale})`,

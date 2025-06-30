@@ -9,23 +9,22 @@ interface UseAppearAnimationParams {
 
 export const useAppearAnimation = ({ gridX, gridY, delay = 0 }: UseAppearAnimationParams) => {
   return useMemo(() => {
-    // Детерминированная рандомизация на основе координат грида
-    const seed1 = Math.abs((gridX * 17 + gridY * 23) % 1000) / 1000;
+    // Детерминированная рандомизация только для длительности анимации
     const seed2 = Math.abs((gridX * 31 + gridY * 41) % 1000) / 1000;
     
-    // Случайная задержка от 0 до 800ms
-    const randomDelay = seed1 * 800;
+    // Убираем случайную задержку - элементы появляются сразу
+    const randomDelay = 0;
     
-    // Случайная длительность от 600ms до 1200ms
-    const randomDuration = 600 + (seed2 * 600);
+    // Случайная длительность от 300ms до 600ms (быстрее чем раньше)
+    const randomDuration = 300 + (seed2 * 300);
     
-    // Добавляем базовую задержку если передана
+    // Добавляем только базовую задержку если передана
     const totalDelay = delay + randomDelay;
     
     return {
       animationDelay: `${totalDelay}ms`,
       animationDuration: `${randomDuration}ms`,
-      // CSS custom properties для более сложной анимации
+      // CSS custom properties для анимации
       '--appear-delay': `${totalDelay}ms`,
       '--appear-duration': `${randomDuration}ms`,
     };
