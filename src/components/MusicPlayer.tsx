@@ -67,7 +67,7 @@ const MusicPlayer: React.FC = () => {
     }
   }, [isPlaying]);
 
-  const togglePlayback = async () => {
+  const togglePlayback = () => {
     try {
       if (isPlaying) {
         console.log('⏸️ Pausing audio');
@@ -76,17 +76,39 @@ const MusicPlayer: React.FC = () => {
         setIsPlaying(false);
       } else {
         console.log('▶️ Starting audio playback');
+        console.log('Audio error state:', audioError);
         
         // Try primary file first
         if (!audioError) {
-          await play();
-          setIsPlaying(true);
-          console.log('✅ Playing primary file');
+          console.log('🎵 Attempting to play primary file: bgRFD2.mp3');
+          try {
+            play();
+            setIsPlaying(true);
+            console.log('✅ Primary file playback started');
+          } catch (primaryError) {
+            console.log('❌ Primary file playback failed:', primaryError);
+            // If primary fails, try fallback
+            console.log('🎵 Attempting to play fallback file: bgRFD.mp3');
+            try {
+              playFallback();
+              setIsPlaying(true);
+              console.log('✅ Fallback file playback started');
+            } catch (fallbackError) {
+              console.log('❌ Fallback file playback also failed:', fallbackError);
+              throw fallbackError;
+            }
+          }
         } else {
-          // If primary failed, try fallback
-          await playFallback();
-          setIsPlaying(true);
-          console.log('✅ Playing fallback file');
+          // If primary failed to load, try fallback directly
+          console.log('🎵 Primary file failed to load, using fallback: bgRFD.mp3');
+          try {
+            playFallback();
+            setIsPlaying(true);
+            console.log('✅ Fallback file playback started');
+          } catch (fallbackError) {
+            console.log('❌ Fallback file playback failed:', fallbackError);
+            throw fallbackError;
+          }
         }
 
         // Show success notification only on first successful play
@@ -104,7 +126,7 @@ const MusicPlayer: React.FC = () => {
       
       toast({
         title: "Ошибка воспроизведения",
-        description: "Не удалось запустить музыку",
+        description: "Не удалось запустить музыку. Возможно, браузер блокирует автовоспроизведение.",
         variant: "destructive",
       });
     }
