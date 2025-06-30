@@ -20,13 +20,13 @@ const About: React.FC = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={400}>
-          <p className="text-muted-foreground mb-16 leading-relaxed text-xl">Интерактивная галерея обложек RFD, созданная с помощью ИИ</p>
+          <p className="text-muted-foreground mb-16 leading-relaxed text-xl">Галерея обложек RFD, сделанная с помощью ИИ</p>
         </ScrollReveal>
 
         <div className="space-y-20">
           <ScrollReveal delay={600} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Этот проект — простая галерея музыкальных обложек RFD. 
+              Этот проект — галерея музыкальных обложек RFD. 
               Вместо обычной разработки решили попробовать новый подход с ИИ.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
@@ -68,15 +68,15 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1000} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Главная задача — показать много обложек без тормозов. 
-              Сделали простую виртуализацию: показываем только видимые картинки.
+              Основная задача — показать много обложек без тормозов. 
+              Сделали виртуализацию: показываем только видимые картинки.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Для размещения обложек используется алгоритм, который расставляет их 
+              Для размещения обложек используется алгоритм Poisson Disk Sampling, который расставляет их 
               естественно, но не случайно — каждый раз в одних местах.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Картинки загружаются быстро и плавно появляются без задержек.
+              Картинки появляются мгновенно при попадании в область видимости без всяких задержек.
             </p>
           </ScrollReveal>
 
@@ -92,17 +92,17 @@ const About: React.FC = () => {
                   </p>
                 </div>
                 <div className="bg-card p-6 border border-border rounded-2xl">
-                  <h3 className="text-lg font-medium mb-3 text-foreground">Размещение обложек</h3>
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Poisson Disk Sampling</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Алгоритм расставляет обложки так, чтобы они не налезали друг на друга, 
-                    но выглядели естественно. У каждой своё место.
+                    но выглядели естественно. У каждой своё фиксированное место.
                   </p>
                 </div>
                 <div className="bg-card p-6 border border-border rounded-2xl">
-                  <h3 className="text-lg font-medium mb-3 text-foreground">Загрузка картинок</h3>
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Momentum Scrolling</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Картинки появляются сразу при попадании в область видимости. 
-                    Никаких задержек и долгих ожиданий.
+                    Реализована инерция при перетаскивании — галерея продолжает двигаться 
+                    после отпускания пальца или мыши, как на мобильных устройствах.
                   </p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1400} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              С аудио было проще — браузеры не любят автопроигрывание. 
+              С Web Audio API было проще — браузеры не любят автопроигрывание. 
               Поэтому сделали уведомления, которые помогают включить звук.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
@@ -142,7 +142,7 @@ const About: React.FC = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Простые анимации и эффекты</p>
+                    <p className="text-muted-foreground">Drag & Drop с инерцией</p>
                   </div>
                 </div>
               </div>
@@ -151,35 +151,35 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1800} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Интерфейс продуман для удобства. Используем возможности CSS 
-              для эффектов, которые раньше требовали сложного кода.
+              Интерфейс продуман для удобства. Используем CSS Grid и Flexbox 
+              для адаптивной вёрстки, которая раньше требовала сложного кода.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Темы работают везде — каждый элемент плавно меняется при переключении.
+              CSS Custom Properties обеспечивают плавное переключение тем — каждый элемент меняется синхронно.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={2000}>
             <section>
-              <h2 className="mb-8 text-foreground font-bold text-3xl">Результат</h2>
+              <h2 className="mb-8 text-foreground font-bold text-3xl">Техническая реализация</h2>
               <div className="bg-card p-6 border border-border rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-medium mb-3 text-foreground">Скорость</h3>
+                    <h3 className="text-lg font-medium mb-3 text-foreground">Производительность</h3>
                     <ul className="text-muted-foreground space-y-2">
-                      <li>Быстрая загрузка</li>
-                      <li>Плавная прокрутка</li>
-                      <li>Мало памяти</li>
-                      <li>Стабильная работа</li>
+                      <li>Intersection Observer API</li>
+                      <li>RequestAnimationFrame</li>
+                      <li>CSS Transform3D</li>
+                      <li>Lazy Loading</li>
                     </ul>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium mb-3 text-foreground">Удобство</h3>
+                    <h3 className="text-lg font-medium mb-3 text-foreground">Взаимодействие</h3>
                     <ul className="text-muted-foreground space-y-2">
-                      <li>Простое управление</li>
-                      <li>Работает на телефонах</li>
-                      <li>Красивые переходы</li>
-                      <li>Понятный интерфейс</li>
+                      <li>Touch Events</li>
+                      <li>Mouse Events</li>
+                      <li>Momentum Physics</li>
+                      <li>Responsive Design</li>
                     </ul>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={2200}>
             <p className="text-foreground leading-relaxed mb-6 text-xl text-center">
-              RFD MUSEUM — простая галерея, созданная с помощью ИИ за несколько часов.
+              RFD MUSEUM — галерея, созданная с помощью ИИ за несколько часов.
             </p>
           </ScrollReveal>
 
