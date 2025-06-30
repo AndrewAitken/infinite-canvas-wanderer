@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal';
+
 const About: React.FC = () => {
-  return <div className="min-h-screen bg-background text-foreground font-ys">
+  return (
+    <div className="min-h-screen bg-background text-foreground font-ys">
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <ScrollReveal>
           <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-12">
@@ -13,49 +16,50 @@ const About: React.FC = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={200}>
-          <h1 className="mb-8 text-foreground font-extrabold text-4xl">Как мы сделали RFD MUSEUM</h1>
+          <h1 className="mb-8 text-foreground font-extrabold text-4xl">О проекте RFD MUSEUM</h1>
         </ScrollReveal>
 
         <ScrollReveal delay={400}>
-          <p className="text-muted-foreground mb-16 leading-relaxed text-xl">Рассказ о том, как интерактивная галерея обложек для RFD была создана с помощью искусственного интеллекта</p>
+          <p className="text-muted-foreground mb-16 leading-relaxed text-xl">Интерактивная галерея обложек RFD, созданная с помощью ИИ</p>
         </ScrollReveal>
 
         <div className="space-y-20">
           <ScrollReveal delay={600} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Всё началось с простой идеи — создать интерактивную галерею для музыкальных обложек. 
-              Но вместо традиционной разработки, мы решили попробовать что-то революционное.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Этот проект начался с простой идеи — сделать красивую галерею для музыкальных обложек RFD. 
+              Но вместо обычной разработки решили попробовать новый подход.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Lovable AI стал нашим партнёром в этом проекте. Через естественный диалог на русском языке 
-              мы описывали желаемые функции, а ИИ мгновенно воплощал их в код.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Всё создано с помощью Lovable AI — просто описывали на русском языке что хотим, 
+              а ИИ сразу писал код и показывал результат.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Каждая строчка кода, каждая анимация, каждый компонент — всё создавалось в реальном времени через простые инструкции.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Получилась интерактивная галерея, где можно листать обложки, слушать музыку 
+              и переключаться между светлой и тёмной темами.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={800}>
             <section>
-              <h2 className="text-3xl mb-8 text-foreground font-extrabold">Под капотом</h2>
-              <div className="bg-card p-8 border border-border rounded-[40px]">
+              <h2 className="text-3xl mb-8 text-foreground font-bold">Что использовали</h2>
+              <div className="bg-card p-8 border border-border rounded-3xl">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-xl font-medium mb-4 text-foreground">Основа</h3>
                     <ul className="text-muted-foreground space-y-2">
-                      <li>React 18 с TypeScript</li>
-                      <li>Vite для быстрой сборки</li>
-                      <li>Tailwind CSS для стилизации</li>
-                      <li>Shadcn/ui компоненты</li>
+                      <li>React + TypeScript</li>
+                      <li>Tailwind CSS</li>
+                      <li>Vite</li>
+                      <li>React Router</li>
                     </ul>
                   </div>
                   <div>
-                    <h3 className="text-xl font-medium mb-4 text-foreground">Расширения</h3>
+                    <h3 className="text-xl font-medium mb-4 text-foreground">Дополнительно</h3>
                     <ul className="text-muted-foreground space-y-2">
-                      <li>React Query для данных</li>
-                      <li>React Router для навигации</li>
-                      <li>Lucide React для иконок</li>
-                      <li>Next Themes для переключения тем</li>
+                      <li>Shadcn/ui компоненты</li>
+                      <li>Lucide иконки</li>
+                      <li>Переключение тем</li>
+                      <li>Аудио плеер</li>
                     </ul>
                   </div>
                 </div>
@@ -64,43 +68,41 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1000} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Самой сложной частью стала реализация бесконечного канваса. Нужно было показать все обложки одновременно, но без потери производительности.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Самая сложная часть — показать много обложек одновременно без тормозов. 
+              Сделали виртуализацию: показываем только те картинки, которые видны на экране.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Lovable AI предложил виртуализацию. Система отображает только те элементы, которые видны пользователю в данный момент.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Для красивого размещения обложек используется алгоритм, который расставляет их 
+              естественно, но не случайно — каждый раз в одних и тех же местах.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Для естественного размещения элементов мы использовали алгоритм Poisson Disk Sampling — 
-              математическую модель, которая создаёт органичное, но структурированное расположение.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Картинки загружаются быстро и плавно появляются без всяких серых плейсхолдеров.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={1200}>
             <section>
-              <h2 className="text-3xl mb-8 text-foreground font-extrabold">Интересное</h2>
+              <h2 className="text-3xl mb-8 text-foreground font-bold">Как это работает</h2>
               <div className="space-y-6">
-                <div className="bg-card p-8 border border-border rounded-[40px]">
-                  <h3 className="text-xl font-medium mb-3 text-foreground">Виртуализация бесконечного канваса</h3>
+                <div className="bg-card p-6 border border-border rounded-2xl">
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Виртуализация</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Система отображает только видимые элементы, позволяя показывать тысячи обложек 
-                    без потери производительности. Элементы динамически создаются и удаляются 
-                    при прокрутке.
+                    Показываем только видимые обложки. Остальные создаются и удаляются при прокрутке. 
+                    Поэтому можно листать тысячи картинок без зависаний.
                   </p>
                 </div>
-                <div className="bg-card p-8 border border-border rounded-[40px]">
-                  <h3 className="text-xl font-medium mb-3 text-foreground">Алгоритм Poisson Disk Sampling</h3>
+                <div className="bg-card p-6 border border-border rounded-2xl">
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Умное размещение</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Математический алгоритм для создания естественного размещения элементов 
-                    с минимальным расстоянием между ними. Каждая обложка имеет своё уникальное 
-                    место в пространстве.
+                    Алгоритм расставляет обложки так, чтобы они не налезали друг на друга, 
+                    но выглядели естественно. Каждая имеет своё место.
                   </p>
                 </div>
-                <div className="bg-card p-8 border border-border rounded-[40px]">
-                  <h3 className="text-xl font-medium mb-3 text-foreground">Детерминированная рандомизация</h3>
+                <div className="bg-card p-6 border border-border rounded-2xl">
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Быстрая загрузка</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Позиции и анимации генерируются псевдослучайно, но остаются стабильными 
-                    между перезагрузками. Каждый пользователь видит одну и ту же композицию.
+                    Картинки появляются сразу и плавно. Никаких серых квадратиков и долгих ожиданий.
                   </p>
                 </div>
               </div>
@@ -108,41 +110,39 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1400} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Интеграция аудио стала особым вызовом. Современные браузеры блокируют автовоспроизведение, поэтому нужно было как-то обработать разрешения пользователя.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              С аудио было интереснее — браузеры не разрешают автопроигрывание. 
+              Поэтому сделали умные уведомления, которые помогают включить звук.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Мы создали интеллектуальную систему с toast-уведомлениями, которая направляет пользователя к взаимодействию с аудио.
-            </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Плавающий плеер с эффектом размытия появляется только тогда, когда это действительно нужно.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Плеер появляется только когда нужен, не мешается и выглядит аккуратно.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={1600}>
             <section>
-              <h2 className="mb-8 text-foreground font-extrabold text-3xl">Визуал</h2>
-              <div className="bg-card p-8 border border-border rounded-[40px]">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
+              <h2 className="mb-8 text-foreground font-bold text-3xl">Что получилось</h2>
+              <div className="bg-card p-6 border border-border rounded-2xl">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Плавные переходы между светлой и тёмной темами</p>
+                    <p className="text-muted-foreground">Быстрая загрузка и плавная прокрутка</p>
                   </div>
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Анимации появления элементов при скролле</p>
+                    <p className="text-muted-foreground">Переключение между светлой и тёмной темой</p>
                   </div>
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Hover-эффекты с backdrop-blur</p>
+                    <p className="text-muted-foreground">Встроенный аудиоплеер</p>
                   </div>
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Летающие анимации обложек</p>
+                    <p className="text-muted-foreground">Работает на всех устройствах</p>
                   </div>
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Адаптивный дизайн для всех устройств</p>
+                    <p className="text-muted-foreground">Красивые анимации и эффекты</p>
                   </div>
                 </div>
               </div>
@@ -150,40 +150,36 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1800} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Каждая деталь интерфейса была продумана до мелочей. Мы использовали современные 
-              CSS-возможности для создания эффектов, которые раньше требовали JavaScript.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Весь интерфейс продуман до мелочей. Используем современные возможности CSS 
+              для эффектов, которые раньше требовали сложного JavaScript.
             </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Система тем интегрирована на глубоком уровне — каждый элемент плавно адаптируется 
-              к выбранной пользователем схеме.
-            </p>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              Результат — интерфейс, который чувствуется естественным и отзывчивым на любом устройстве.
+            <p className="text-foreground leading-relaxed mb-6 text-xl">
+              Темы работают везде — каждый элемент плавно меняется при переключении.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={2000}>
             <section>
-              <h2 className="mb-8 text-foreground font-extrabold text-3xl">Ещё интересное</h2>
-              <div className="bg-card p-8 border border-border rounded-[40px]">
-                <div className="grid md:grid-cols-2 gap-8">
+              <h2 className="mb-8 text-foreground font-bold text-3xl">Результат</h2>
+              <div className="bg-card p-6 border border-border rounded-2xl">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-xl font-medium mb-4 text-foreground">Оптимизации</h3>
-                    <ul className="text-muted-foreground space-y-3">
-                      <li>Lazy Loading изображений</li>
-                      <li>Виртуализация элементов</li>
-                      <li>Мемоизация React hooks</li>
-                      <li>Оптимизированная сборка</li>
+                    <h3 className="text-lg font-medium mb-3 text-foreground">Производительность</h3>
+                    <ul className="text-muted-foreground space-y-2">
+                      <li>Мгновенная загрузка</li>
+                      <li>Плавная прокрутка</li>
+                      <li>Низкое потребление памяти</li>
+                      <li>Стабильная работа</li>
                     </ul>
                   </div>
                   <div>
-                    <h3 className="text-xl font-medium mb-4 text-foreground">Результаты</h3>
-                    <ul className="text-muted-foreground space-y-3">
-                      <li>Мгновенная загрузка</li>
-                      <li>Плавная прокрутка</li>
-                      <li>Стабильная работа</li>
-                      <li>Низкое потребление памяти</li>
+                    <h3 className="text-lg font-medium mb-3 text-foreground">Удобство</h3>
+                    <ul className="text-muted-foreground space-y-2">
+                      <li>Простое управление</li>
+                      <li>Адаптивный дизайн</li>
+                      <li>Красивые переходы</li>
+                      <li>Интуитивный интерфейс</li>
                     </ul>
                   </div>
                 </div>
@@ -191,28 +187,27 @@ const About: React.FC = () => {
             </section>
           </ScrollReveal>
 
-          <ScrollReveal delay={2200} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-2xl font-light">
-              RFD MUSEUM — это больше, чем просто галерея. Это демонстрация возможностей 
-              современных веб-технологий и искусственного интеллекта.
+          <ScrollReveal delay={2200}>
+            <p className="text-foreground leading-relaxed mb-6 text-xl text-center">
+              RFD MUSEUM — простая галерея, созданная с помощью ИИ за несколько часов диалога.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={2400}>
-            <div className="text-center py-16 border-t border-border">
-              <div className="mb-8">
-                <img src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png" alt="AntoshkinBaskirov" className="w-auto h-16 rounded-full mx-auto mb-6 object-cover" />
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-semibold text-foreground">AntoshkinBashkirov</h3>
-                </div>
+            <div className="text-center py-12 border-t border-border">
+              <div className="mb-6">
+                <img src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png" alt="AntoshkinBaskirov" className="w-16 h-16 rounded-full mx-auto mb-4 object-cover" />
+                <h3 className="text-xl font-medium text-foreground">AntoshkinBashkirov</h3>
               </div>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground">
                 Создано с помощью Lovable AI
               </p>
             </div>
           </ScrollReveal>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default About;
