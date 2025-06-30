@@ -3,36 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* YS Text Font Family Definitions */
+/* Optimized YS Text Font Loading - only essential weights */
 @font-face {
   font-family: 'YS Text';
   src: url('/YS Text-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Regular Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Light Italic.ttf') format('truetype');
-  font-weight: 300;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -46,110 +22,35 @@
 
 @font-face {
   font-family: 'YS Text';
-  src: url('/YS Text-Medium Italic.ttf') format('truetype');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
   src: url('/YS Text-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Bold Italic.ttf') format('truetype');
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Heavy.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Heavy Italic.ttf') format('truetype');
-  font-weight: 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Black Italic.ttf') format('truetype');
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Thin.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Thin Italic.ttf') format('truetype');
-  font-weight: 100;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
-
+/* Design system colors and variables */
 @layer base {
   :root {
     --background: 32 21% 95%;
     --foreground: 12 6% 15%;
-
     --card: 32 21% 95%;
     --card-foreground: 12 6% 15%;
-
     --popover: 32 21% 95%;
     --popover-foreground: 12 6% 15%;
-
     --primary: 12 6% 15%;
     --primary-foreground: 25 5% 96%;
-
     --secondary: 25 5% 96%;
     --secondary-foreground: 12 6% 15%;
-
     --muted: 25 5% 96%;
     --muted-foreground: 13 5% 45%;
-
     --accent: 25 5% 96%;
     --accent-foreground: 12 6% 15%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 25 5% 96%;
-
     --border: 21 13% 87%;
     --input: 21 13% 87%;
     --ring: 12 6% 15%;
-
     --radius: 0.5rem;
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -163,32 +64,23 @@
   .dark {
     --background: 15 8% 10%;
     --foreground: 25 5% 96%;
-
     --card: 15 8% 10%;
     --card-foreground: 25 5% 96%;
-
     --popover: 15 8% 10%;
     --popover-foreground: 25 5% 96%;
-
     --primary: 25 5% 96%;
     --primary-foreground: 12 6% 15%;
-
     --secondary: 13 5% 15%;
     --secondary-foreground: 25 5% 96%;
-
     --muted: 13 5% 15%;
     --muted-foreground: 13 5% 65%;
-
     --accent: 13 5% 15%;
     --accent-foreground: 25 5% 96%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 25 5% 96%;
-
     --border: 13 5% 15%;
     --input: 13 5% 15%;
     --ring: 25 5% 70%;
-
     --sidebar-background: 15 8% 10%;
     --sidebar-foreground: 25 5% 96%;
     --sidebar-primary: 25 5% 96%;
@@ -212,6 +104,10 @@
     background-image: 
       radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
     background-size: 20px 20px;
+    /* Optimize for mobile performance */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
   }
 
   .dark body {
@@ -220,9 +116,24 @@
       radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
     background-size: 20px 20px;
   }
+
+  /* Mobile-specific optimizations */
+  @media (max-width: 768px) {
+    body {
+      /* Disable background pattern on mobile for better performance */
+      background-image: none;
+      /* Improve touch responsiveness */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .dark body {
+      background-image: none;
+    }
+  }
 }
 
-/* Анимация появления из пустоты с bouncy эффектом */
+/* Optimized animation for mobile */
 @keyframes scale-from-zero {
   0% {
     transform: scale(0);
@@ -238,7 +149,21 @@
   }
 }
 
-/* Поддержка prefers-reduced-motion для доступности */
+/* Mobile-optimized animations */
+@media (max-width: 768px) {
+  @keyframes scale-from-zero {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+/* Accessibility support */
 @media (prefers-reduced-motion: reduce) {
   @keyframes scale-from-zero {
     0% {
@@ -247,5 +172,11 @@
     100% {
       opacity: 1;
     }
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

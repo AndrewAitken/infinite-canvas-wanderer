@@ -17,12 +17,12 @@ const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (м
 const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
-// Настройки автоскролла - медленное диагональное движение (слева снизу → направо вверх)
-const AUTO_SCROLL_CONFIG = {
-  speedX: 25, // пикселей в секунду вправо
-  speedY: -20, // пикселей в секунду вверх (отрицательное значение)
-  enabled: true,
-};
+// Настройки автоскролла - отключаем на мобильных устройствах
+const getAutoScrollConfig = (isMobile: boolean) => ({
+  speedX: isMobile ? 0 : 25, // Отключаем автоскролл на мобильных
+  speedY: isMobile ? 0 : -20,
+  enabled: !isMobile, // Полностью отключаем на мобильных
+});
 
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -42,20 +42,23 @@ const InfiniteCanvas: React.FC = () => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
+  console.log(`📱 Device detection - Mobile: ${isMobile}, Tablet: ${isTablet}`);
+  
   const allAlbums = getAllAlbums();
   const { animationState, startFlyingAnimation, setAnimationPhase, stopFlyingAnimation } = useFlyingAnimation();
   
   // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
-  // Автоскролл
+  // Автоскролл с учетом мобильных устройств
+  const autoScrollConfig = getAutoScrollConfig(isMobile);
   const {
     offset: autoScrollOffset,
     isAutoScrolling,
     pauseAutoScroll,
     resumeAutoScroll,
     setEnabled: setAutoScrollEnabled,
-  } = useAutoScroll(AUTO_SCROLL_CONFIG);
+  } = useAutoScroll(autoScrollConfig);
 
   // Перетаскивание с интеграцией автоскролла
   const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag({
@@ -68,10 +71,12 @@ const InfiniteCanvas: React.FC = () => {
   useEffect(() => {
     const updateSize = () => {
       if (canvasRef.current) {
-        setCanvasSize({
+        const newSize = {
           width: window.innerWidth,
           height: window.innerHeight,
-        });
+        };
+        console.log(`📐 Canvas size updated:`, newSize);
+        setCanvasSize(newSize);
       }
     };
     
@@ -89,23 +94,23 @@ const InfiniteCanvas: React.FC = () => {
   });
 
   const handleGridToggle = useCallback(() => {
+    console.log(`🔄 Grid toggle - Aligned: ${!isGridAligned}`);
     setIsTransitioning(true);
     setIsGridAligned(prev => !prev);
     
-    // Завершаем анимацию через 800ms
     setTimeout(() => {
       setIsTransitioning(false);
     }, 800);
-  }, []);
+  }, [isGridAligned]);
 
   // Приостанавливаем автоскролл при открытии панели
   useEffect(() => {
     if (isPanelOpen) {
       pauseAutoScroll();
-    } else {
+    } else if (!isMobile) { // Возобновляем только если не мобильное устройство
       resumeAutoScroll();
     }
-  }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll]);
+  }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll, isMobile]);
 
   const handlePanelReady = useCallback(() => {
     console.log('Panel is ready, starting animation');
@@ -127,7 +132,6 @@ const InfiniteCanvas: React.FC = () => {
         setPendingAnimation(null);
       } else {
         console.warn('Could not get panel image position or size');
-        // Fallback with increased delay
         setTimeout(() => {
           const fallbackPos = panelRef.current?.getImagePosition();
           const fallbackSize = panelRef.current?.getImageSize();
@@ -146,25 +150,23 @@ const InfiniteCanvas: React.FC = () => {
   }, [pendingAnimation, startFlyingAnimation]);
 
   const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {
+    console.log(`🎨 Album clicked: ${imageUrl}`);
+    
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
     
-    // Hide the clicked image
     const imageKey = `${clickPosition.x}-${clickPosition.y}-${imageUrl}`;
     setHiddenImageKey(imageKey);
     
-    // Set album data and open panel
     setSelectedAlbum(albumData);
     setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
     setIsPanelOpen(true);
     setShowStaticImage(false);
     
-    // Store animation data to be used when panel is ready
     setPendingAnimation({ imageUrl, clickPosition });
   }, []);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
-    // Show static image in panel when flying animation reaches target
     setShowStaticImage(true);
     setAnimationPhase('showing-in-panel');
   }, [setAnimationPhase]);
@@ -180,7 +182,7 @@ const InfiniteCanvas: React.FC = () => {
     if (nextAlbum) {
       setSelectedAlbum(nextAlbum);
       setCurrentAlbumIndex(nextIndex);
-      setShowStaticImage(true); // Show immediately for navigation
+      setShowStaticImage(true);
     }
   }, [currentAlbumIndex]);
 
@@ -191,17 +193,17 @@ const InfiniteCanvas: React.FC = () => {
     if (prevAlbum) {
       setSelectedAlbum(prevAlbum);
       setCurrentAlbumIndex(prevIndex);
-      setShowStaticImage(true); // Show immediately for navigation
+      setShowStaticImage(true);
     }
   }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
-    // Simply close panel and show the hidden image back
+    console.log('🚪 Panel closing');
     setIsPanelOpen(false);
     setSelectedAlbum(null);
     setShowStaticImage(false);
-    setHiddenImageKey(null); // Show the original image back
-    setPendingAnimation(null); // Clear any pending animation
+    setHiddenImageKey(null);
+    setPendingAnimation(null);
   }, []);
 
   return (
@@ -211,8 +213,8 @@ const InfiniteCanvas: React.FC = () => {
         className={`fixed inset-0 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ${
           isPanelOpen ? 'backdrop-blur-sm bg-background/80' : ''
         }`}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
+        onMouseDown={!isMobile ? handleMouseDown : undefined}
+        onTouchStart={isMobile ? handleTouchStart : undefined}
         style={{ cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab' }}
       >
         <div
@@ -246,7 +248,6 @@ const InfiniteCanvas: React.FC = () => {
           })}
         </div>
 
-        {/* Grid Toggle Button */}
         <div className="fixed bottom-4 right-4 z-50">
           <GridToggle 
             isGridAligned={isGridAligned}
