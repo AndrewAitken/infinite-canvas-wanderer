@@ -79,12 +79,12 @@ const MusicPlayer: React.FC = () => {
         
         // Try primary file first
         if (!audioError) {
-          play();
+          await play();
           setIsPlaying(true);
           console.log('✅ Playing primary file');
         } else {
           // If primary failed, try fallback
-          playFallback();
+          await playFallback();
           setIsPlaying(true);
           console.log('✅ Playing fallback file');
         }
