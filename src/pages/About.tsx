@@ -2,8 +2,10 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal';
+
 const About: React.FC = () => {
-  return <div className="min-h-screen bg-background text-stone-100 font-ys">
+  return (
+    <div className="min-h-screen bg-background text-stone-100 font-ys">
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <ScrollReveal>
           <Link to="/" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-300 transition-colors mb-12">
@@ -217,6 +219,20 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={2400}>
             <div className="text-center py-16 border-t border-stone-800">
+              <div className="mb-8">
+                <img 
+                  src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png"
+                  alt="AntoshkinBaskirov"
+                  className="w-32 h-32 rounded-full mx-auto mb-6 object-cover"
+                />
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold text-stone-200">AntoshkinBaskirov</h3>
+                  <p className="text-stone-400 max-w-md mx-auto">
+                    Креативный разработчик и исследователь возможностей ИИ в веб-разработке. 
+                    Создатель интерактивных музыкальных галерей и инновационных пользовательских интерфейсов.
+                  </p>
+                </div>
+              </div>
               <p className="text-stone-400 text-lg">
                 Создано с помощью Lovable AI
               </p>
@@ -224,6 +240,8 @@ const About: React.FC = () => {
           </ScrollReveal>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default About;
