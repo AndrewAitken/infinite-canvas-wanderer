@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface DragState {
@@ -36,13 +35,6 @@ export const useDrag = (options: DragOptions = {}): DragState => {
 
   const velocityHistory = useRef<VelocityPoint[]>([]);
   const momentumAnimation = useRef<number | null>(null);
-  const isTouchDevice = useRef<boolean>(false);
-
-  // Check if this is a touch device
-  useEffect(() => {
-    isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    console.log(`📱 Touch device detected: ${isTouchDevice.current}`);
-  }, []);
 
   // Комбинируем внешний offset (автоскролл) с offset от перетаскивания
   const combinedOffset = {
@@ -60,9 +52,8 @@ export const useDrag = (options: DragOptions = {}): DragState => {
 
   const calculateVelocity = useCallback(() => {
     const now = Date.now();
-    const lookbackTime = isTouchDevice.current ? 100 : 150; // Shorter lookback on mobile
     const recentPoints = velocityHistory.current.filter(
-      point => now - point.timestamp < lookbackTime
+      point => now - point.timestamp < 150
     );
     
     if (recentPoints.length < 2) return { x: 0, y: 0 };
@@ -80,10 +71,11 @@ export const useDrag = (options: DragOptions = {}): DragState => {
   }, []);
 
   const startMomentum = useCallback((velocity: { x: number; y: number }) => {
-    const minVelocity = isTouchDevice.current ? 0.2 : 0.1; // Higher threshold on mobile
+    const minVelocity = 0.1;
     const velocityMagnitude = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     
     if (velocityMagnitude < minVelocity) {
+      // Возобновляем автоскролл после окончания momentum
       options.onDragEnd?.();
       return;
     }
@@ -93,13 +85,13 @@ export const useDrag = (options: DragOptions = {}): DragState => {
     let currentDragOffset = { ...dragOffset };
     
     const animate = () => {
-      const decay = isTouchDevice.current ? 0.92 : 0.95; // Faster decay on mobile
-      const minVelocityThreshold = isTouchDevice.current ? 0.02 : 0.01;
+      const decay = 0.95;
+      const minVelocityThreshold = 0.01;
       
       currentVelocity.x *= decay;
       currentVelocity.y *= decay;
       
-      currentDragOffset.x += currentVelocity.x * 16;
+      currentDragOffset.x += currentVelocity.x * 16; // ~60fps
       currentDragOffset.y += currentVelocity.y * 16;
       
       setDragOffset({ ...currentDragOffset });
@@ -113,6 +105,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
       } else {
         setIsMomentum(false);
         momentumAnimation.current = null;
+        // Возобновляем автоскролл после окончания momentum
         options.onDragEnd?.();
       }
     };
@@ -121,11 +114,10 @@ export const useDrag = (options: DragOptions = {}): DragState => {
   }, [dragOffset, options]);
 
   const handleStart = useCallback((clientX: number, clientY: number) => {
-    console.log(`🚀 Drag start - Touch device: ${isTouchDevice.current}, Position: ${clientX}, ${clientY}`);
-    
     clearMomentum();
     setIsDragging(true);
     
+    // Приостанавливаем автоскролл
     options.onDragStart?.();
     
     dragState.current.startX = clientX;
@@ -151,7 +143,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
 
     setDragOffset({ x: newX, y: newY });
     
-    // Update velocity history with mobile-optimized settings
+    // Update velocity history
     const now = Date.now();
     velocityHistory.current.push({
       x: clientX,
@@ -159,16 +151,15 @@ export const useDrag = (options: DragOptions = {}): DragState => {
       timestamp: now
     });
     
-    const historyLimit = isTouchDevice.current ? 150 : 200; // Shorter history on mobile
+    // Keep only recent points
     velocityHistory.current = velocityHistory.current.filter(
-      point => now - point.timestamp < historyLimit
+      point => now - point.timestamp < 200
     );
   }, [isDragging]);
 
   const handleEnd = useCallback(() => {
     if (!isDragging) return;
     
-    console.log(`🏁 Drag end - Touch device: ${isTouchDevice.current}`);
     setIsDragging(false);
     
     const velocity = calculateVelocity();
@@ -178,54 +169,45 @@ export const useDrag = (options: DragOptions = {}): DragState => {
   }, [isDragging, calculateVelocity, startMomentum]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (isTouchDevice.current) return; // Prevent mouse events on touch devices
     e.preventDefault();
     handleStart(e.clientX, e.clientY);
   }, [handleStart]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (!isTouchDevice.current) return; // Safety check
     e.preventDefault();
     const touch = e.touches[0];
     handleStart(touch.clientX, touch.clientY);
   }, [handleStart]);
 
   const setExternalOffset = useCallback((offset: { x: number; y: number }) => {
-    // This function can be used to reset external offset if needed
+    // Эта функция может использоваться для сброса внешнего offset'а если нужно
   }, []);
 
-  // Mobile-optimized event listeners
+  // ... keep existing code (useEffect для обработчиков событий мыши и touch)
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isTouchDevice.current) return;
       handleMove(e.clientX, e.clientY);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isTouchDevice.current) return;
       e.preventDefault();
       const touch = e.touches[0];
       handleMove(touch.clientX, touch.clientY);
     };
 
     const handleMouseUp = () => {
-      if (isTouchDevice.current) return;
       handleEnd();
     };
 
     const handleTouchEnd = () => {
-      if (!isTouchDevice.current) return;
       handleEnd();
     };
 
     if (isDragging) {
-      if (isTouchDevice.current) {
-        document.addEventListener('touchmove', handleTouchMove, { passive: false });
-        document.addEventListener('touchend', handleTouchEnd, { passive: true });
-      } else {
-        document.addEventListener('mousemove', handleMouseMove, { passive: true });
-        document.addEventListener('mouseup', handleMouseUp, { passive: true });
-      }
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
     }
 
     return () => {

@@ -1,5 +1,5 @@
 
-import React, { useMemo, useRef, useState, useCallback } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
 interface CoverSquareProps {
@@ -83,40 +83,37 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   ];
 
   // Improved album cover selection with point index
-  const getAlbumCover = useCallback((gx: number, gy: number, pIndex: number) => {
+  const getAlbumCover = (gx: number, gy: number, pIndex: number) => {
     const hash1 = Math.abs(gx * 97 + gy * 101 + pIndex * 89) % 1009;
     const hash2 = Math.abs(gx * 103 + gy * 107 + pIndex * 91) % 1013;
     const hash3 = Math.abs(gx * 109 + gy * 113 + pIndex * 93) % 1019;
     const combinedHash = (hash1 ^ hash2 ^ hash3) % albumCovers.length;
     return albumCovers[combinedHash];
-  }, [albumCovers]);
+  };
 
-  // Mobile-optimized element sizes
-  const rectWidth = isMobile ? 220 : isTablet ? 240 : 248; // Smaller on mobile
-  const rectHeight = isMobile ? 300 : isTablet ? 320 : 331; // Smaller on mobile
+  // Размеры элемента
+  const rectWidth = isMobile ? 250 : 248;
+  const rectHeight = isMobile ? 350 : 331;
 
-  // Точное позиционирование
+  // Позиционирование теперь точное - убираем случайные смещения
   const finalX = x - rectWidth / 2;
   const finalY = y - rectHeight / 2;
 
-  // Mobile-optimized edge scale calculation
+  // Вычисление масштаба для краев экрана
   const edgeScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 1;
-    
     const screenX = finalX + offset.x;
     const screenY = finalY + offset.y;
     const centerX = screenX + rectWidth / 2;
     const centerY = screenY + rectHeight / 2;
-    
     const distanceToLeft = centerX;
     const distanceToRight = canvasSize.width - centerX;
     const distanceToTop = centerY;
     const distanceToBottom = canvasSize.height - centerY;
     const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
 
-    // Mobile-optimized fade zones and scales
-    const fadeZone = isMobile ? 200 : 350; // Smaller fade zone on mobile
-    const minScale = isMobile ? 0.6 : 0.15; // Higher minimum scale on mobile
+    const fadeZone = 350;
+    const minScale = isMobile ? 0.4 : 0.15;
     const maxScale = 1.0;
     
     if (minDistance >= fadeZone) {
@@ -125,8 +122,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
     const normalizedDistance = Math.max(0, minDistance) / fadeZone;
     const t = normalizedDistance;
-    // Simplified easing for mobile performance
-    const easedDistance = isMobile ? t : t * t * t * (t * (t * 6 - 15) + 10);
+    const easedDistance = t * t * t * (t * (t * 6 - 15) + 10);
 
     return minScale + (maxScale - minScale) * easedDistance;
   }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight, isMobile]);
@@ -137,33 +133,31 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     gridY: gridY + pointIndex * 2
   });
 
-  const handleImageLoad = useCallback(() => {
-    console.log(`✅ Image loaded (mobile: ${isMobile}): ${albumCover}`);
+  const handleImageLoad = () => {
+    console.log(`✅ Image loaded successfully: ${albumCover}`);
     setIsLoading(false);
     setImageError(false);
-  }, [albumCover, isMobile]);
+  };
 
-  const handleImageError = useCallback((error: any) => {
-    console.error(`❌ Failed to load image (mobile: ${isMobile}): ${albumCover}`, error);
+  const handleImageError = (error: any) => {
+    console.error(`❌ Failed to load image: ${albumCover}`, error);
     setIsLoading(false);
     
-    if (retryCount < (isMobile ? 1 : 2)) { // Fewer retries on mobile
+    if (retryCount < 2) {
       console.log(`🔄 Retrying image load (attempt ${retryCount + 1}): ${albumCover}`);
-      const retryDelay = isMobile ? 500 : 1000; // Faster retry on mobile
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
         setImageError(false);
         setIsLoading(true);
-      }, retryDelay * (retryCount + 1));
+      }, 1000 * (retryCount + 1));
     } else {
-      console.warn(`⚠️ Image failed to load after retries (mobile: ${isMobile}): ${albumCover}`);
+      console.warn(`⚠️ Image failed to load after retries: ${albumCover}`);
       setImageError(true);
     }
-  }, [albumCover, retryCount, isMobile]);
+  };
 
-  const handleClick = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    e.preventDefault(); // Prevent default touch behavior
     
     console.log(`🎯 Album click - Mobile: ${isMobile}, Album: ${albumCover}`);
     
@@ -174,10 +168,10 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         y: rect.top + rect.height / 2
       };
       
-      console.log(`📍 Click position (mobile: ${isMobile}):`, clickPosition);
+      console.log(`📍 Click position:`, clickPosition);
       onAlbumClick(albumCover, clickPosition);
     }
-  }, [isMobile, albumCover, onAlbumClick]);
+  };
 
   return (
     <div 
@@ -186,40 +180,35 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         left: finalX,
         top: finalY,
         opacity: isHidden ? 0 : 1,
-        transition: isTransitioning 
-          ? `left ${isMobile ? '400ms' : '800ms'} cubic-bezier(0.25, 0.46, 0.45, 0.94), top ${isMobile ? '400ms' : '800ms'} cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 300ms` 
-          : 'opacity 300ms',
+        transition: isTransitioning ? 'left 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), top 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 300ms' : 'opacity 300ms',
         ...appearAnimation
       }} 
-      className={`absolute ${isMobile ? '' : 'animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both]'} motion-reduce:animate-none`}
+      className="absolute animate-[scale-from-zero_var(--appear-duration,0.8s)_cubic-bezier(0.34,1.56,0.64,1)_var(--appear-delay,0s)_both] motion-reduce:animate-none"
     >
-      <div 
-        style={{
-          transform: `scale(${edgeScale})`,
-          transformOrigin: 'center',
-          width: rectWidth,
-          height: rectHeight
-        }} 
-        onClick={!isMobile ? handleClick : undefined}
-        onTouchEnd={isMobile ? handleClick : undefined}
-        className={`rounded-xl shadow-lg 
-                   transition-all duration-300 ease-out
-                   ${isMobile ? 'active:scale-95' : 'hover:scale-110 hover:shadow-xl'} 
-                   cursor-pointer overflow-hidden relative
-                   ${isMobile ? 'touch-manipulation' : ''}`}
-      >
+      <div style={{
+        transform: `scale(${edgeScale})`,
+        transformOrigin: 'center',
+        width: rectWidth,
+        height: rectHeight
+      }} 
+      onClick={handleClick}
+      onTouchEnd={isMobile ? handleClick : undefined}
+      className="rounded-xl shadow-lg 
+                 transition-all duration-300 ease-out
+                 hover:scale-110 hover:shadow-xl cursor-pointer
+                 overflow-hidden relative">
         
         {isLoading && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-xl flex items-center justify-center">
-            <div className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} border-2 border-gray-400 border-t-transparent rounded-full animate-spin`}></div>
+            <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
         
         {imageError ? (
           <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 rounded-xl flex items-center justify-center">
             <div className="text-center text-gray-600">
-              <div className={`${isMobile ? 'text-xl mb-1' : 'text-2xl mb-2'}`}>🎵</div>
-              <div className={`${isMobile ? 'text-xs' : 'text-sm'}`}>RFD</div>
+              <div className="text-2xl mb-2">🎵</div>
+              <div className="text-sm">RFD</div>
             </div>
           </div>
         ) : (
@@ -231,9 +220,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
             loading="lazy"
             onLoad={handleImageLoad}
             onError={handleImageError}
-            style={{
-              imageRendering: isMobile ? 'auto' : 'high-quality', // Optimize for mobile
-            }}
           />
         )}
       </div>
