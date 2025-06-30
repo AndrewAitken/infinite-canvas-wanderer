@@ -26,15 +26,14 @@ const About: React.FC = () => {
         <div className="space-y-20">
           <ScrollReveal delay={600} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Этот проект начался с простой идеи — сделать красивую галерею для музыкальных обложек RFD. 
-              Но вместо обычной разработки решили попробовать новый подход.
+              Этот проект — простая галерея музыкальных обложек RFD. 
+              Вместо обычной разработки решили попробовать новый подход с ИИ.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Всё создано с помощью Lovable AI — просто описывали на русском языке что хотим, 
-              а ИИ сразу писал код и показывал результат.
+              Описывали на русском языке что хотим, а Lovable AI сразу писал код и показывал результат.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Получилась интерактивная галерея, где можно листать обложки, слушать музыку 
+              Получилась галерея, где можно листать обложки, слушать музыку 
               и переключаться между светлой и тёмной темами.
             </p>
           </ScrollReveal>
@@ -58,8 +57,8 @@ const About: React.FC = () => {
                     <ul className="text-muted-foreground space-y-2">
                       <li>Shadcn/ui компоненты</li>
                       <li>Lucide иконки</li>
-                      <li>Переключение тем</li>
-                      <li>Аудио плеер</li>
+                      <li>next-themes для тем</li>
+                      <li>Встроенный аудиоплеер</li>
                     </ul>
                   </div>
                 </div>
@@ -69,15 +68,15 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1000} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Самая сложная часть — показать много обложек одновременно без тормозов. 
-              Сделали виртуализацию: показываем только те картинки, которые видны на экране.
+              Главная задача — показать много обложек без тормозов. 
+              Сделали простую виртуализацию: показываем только видимые картинки.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Для красивого размещения обложек используется алгоритм, который расставляет их 
-              естественно, но не случайно — каждый раз в одних и тех же местах.
+              Для размещения обложек используется алгоритм, который расставляет их 
+              естественно, но не случайно — каждый раз в одних местах.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Картинки загружаются быстро и плавно появляются без всяких серых плейсхолдеров.
+              Картинки загружаются быстро и плавно появляются без задержек.
             </p>
           </ScrollReveal>
 
@@ -88,21 +87,22 @@ const About: React.FC = () => {
                 <div className="bg-card p-6 border border-border rounded-2xl">
                   <h3 className="text-lg font-medium mb-3 text-foreground">Виртуализация</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Показываем только видимые обложки. Остальные создаются и удаляются при прокрутке. 
-                    Поэтому можно листать тысячи картинок без зависаний.
+                    Показываем только видимые обложки. Остальные создаются при прокрутке. 
+                    Поэтому можно листать много картинок без зависаний.
                   </p>
                 </div>
                 <div className="bg-card p-6 border border-border rounded-2xl">
-                  <h3 className="text-lg font-medium mb-3 text-foreground">Умное размещение</h3>
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Размещение обложек</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Алгоритм расставляет обложки так, чтобы они не налезали друг на друга, 
-                    но выглядели естественно. Каждая имеет своё место.
+                    но выглядели естественно. У каждой своё место.
                   </p>
                 </div>
                 <div className="bg-card p-6 border border-border rounded-2xl">
-                  <h3 className="text-lg font-medium mb-3 text-foreground">Быстрая загрузка</h3>
+                  <h3 className="text-lg font-medium mb-3 text-foreground">Загрузка картинок</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Картинки появляются сразу и плавно. Никаких серых квадратиков и долгих ожиданий.
+                    Картинки появляются сразу при попадании в область видимости. 
+                    Никаких задержек и долгих ожиданий.
                   </p>
                 </div>
               </div>
@@ -111,11 +111,11 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1400} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              С аудио было интереснее — браузеры не разрешают автопроигрывание. 
-              Поэтому сделали умные уведомления, которые помогают включить звук.
+              С аудио было проще — браузеры не любят автопроигрывание. 
+              Поэтому сделали уведомления, которые помогают включить звук.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Плеер появляется только когда нужен, не мешается и выглядит аккуратно.
+              Плеер появляется только когда нужен и выглядит аккуратно.
             </p>
           </ScrollReveal>
 
@@ -142,7 +142,7 @@ const About: React.FC = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground">Красивые анимации и эффекты</p>
+                    <p className="text-muted-foreground">Простые анимации и эффекты</p>
                   </div>
                 </div>
               </div>
@@ -151,8 +151,8 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1800} stagger={true}>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Весь интерфейс продуман до мелочей. Используем современные возможности CSS 
-              для эффектов, которые раньше требовали сложного JavaScript.
+              Интерфейс продуман для удобства. Используем возможности CSS 
+              для эффектов, которые раньше требовали сложного кода.
             </p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
               Темы работают везде — каждый элемент плавно меняется при переключении.
@@ -165,11 +165,11 @@ const About: React.FC = () => {
               <div className="bg-card p-6 border border-border rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-medium mb-3 text-foreground">Производительность</h3>
+                    <h3 className="text-lg font-medium mb-3 text-foreground">Скорость</h3>
                     <ul className="text-muted-foreground space-y-2">
-                      <li>Мгновенная загрузка</li>
+                      <li>Быстрая загрузка</li>
                       <li>Плавная прокрутка</li>
-                      <li>Низкое потребление памяти</li>
+                      <li>Мало памяти</li>
                       <li>Стабильная работа</li>
                     </ul>
                   </div>
@@ -177,9 +177,9 @@ const About: React.FC = () => {
                     <h3 className="text-lg font-medium mb-3 text-foreground">Удобство</h3>
                     <ul className="text-muted-foreground space-y-2">
                       <li>Простое управление</li>
-                      <li>Адаптивный дизайн</li>
+                      <li>Работает на телефонах</li>
                       <li>Красивые переходы</li>
-                      <li>Интуитивный интерфейс</li>
+                      <li>Понятный интерфейс</li>
                     </ul>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={2200}>
             <p className="text-foreground leading-relaxed mb-6 text-xl text-center">
-              RFD MUSEUM — простая галерея, созданная с помощью ИИ за несколько часов диалога.
+              RFD MUSEUM — простая галерея, созданная с помощью ИИ за несколько часов.
             </p>
           </ScrollReveal>
 
