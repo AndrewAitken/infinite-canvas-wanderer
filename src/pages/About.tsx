@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -35,10 +34,7 @@ const About: React.FC = () => {
               Lovable AI стал нашим партнёром в этом проекте. Через естественный диалог на русском языке 
               мы описывали желаемые функции, а ИИ мгновенно воплощал их в код.
             </p>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Каждая строчка кода, каждая анимация, каждый компонент — всё создавалось в реальном времени 
-              через простые инструкции. Это было похоже на магию.
-            </p>
+            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">Каждая строчка кода, каждая анимация, каждый компонент — всё создавалось в реальном времени через простые инструкции. </p>
           </ScrollReveal>
 
           <ScrollReveal delay={800}>
@@ -70,14 +66,8 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1000} stagger={true}>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Самой сложной частью стала реализация бесконечного канваса. Нужно было показать 
-              сотни обложек одновременно, но без потери производительности.
-            </p>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Lovable AI предложил элегантное решение — виртуализацию. Система отображает только 
-              те элементы, которые видны пользователю в данный момент.
-            </p>
+            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">Самой сложной частью стала реализация бесконечного канваса. Нужно было показать все обложки одновременно, но без потери производительности.</p>
+            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">Lovable AI предложил виртуализацию. Система отображает только те элементы, которые видны пользователю в данный момент.</p>
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
               Для естественного размещения элементов мы использовали алгоритм Poisson Disk Sampling — 
               математическую модель, которая создаёт органичное, но структурированное расположение.
@@ -116,14 +106,8 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1400} stagger={true}>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Интеграция аудио стала особым вызовом. Современные браузеры блокируют автовоспроизведение, 
-              поэтому нужно было элегантно обработать разрешения пользователя.
-            </p>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Мы создали интеллектуальную систему с toast-уведомлениями, которая мягко направляет 
-              пользователя к взаимодействию с аудио.
-            </p>
+            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">Интеграция аудио стала особым вызовом. Современные браузеры блокируют автовоспроизведение, поэтому нужно было как-то обработать разрешения пользователя.</p>
+            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">Мы создали интеллектуальную систему с toast-уведомлениями, которая направляет пользователя к взаимодействию с аудио.</p>
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
               Плавающий плеер с эффектом размытия появляется только тогда, когда это действительно нужно.
             </p>
@@ -206,10 +190,7 @@ const About: React.FC = () => {
               RFD MUSEUM — это больше, чем просто галерея. Это демонстрация возможностей 
               современных веб-технологий и искусственного интеллекта.
             </p>
-            <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Каждый элемент здесь служит цели создания уникального пользовательского опыта. 
-              От математических алгоритмов до тонких анимаций.
-            </p>
+            
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
               Это пример того, как ИИ может стать креативным партнёром в создании 
               по-настоящему инновационных интерфейсов.
