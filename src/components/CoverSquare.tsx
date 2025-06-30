@@ -1,8 +1,7 @@
 
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
-import OptimizedImage from './OptimizedImage';
-import { imagePreloader } from '../utils/imagePreloader';
+import SimpleImage from './SimpleImage';
 
 interface CoverSquareProps {
   x: number;
@@ -135,38 +134,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
     gridY: gridY + pointIndex * 2
   });
 
-  // Determine if image should be high priority (visible or nearly visible)
-  const isNearViewport = useMemo(() => {
-    if (canvasSize.width === 0 || canvasSize.height === 0) return false;
-    const screenX = finalX + offset.x;
-    const screenY = finalY + offset.y;
-    const buffer = 200; // Load images 200px before they come into view
-    
-    return screenX + rectWidth > -buffer && 
-           screenX < canvasSize.width + buffer &&
-           screenY + rectHeight > -buffer && 
-           screenY < canvasSize.height + buffer;
-  }, [finalX, finalY, offset, canvasSize, rectWidth, rectHeight]);
-
-  // Preload nearby images
-  useEffect(() => {
-    if (isNearViewport) {
-      // Preload current image and some nearby ones
-      const nearbyCovers = [
-        albumCover,
-        getAlbumCover(gridX + 1, gridY, pointIndex),
-        getAlbumCover(gridX - 1, gridY, pointIndex),
-        getAlbumCover(gridX, gridY + 1, pointIndex),
-        getAlbumCover(gridX, gridY - 1, pointIndex)
-      ];
-      
-      // Preload without blocking
-      imagePreloader.preloadMultiple(nearbyCovers).catch(() => {
-        // Ignore preload errors, they'll be handled by the component
-      });
-    }
-  }, [isNearViewport, albumCover, gridX, gridY, pointIndex]);
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAlbumClick(albumCover);
@@ -194,13 +161,12 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
                    hover:scale-110 hover:shadow-xl cursor-pointer
                    overflow-hidden relative">
         
-        <OptimizedImage
+        <SimpleImage
           src={albumCover}
           alt={`Album cover ${gridX},${gridY}-${pointIndex}`}
           width={rectWidth}
           height={rectHeight}
           className="w-full h-full rounded-xl"
-          priority={isNearViewport}
           draggable={false}
         />
       </div>
