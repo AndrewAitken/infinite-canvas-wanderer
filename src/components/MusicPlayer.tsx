@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause } from 'lucide-react';
 import { Button } from './ui/button';
@@ -54,7 +53,7 @@ const MusicPlayer: React.FC = () => {
   const setupMediaSession = () => {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'Flawed Mangoes Swimming',
+        title: 'bgRFD2',
         artist: 'Unknown Artist',
         album: 'Background Music',
       });
@@ -200,7 +199,7 @@ const MusicPlayer: React.FC = () => {
     <>
       <audio 
         ref={audioRef} 
-        src="/Flawed Mangoes Swimming.mp3" 
+        src="/bgRFD2.mp3" 
         loop 
         preload="metadata"
       />
