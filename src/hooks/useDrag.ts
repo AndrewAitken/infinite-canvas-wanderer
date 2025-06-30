@@ -6,6 +6,7 @@ interface DragState {
   isMomentum: boolean;
   handleMouseDown: (e: React.MouseEvent) => void;
   handleTouchStart: (e: React.TouchEvent) => void;
+  setExternalOffset: (offset: { x: number; y: number }) => void;
 }
 
 interface VelocityPoint {
@@ -14,8 +15,14 @@ interface VelocityPoint {
   timestamp: number;
 }
 
-export const useDrag = (): DragState => {
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+interface DragOptions {
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
+  externalOffset?: { x: number; y: number };
+}
+
+export const useDrag = (options: DragOptions = {}): DragState => {
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [isMomentum, setIsMomentum] = useState(false);
   
@@ -28,6 +35,12 @@ export const useDrag = (): DragState => {
 
   const velocityHistory = useRef<VelocityPoint[]>([]);
   const momentumAnimation = useRef<number | null>(null);
+
+  // Комбинируем внешний offset (автоскролл) с offset от перетаскивания
+  const combinedOffset = {
+    x: dragOffset.x + (options.externalOffset?.x || 0),
+    y: dragOffset.y + (options.externalOffset?.y || 0)
+  };
 
   const clearMomentum = useCallback(() => {
     if (momentumAnimation.current) {
@@ -61,11 +74,15 @@ export const useDrag = (): DragState => {
     const minVelocity = 0.1;
     const velocityMagnitude = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     
-    if (velocityMagnitude < minVelocity) return;
+    if (velocityMagnitude < minVelocity) {
+      // Возобновляем автоскролл после окончания momentum
+      options.onDragEnd?.();
+      return;
+    }
     
     setIsMomentum(true);
     let currentVelocity = { ...velocity };
-    let currentOffset = { ...offset };
+    let currentDragOffset = { ...dragOffset };
     
     const animate = () => {
       const decay = 0.95;
@@ -74,10 +91,10 @@ export const useDrag = (): DragState => {
       currentVelocity.x *= decay;
       currentVelocity.y *= decay;
       
-      currentOffset.x += currentVelocity.x * 16; // ~60fps
-      currentOffset.y += currentVelocity.y * 16;
+      currentDragOffset.x += currentVelocity.x * 16; // ~60fps
+      currentDragOffset.y += currentVelocity.y * 16;
       
-      setOffset({ ...currentOffset });
+      setDragOffset({ ...currentDragOffset });
       
       const velocityMagnitude = Math.sqrt(
         currentVelocity.x * currentVelocity.x + currentVelocity.y * currentVelocity.y
@@ -88,26 +105,32 @@ export const useDrag = (): DragState => {
       } else {
         setIsMomentum(false);
         momentumAnimation.current = null;
+        // Возобновляем автоскролл после окончания momentum
+        options.onDragEnd?.();
       }
     };
     
     momentumAnimation.current = requestAnimationFrame(animate);
-  }, [offset]);
+  }, [dragOffset, options]);
 
   const handleStart = useCallback((clientX: number, clientY: number) => {
     clearMomentum();
     setIsDragging(true);
+    
+    // Приостанавливаем автоскролл
+    options.onDragStart?.();
+    
     dragState.current.startX = clientX;
     dragState.current.startY = clientY;
-    dragState.current.startOffsetX = offset.x;
-    dragState.current.startOffsetY = offset.y;
+    dragState.current.startOffsetX = dragOffset.x;
+    dragState.current.startOffsetY = dragOffset.y;
     
     velocityHistory.current = [{
       x: clientX,
       y: clientY,
       timestamp: Date.now()
     }];
-  }, [offset, clearMomentum]);
+  }, [dragOffset, clearMomentum, options]);
 
   const handleMove = useCallback((clientX: number, clientY: number) => {
     if (!isDragging) return;
@@ -118,7 +141,7 @@ export const useDrag = (): DragState => {
     const newX = dragState.current.startOffsetX + deltaX;
     const newY = dragState.current.startOffsetY + deltaY;
 
-    setOffset({ x: newX, y: newY });
+    setDragOffset({ x: newX, y: newY });
     
     // Update velocity history
     const now = Date.now();
@@ -156,6 +179,11 @@ export const useDrag = (): DragState => {
     handleStart(touch.clientX, touch.clientY);
   }, [handleStart]);
 
+  const setExternalOffset = useCallback((offset: { x: number; y: number }) => {
+    // Эта функция может использоваться для сброса внешнего offset'а если нужно
+  }, []);
+
+  // ... keep existing code (useEffect для обработчиков событий мыши и touch)
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       handleMove(e.clientX, e.clientY);
@@ -198,10 +226,11 @@ export const useDrag = (): DragState => {
   }, [clearMomentum]);
 
   return {
-    offset,
+    offset: combinedOffset,
     isDragging,
     isMomentum,
     handleMouseDown,
     handleTouchStart,
+    setExternalOffset,
   };
 };

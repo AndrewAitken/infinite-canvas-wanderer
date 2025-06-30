@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
+import { useAutoScroll } from '../hooks/useAutoScroll';
 import { useVirtualization } from '../hooks/useVirtualization';
 import { useFlyingAnimation } from '../hooks/useFlyingAnimation';
 import CoverSquare from './CoverSquare';
@@ -15,6 +16,13 @@ const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (
 const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
 const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
 const BUFFER_SIZE = 2; // Extra cells to render outside viewport
+
+// Настройки автоскролла - медленное диагональное движение (слева снизу → направо вверх)
+const AUTO_SCROLL_CONFIG = {
+  speedX: 25, // пикселей в секунду вправо
+  speedY: -20, // пикселей в секунду вверх (отрицательное значение)
+  enabled: true,
+};
 
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -40,6 +48,22 @@ const InfiniteCanvas: React.FC = () => {
   // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
+  // Автоскролл
+  const {
+    offset: autoScrollOffset,
+    isAutoScrolling,
+    pauseAutoScroll,
+    resumeAutoScroll,
+    setEnabled: setAutoScrollEnabled,
+  } = useAutoScroll(AUTO_SCROLL_CONFIG);
+
+  // Перетаскивание с интеграцией автоскролла
+  const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag({
+    externalOffset: autoScrollOffset,
+    onDragStart: pauseAutoScroll,
+    onDragEnd: resumeAutoScroll,
+  });
+
   // Update canvas size on window resize
   useEffect(() => {
     const updateSize = () => {
@@ -55,8 +79,6 @@ const InfiniteCanvas: React.FC = () => {
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
   }, []);
-
-  const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag();
   
   const visibleItems = useVirtualization({
     offset,
@@ -75,6 +97,15 @@ const InfiniteCanvas: React.FC = () => {
       setIsTransitioning(false);
     }, 800);
   }, []);
+
+  // Приостанавливаем автоскролл при открытии панели
+  useEffect(() => {
+    if (isPanelOpen) {
+      pauseAutoScroll();
+    } else {
+      resumeAutoScroll();
+    }
+  }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll]);
 
   const handlePanelReady = useCallback(() => {
     console.log('Panel is ready, starting animation');
@@ -222,6 +253,13 @@ const InfiniteCanvas: React.FC = () => {
             onToggle={handleGridToggle}
           />
         </div>
+
+        {/* Auto-scroll status indicator (optional) */}
+        {isAutoScrolling && (
+          <div className="fixed top-4 left-4 bg-black/20 text-white text-xs px-2 py-1 rounded z-50">
+            Auto-scroll: ON
+          </div>
+        )}
       </div>
 
       <FlyingImageAnimation
