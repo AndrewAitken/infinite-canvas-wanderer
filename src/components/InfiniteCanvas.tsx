@@ -11,18 +11,18 @@ import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, ge
 import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
 
-// Grid sizes for different devices
-const GRID_SIZE_DESKTOP = 400;
-const GRID_SIZE_TABLET = 312;
-const GRID_SIZE_MOBILE = 346;
-const BUFFER_SIZE = 2;
+// Размеры сетки с учетом планшета
+const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
+const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
+const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
+const BUFFER_SIZE = 2; // Extra cells to render outside viewport
 
-// Auto-scroll configuration - disabled on mobile
-const getAutoScrollConfig = (isMobile: boolean) => ({
-  speedX: isMobile ? 0 : 25,
-  speedY: isMobile ? 0 : -20,
-  enabled: !isMobile,
-});
+// Настройки автоскролла - медленное диагональное движение (слева снизу → направо вверх)
+const AUTO_SCROLL_CONFIG = {
+  speedX: 25, // пикселей в секунду вправо
+  speedY: -20, // пикселей в секунду вверх (отрицательное значение)
+  enabled: true,
+};
 
 const InfiniteCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -42,23 +42,22 @@ const InfiniteCanvas: React.FC = () => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
-  console.log(`📱 Device detection - Mobile: ${isMobile}, Tablet: ${isTablet}`);
-  
   const allAlbums = getAllAlbums();
   const { animationState, startFlyingAnimation, setAnimationPhase, stopFlyingAnimation } = useFlyingAnimation();
   
+  // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
-  const autoScrollConfig = getAutoScrollConfig(isMobile);
+  // Автоскролл
   const {
     offset: autoScrollOffset,
     isAutoScrolling,
     pauseAutoScroll,
     resumeAutoScroll,
     setEnabled: setAutoScrollEnabled,
-  } = useAutoScroll(autoScrollConfig);
+  } = useAutoScroll(AUTO_SCROLL_CONFIG);
 
-  // Universal drag handlers that work on both desktop and mobile
+  // Перетаскивание с интеграцией автоскролла
   const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag({
     externalOffset: autoScrollOffset,
     onDragStart: pauseAutoScroll,
@@ -69,12 +68,10 @@ const InfiniteCanvas: React.FC = () => {
   useEffect(() => {
     const updateSize = () => {
       if (canvasRef.current) {
-        const newSize = {
+        setCanvasSize({
           width: window.innerWidth,
           height: window.innerHeight,
-        };
-        console.log(`📐 Canvas size updated:`, newSize);
-        setCanvasSize(newSize);
+        });
       }
     };
     
@@ -92,23 +89,23 @@ const InfiniteCanvas: React.FC = () => {
   });
 
   const handleGridToggle = useCallback(() => {
-    console.log(`🔄 Grid toggle - Aligned: ${!isGridAligned}`);
     setIsTransitioning(true);
     setIsGridAligned(prev => !prev);
     
+    // Завершаем анимацию через 800ms
     setTimeout(() => {
       setIsTransitioning(false);
     }, 800);
-  }, [isGridAligned]);
+  }, []);
 
-  // Pause auto-scroll when panel is open
+  // Приостанавливаем автоскролл при открытии панели
   useEffect(() => {
     if (isPanelOpen) {
       pauseAutoScroll();
-    } else if (!isMobile) {
+    } else {
       resumeAutoScroll();
     }
-  }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll, isMobile]);
+  }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll]);
 
   const handlePanelReady = useCallback(() => {
     console.log('Panel is ready, starting animation');
@@ -130,6 +127,7 @@ const InfiniteCanvas: React.FC = () => {
         setPendingAnimation(null);
       } else {
         console.warn('Could not get panel image position or size');
+        // Fallback with increased delay
         setTimeout(() => {
           const fallbackPos = panelRef.current?.getImagePosition();
           const fallbackSize = panelRef.current?.getImageSize();
@@ -148,23 +146,25 @@ const InfiniteCanvas: React.FC = () => {
   }, [pendingAnimation, startFlyingAnimation]);
 
   const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {
-    console.log(`🎨 Album clicked: ${imageUrl}`);
-    
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
     
+    // Hide the clicked image
     const imageKey = `${clickPosition.x}-${clickPosition.y}-${imageUrl}`;
     setHiddenImageKey(imageKey);
     
+    // Set album data and open panel
     setSelectedAlbum(albumData);
     setCurrentAlbumIndex(albumIndex >= 0 ? albumIndex : 0);
     setIsPanelOpen(true);
     setShowStaticImage(false);
     
+    // Store animation data to be used when panel is ready
     setPendingAnimation({ imageUrl, clickPosition });
   }, []);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
+    // Show static image in panel when flying animation reaches target
     setShowStaticImage(true);
     setAnimationPhase('showing-in-panel');
   }, [setAnimationPhase]);
@@ -180,7 +180,7 @@ const InfiniteCanvas: React.FC = () => {
     if (nextAlbum) {
       setSelectedAlbum(nextAlbum);
       setCurrentAlbumIndex(nextIndex);
-      setShowStaticImage(true);
+      setShowStaticImage(true); // Show immediately for navigation
     }
   }, [currentAlbumIndex]);
 
@@ -191,29 +191,18 @@ const InfiniteCanvas: React.FC = () => {
     if (prevAlbum) {
       setSelectedAlbum(prevAlbum);
       setCurrentAlbumIndex(prevIndex);
-      setShowStaticImage(true);
+      setShowStaticImage(true); // Show immediately for navigation
     }
   }, [currentAlbumIndex]);
 
   const handlePanelClose = useCallback(() => {
-    console.log('🚪 Panel closing');
+    // Simply close panel and show the hidden image back
     setIsPanelOpen(false);
     setSelectedAlbum(null);
     setShowStaticImage(false);
-    setHiddenImageKey(null);
-    setPendingAnimation(null);
+    setHiddenImageKey(null); // Show the original image back
+    setPendingAnimation(null); // Clear any pending animation
   }, []);
-
-  // Universal event handler that works for both mouse and touch
-  const handlePointerStart = useCallback((e: React.PointerEvent) => {
-    console.log('👆 Pointer start:', e.pointerType);
-    
-    if (e.pointerType === 'mouse') {
-      handleMouseDown(e as any);
-    } else if (e.pointerType === 'touch') {
-      handleTouchStart(e as any);
-    }
-  }, [handleMouseDown, handleTouchStart]);
 
   return (
     <>
@@ -222,13 +211,9 @@ const InfiniteCanvas: React.FC = () => {
         className={`fixed inset-0 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ${
           isPanelOpen ? 'backdrop-blur-sm bg-background/80' : ''
         }`}
-        onPointerDown={handlePointerStart}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-        style={{ 
-          cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab',
-          touchAction: 'none' // Prevent default touch behaviors
-        }}
+        style={{ cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab' }}
       >
         <div
           className="relative"
@@ -261,6 +246,7 @@ const InfiniteCanvas: React.FC = () => {
           })}
         </div>
 
+        {/* Grid Toggle Button */}
         <div className="fixed bottom-4 right-4 z-50">
           <GridToggle 
             isGridAligned={isGridAligned}

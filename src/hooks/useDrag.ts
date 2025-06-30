@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface DragState {
@@ -36,9 +35,8 @@ export const useDrag = (options: DragOptions = {}): DragState => {
 
   const velocityHistory = useRef<VelocityPoint[]>([]);
   const momentumAnimation = useRef<number | null>(null);
-  const touchIdentifier = useRef<number | null>(null);
 
-  // Combine external offset (autoscroll) with drag offset
+  // Комбинируем внешний offset (автоскролл) с offset от перетаскивания
   const combinedOffset = {
     x: dragOffset.x + (options.externalOffset?.x || 0),
     y: dragOffset.y + (options.externalOffset?.y || 0)
@@ -77,6 +75,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
     const velocityMagnitude = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     
     if (velocityMagnitude < minVelocity) {
+      // Возобновляем автоскролл после окончания momentum
       options.onDragEnd?.();
       return;
     }
@@ -92,7 +91,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
       currentVelocity.x *= decay;
       currentVelocity.y *= decay;
       
-      currentDragOffset.x += currentVelocity.x * 16;
+      currentDragOffset.x += currentVelocity.x * 16; // ~60fps
       currentDragOffset.y += currentVelocity.y * 16;
       
       setDragOffset({ ...currentDragOffset });
@@ -106,6 +105,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
       } else {
         setIsMomentum(false);
         momentumAnimation.current = null;
+        // Возобновляем автоскролл после окончания momentum
         options.onDragEnd?.();
       }
     };
@@ -113,16 +113,11 @@ export const useDrag = (options: DragOptions = {}): DragState => {
     momentumAnimation.current = requestAnimationFrame(animate);
   }, [dragOffset, options]);
 
-  const handleStart = useCallback((clientX: number, clientY: number, identifier?: number) => {
-    console.log('🚀 Drag start - X:', clientX, 'Y:', clientY, 'Touch ID:', identifier);
-    
+  const handleStart = useCallback((clientX: number, clientY: number) => {
     clearMomentum();
     setIsDragging(true);
     
-    if (identifier !== undefined) {
-      touchIdentifier.current = identifier;
-    }
-    
+    // Приостанавливаем автоскролл
     options.onDragStart?.();
     
     dragState.current.startX = clientX;
@@ -137,13 +132,8 @@ export const useDrag = (options: DragOptions = {}): DragState => {
     }];
   }, [dragOffset, clearMomentum, options]);
 
-  const handleMove = useCallback((clientX: number, clientY: number, identifier?: number) => {
+  const handleMove = useCallback((clientX: number, clientY: number) => {
     if (!isDragging) return;
-    
-    // For touch events, make sure we're tracking the same finger
-    if (identifier !== undefined && touchIdentifier.current !== null && identifier !== touchIdentifier.current) {
-      return;
-    }
 
     const deltaX = clientX - dragState.current.startX;
     const deltaY = clientY - dragState.current.startY;
@@ -170,10 +160,7 @@ export const useDrag = (options: DragOptions = {}): DragState => {
   const handleEnd = useCallback(() => {
     if (!isDragging) return;
     
-    console.log('🏁 Drag end');
-    
     setIsDragging(false);
-    touchIdentifier.current = null;
     
     const velocity = calculateVelocity();
     startMomentum(velocity);
@@ -187,49 +174,33 @@ export const useDrag = (options: DragOptions = {}): DragState => {
   }, [handleStart]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    // Don't prevent default to allow other touch interactions
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      handleStart(touch.clientX, touch.clientY, touch.identifier);
-    }
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleStart(touch.clientX, touch.clientY);
   }, [handleStart]);
 
   const setExternalOffset = useCallback((offset: { x: number; y: number }) => {
-    // Function for external offset updates if needed
+    // Эта функция может использоваться для сброса внешнего offset'а если нужно
   }, []);
 
-  // Mouse and touch event handlers
+  // ... keep existing code (useEffect для обработчиков событий мыши и touch)
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       handleMove(e.clientX, e.clientY);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        handleMove(touch.clientX, touch.clientY, touch.identifier);
-        
-        // Only prevent default if we're actively dragging to avoid scroll conflicts
-        if (isDragging) {
-          e.preventDefault();
-        }
-      }
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleMove(touch.clientX, touch.clientY);
     };
 
     const handleMouseUp = () => {
       handleEnd();
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      // Check if our tracked touch ended
-      if (touchIdentifier.current !== null) {
-        const endedTouch = Array.from(e.changedTouches).find(
-          touch => touch.identifier === touchIdentifier.current
-        );
-        if (endedTouch) {
-          handleEnd();
-        }
-      }
+    const handleTouchEnd = () => {
+      handleEnd();
     };
 
     if (isDragging) {

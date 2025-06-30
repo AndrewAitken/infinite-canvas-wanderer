@@ -1,5 +1,6 @@
 
 import { useState, useRef } from 'react';
+import { TouchEvent } from 'react';
 
 interface SwipeHandlers {
   onSwipeLeft?: () => void;
@@ -20,76 +21,50 @@ export const useSwipe = (handlers: SwipeHandlers, threshold: number = 50) => {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const touchEnd = useRef<{ x: number; y: number } | null>(null);
 
-  // Check if touch events are supported
-  const isTouchSupported = () => {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  };
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isTouchSupported()) return;
-    
-    console.log('🚀 Touch start detected');
-    
-    // Don't prevent default to allow scrolling when needed
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     touchEnd.current = null;
+    touchStart.current = {
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    };
+    setSwipeState({ isSwiping: true, swipeDirection: null });
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (!touchStart.current) return;
     
-    if (e.touches && e.touches.length > 0) {
-      touchStart.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      };
-      setSwipeState({ isSwiping: true, swipeDirection: null });
+    const currentTouch = {
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    };
+    
+    const deltaX = touchStart.current.x - currentTouch.x;
+    const deltaY = Math.abs(touchStart.current.y - currentTouch.y);
+    
+    // Only process horizontal swipes (ignore vertical scrolling)
+    if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > 20) {
+      const direction = deltaX > 0 ? 'left' : 'right';
+      setSwipeState({ isSwiping: true, swipeDirection: direction });
     }
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isTouchSupported() || !touchStart.current) return;
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    if (!touchStart.current) return;
     
-    if (e.touches && e.touches.length > 0) {
-      const currentTouch = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      };
-      
-      const deltaX = touchStart.current.x - currentTouch.x;
-      const deltaY = Math.abs(touchStart.current.y - currentTouch.y);
-      
-      // Only process horizontal swipes (ignore vertical scrolling)
-      if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > 20) {
-        const direction = deltaX > 0 ? 'left' : 'right';
-        setSwipeState({ isSwiping: true, swipeDirection: direction });
-        
-        // Prevent default only for horizontal swipes to avoid scroll conflicts
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          e.preventDefault();
-        }
-      }
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isTouchSupported() || !touchStart.current) return;
+    touchEnd.current = {
+      x: e.changedTouches[0].clientX,
+      y: e.changedTouches[0].clientY,
+    };
     
-    console.log('🏁 Touch end detected');
+    const deltaX = touchStart.current.x - touchEnd.current.x;
+    const deltaY = Math.abs(touchStart.current.y - touchEnd.current.y);
     
-    if (e.changedTouches && e.changedTouches.length > 0) {
-      touchEnd.current = {
-        x: e.changedTouches[0].clientX,
-        y: e.changedTouches[0].clientY,
-      };
-      
-      const deltaX = touchStart.current.x - touchEnd.current.x;
-      const deltaY = Math.abs(touchStart.current.y - touchEnd.current.y);
-      
-      // Check if it's a valid horizontal swipe
-      if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > deltaY) {
-        console.log(`👆 Swipe detected: ${deltaX > 0 ? 'left' : 'right'}`);
-        
-        if (deltaX > 0 && handlers.onSwipeLeft) {
-          handlers.onSwipeLeft();
-        } else if (deltaX < 0 && handlers.onSwipeRight) {
-          handlers.onSwipeRight();
-        }
+    // Check if it's a valid horizontal swipe
+    if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > deltaY) {
+      if (deltaX > 0 && handlers.onSwipeLeft) {
+        handlers.onSwipeLeft();
+      } else if (deltaX < 0 && handlers.onSwipeRight) {
+        handlers.onSwipeRight();
       }
     }
     

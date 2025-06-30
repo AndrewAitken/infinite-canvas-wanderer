@@ -1,4 +1,3 @@
-
 import React, { useMemo, useRef, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
@@ -84,9 +83,12 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
   // Improved album cover selection with point index
   const getAlbumCover = (gx: number, gy: number, pIndex: number) => {
+    // Используем координаты сектора и индекс точки для выбора обложки
     const hash1 = Math.abs(gx * 97 + gy * 101 + pIndex * 89) % 1009;
     const hash2 = Math.abs(gx * 103 + gy * 107 + pIndex * 91) % 1013;
     const hash3 = Math.abs(gx * 109 + gy * 113 + pIndex * 93) % 1019;
+
+    // Combine hashes for better distribution
     const combinedHash = (hash1 ^ hash2 ^ hash3) % albumCovers.length;
     return albumCovers[combinedHash];
   };
@@ -96,7 +98,7 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   const rectHeight = isMobile ? 350 : 331;
 
   // Позиционирование теперь точное - убираем случайные смещения
-  const finalX = x - rectWidth / 2;
+  const finalX = x - rectWidth / 2; // Центрируем элемент по точке
   const finalY = y - rectHeight / 2;
 
   // Вычисление масштаба для краев экрана
@@ -134,32 +136,27 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   });
 
   const handleImageLoad = () => {
-    console.log(`✅ Image loaded successfully: ${albumCover}`);
     setIsLoading(false);
     setImageError(false);
   };
 
-  const handleImageError = (error: any) => {
-    console.error(`❌ Failed to load image: ${albumCover}`, error);
+  const handleImageError = () => {
+    console.warn(`Failed to load image: ${albumCover}`);
     setIsLoading(false);
     
     if (retryCount < 2) {
-      console.log(`🔄 Retrying image load (attempt ${retryCount + 1}): ${albumCover}`);
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
         setImageError(false);
         setIsLoading(true);
       }, 1000 * (retryCount + 1));
     } else {
-      console.warn(`⚠️ Image failed to load after retries: ${albumCover}`);
       setImageError(true);
     }
   };
 
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    console.log(`🎯 Album click - Mobile: ${isMobile}, Album: ${albumCover}`);
     
     if (elementRef.current) {
       const rect = elementRef.current.getBoundingClientRect();
@@ -167,8 +164,6 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
       };
-      
-      console.log(`📍 Click position:`, clickPosition);
       onAlbumClick(albumCover, clickPosition);
     }
   };
@@ -190,13 +185,10 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
         transformOrigin: 'center',
         width: rectWidth,
         height: rectHeight
-      }} 
-      onClick={handleClick}
-      onTouchEnd={isMobile ? handleClick : undefined}
-      className="rounded-xl shadow-lg 
-                 transition-all duration-300 ease-out
-                 hover:scale-110 hover:shadow-xl cursor-pointer
-                 overflow-hidden relative">
+      }} onClick={handleClick} className="rounded-xl shadow-lg 
+                   transition-all duration-300 ease-out
+                   hover:scale-110 hover:shadow-xl cursor-pointer
+                   overflow-hidden relative">
         
         {isLoading && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-xl flex items-center justify-center">
