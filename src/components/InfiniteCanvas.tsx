@@ -253,13 +253,6 @@ const InfiniteCanvas: React.FC = () => {
             onToggle={handleGridToggle}
           />
         </div>
-
-        {/* Auto-scroll status indicator (optional) */}
-        {isAutoScrolling && (
-          <div className="fixed top-4 left-4 bg-black/20 text-white text-xs px-2 py-1 rounded z-50">
-            Auto-scroll: ON
-          </div>
-        )}
       </div>
 
       <FlyingImageAnimation
