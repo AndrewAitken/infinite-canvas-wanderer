@@ -9,6 +9,7 @@ interface ImageZoomProps {
 
 const ImageZoom: React.FC<ImageZoomProps> = ({ isOpen, imageUrl, onClose }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -18,12 +19,15 @@ const ImageZoom: React.FC<ImageZoomProps> = ({ isOpen, imageUrl, onClose }) => {
     };
 
     if (isOpen) {
+      setShouldRender(true);
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
-      // Запускаем анимацию появления
-      setTimeout(() => setIsAnimating(true), 10);
+      // Запускаем анимацию появления с небольшой задержкой
+      setTimeout(() => setIsAnimating(true), 50);
     } else {
       setIsAnimating(false);
+      // Скрываем компонент после завершения анимации
+      setTimeout(() => setShouldRender(false), 300);
     }
 
     return () => {
@@ -32,7 +36,7 @@ const ImageZoom: React.FC<ImageZoomProps> = ({ isOpen, imageUrl, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !imageUrl) return null;
+  if (!shouldRender || !imageUrl) return null;
 
   return (
     <div
@@ -49,7 +53,7 @@ const ImageZoom: React.FC<ImageZoomProps> = ({ isOpen, imageUrl, onClose }) => {
           src={imageUrl}
           alt="Album cover"
           className={`h-auto max-h-[80vh] w-auto object-contain shadow-2xl transition-transform duration-500 ease-out ${
-            isAnimating ? 'scale-100' : 'scale-50'
+            isAnimating ? 'scale-100' : 'scale-75'
           }`}
           draggable={false}
         />
