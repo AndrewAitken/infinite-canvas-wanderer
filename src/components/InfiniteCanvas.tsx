@@ -1,3 +1,4 @@
+
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useDrag } from '../hooks/useDrag';
 import { useVirtualization } from '../hooks/useVirtualization';
@@ -76,17 +77,32 @@ const InfiniteCanvas: React.FC = () => {
     }, 800);
   }, []);
 
-  const handlePanelReady = useCallback(() => {
-    console.log('Panel is ready, starting animation');
+  const handlePanelReady = useCallback(async () => {
+    console.log('Panel ready callback triggered');
     
-    if (pendingAnimation) {
+    if (!pendingAnimation) {
+      console.log('No pending animation, exiting');
+      return;
+    }
+
+    console.log('Processing pending animation:', pendingAnimation);
+    
+    // Multiple attempts to get accurate coordinates
+    const maxAttempts = 5;
+    let attempt = 1;
+    
+    const tryGetCoordinates = async (): Promise<void> => {
+      console.log(`Attempt ${attempt}/${maxAttempts} to get panel coordinates`);
+      
       const panelImagePos = panelRef.current?.getImagePosition();
       const panelImageSize = panelRef.current?.getImageSize();
       
-      if (panelImagePos && panelImageSize) {
-        console.log('Start position:', pendingAnimation.clickPosition);
-        console.log('Target position:', panelImagePos);
-        console.log('Target size:', panelImageSize);
+      if (panelImagePos && panelImageSize && panelImagePos.x > 0 && panelImagePos.y > 0) {
+        console.log('Successfully got panel coordinates:', {
+          position: panelImagePos,
+          size: panelImageSize,
+          startPosition: pendingAnimation.clickPosition
+        });
         
         startFlyingAnimation(
           pendingAnimation.imageUrl, 
@@ -94,24 +110,32 @@ const InfiniteCanvas: React.FC = () => {
           panelImagePos
         );
         setPendingAnimation(null);
-      } else {
-        console.warn('Could not get panel image position or size');
-        // Fallback with increased delay
-        setTimeout(() => {
-          const fallbackPos = panelRef.current?.getImagePosition();
-          const fallbackSize = panelRef.current?.getImageSize();
-          if (fallbackPos && fallbackSize) {
-            console.log('Fallback animation start');
-            startFlyingAnimation(
-              pendingAnimation.imageUrl, 
-              pendingAnimation.clickPosition, 
-              fallbackPos
-            );
-          }
-          setPendingAnimation(null);
-        }, 600);
+        return;
       }
-    }
+      
+      if (attempt < maxAttempts) {
+        attempt++;
+        console.log('Coordinates not ready, retrying in 100ms');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return tryGetCoordinates();
+      }
+      
+      console.warn('Failed to get coordinates after all attempts, using fallback');
+      // Fallback animation with estimated position
+      const fallbackPos = {
+        x: window.innerWidth - 300,
+        y: window.innerHeight / 2
+      };
+      
+      startFlyingAnimation(
+        pendingAnimation.imageUrl, 
+        pendingAnimation.clickPosition, 
+        fallbackPos
+      );
+      setPendingAnimation(null);
+    };
+    
+    await tryGetCoordinates();
   }, [pendingAnimation, startFlyingAnimation]);
 
   const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {

@@ -1,4 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+
+import React, { forwardRef, useImperativeHandle, useRef, useCallback, useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -44,6 +45,9 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
 }, ref) => {
   const isMobile = useIsMobile();
   const imageRef = useRef<HTMLImageElement>(null);
+  const [imageStabilized, setImageStabilized] = useState(false);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const stabilizationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const {
     swipeHandlers
@@ -52,39 +56,128 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     onSwipeRight: onPrevious
   });
 
+  // Precise coordinate calculation with multiple fallbacks
+  const getPreciseImageCoordinates = useCallback((maxAttempts = 3, attempt = 1): { x: number; y: number } | null => {
+    console.log(`Getting image coordinates, attempt ${attempt}/${maxAttempts}`);
+    
+    if (!imageRef.current) {
+      console.warn('Image ref not available');
+      return null;
+    }
+
+    // Wait for DOM readiness
+    const rect = imageRef.current.getBoundingClientRect();
+    
+    // Check if element is properly rendered
+    if (rect.width === 0 || rect.height === 0) {
+      console.warn('Image dimensions are zero, element not ready');
+      if (attempt < maxAttempts) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve(getPreciseImageCoordinates(maxAttempts, attempt + 1));
+          }, 100);
+        }) as any;
+      }
+      return null;
+    }
+
+    // Calculate precise center with additional logging
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Validate coordinates
+    if (centerX < 0 || centerY < 0 || centerX > window.innerWidth || centerY > window.innerHeight) {
+      console.warn('Calculated coordinates seem invalid:', { centerX, centerY, windowSize: { width: window.innerWidth, height: window.innerHeight } });
+    }
+
+    console.log('Precise image coordinates calculated:', {
+      rect: { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height },
+      center: { x: centerX, y: centerY },
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      scrollPosition: { x: window.scrollX, y: window.scrollY }
+    });
+
+    return { x: centerX, y: centerY };
+  }, []);
+
+  // Stabilization mechanism using requestAnimationFrame
+  const waitForStabilization = useCallback(() => {
+    console.log('Starting image stabilization process');
+    setImageStabilized(false);
+    
+    if (stabilizationTimeoutRef.current) {
+      clearTimeout(stabilizationTimeoutRef.current);
+    }
+
+    let frameCount = 0;
+    const maxFrames = 10; // Wait for 10 animation frames (~166ms at 60fps)
+    
+    const checkStability = () => {
+      frameCount++;
+      console.log(`Stabilization frame ${frameCount}/${maxFrames}`);
+      
+      if (frameCount >= maxFrames) {
+        console.log('Image stabilized after frames');
+        setImageStabilized(true);
+        
+        // Additional timeout for extra safety
+        stabilizationTimeoutRef.current = setTimeout(() => {
+          console.log('Final stabilization timeout reached');
+          if (onPanelReady) {
+            onPanelReady();
+          }
+        }, 50);
+      } else {
+        requestAnimationFrame(checkStability);
+      }
+    };
+    
+    requestAnimationFrame(checkStability);
+  }, [onPanelReady]);
+
+  // ResizeObserver setup
+  useEffect(() => {
+    if (!imageRef.current) return;
+
+    console.log('Setting up ResizeObserver for image');
+    
+    resizeObserverRef.current = new ResizeObserver((entries) => {
+      console.log('ResizeObserver triggered, image dimensions changed');
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        console.log('New image dimensions:', { width, height });
+        
+        // Trigger stabilization when size changes
+        if (width > 0 && height > 0) {
+          waitForStabilization();
+        }
+      }
+    });
+
+    resizeObserverRef.current.observe(imageRef.current);
+
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+      if (stabilizationTimeoutRef.current) {
+        clearTimeout(stabilizationTimeoutRef.current);
+        stabilizationTimeoutRef.current = null;
+      }
+    };
+  }, [waitForStabilization]);
+
   // Handle panel animation completion
   const handleAnimationEnd = () => {
-    console.log('Panel animation completed');
-    if (onPanelReady) {
-      // Увеличиваем задержку для полной стабилизации
-      setTimeout(() => {
-        const position = imageRef.current?.getBoundingClientRect();
-        console.log('Image position after panel ready:', position);
-        onPanelReady();
-      }, 100);
-    }
+    console.log('Panel animation completed, triggering stabilization');
+    waitForStabilization();
   };
 
   useImperativeHandle(ref, () => ({
     getImagePosition: () => {
-      if (imageRef.current) {
-        const rect = imageRef.current.getBoundingClientRect();
-        console.log('Getting precise image position:', { 
-          left: rect.left, 
-          top: rect.top, 
-          width: rect.width, 
-          height: rect.height,
-          centerX: rect.left + rect.width / 2,
-          centerY: rect.top + rect.height / 2
-        });
-        
-        // Возвращаем точный центр с небольшой коррекцией
-        return {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2
-        };
-      }
-      return null;
+      console.log('getImagePosition called, stabilized:', imageStabilized);
+      return getPreciseImageCoordinates();
     },
     getImageSize: () => {
       if (imageRef.current) {
@@ -96,9 +189,11 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
         };
       }
       // Fallback размеры с учетом устройства
-      return isMobile 
+      const fallbackSize = isMobile 
         ? { width: 240, height: 320 }
         : { width: 300, height: 400 };
+      console.log('Using fallback image size:', fallbackSize);
+      return fallbackSize;
     }
   }));
 
@@ -131,12 +226,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
             transition: 'opacity 200ms ease-out'
           }}
           onLoad={() => {
-            // Дополнительная проверка после загрузки изображения
-            console.log('Image loaded, final position check');
-            if (onPanelReady && imageRef.current) {
-              const rect = imageRef.current.getBoundingClientRect();
-              console.log('Image loaded position:', rect);
-            }
+            console.log('Image loaded, starting stabilization process');
+            waitForStabilization();
           }}
         />
       </div>
