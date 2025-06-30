@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -28,11 +29,11 @@ const About: React.FC = () => {
           <ScrollReveal delay={600} stagger={true}>
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
               Всё началось с простой идеи — создать интерактивную галерею для музыкальных обложек. 
-              Но вместо традиционной разработки, я решил попробовать что-то революционное.
+              Но вместо традиционной разработки, мы решили попробовать что-то революционное.
             </p>
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
-              Lovable AI стал моим партнёром в этом проекте. Через естественный диалог на русском языке 
-              я описывал желаемые функции, а ИИ мгновенно воплощал их в код.
+              Lovable AI стал нашим партнёром в этом проекте. Через естественный диалог на русском языке 
+              мы описывали желаемые функции, а ИИ мгновенно воплощал их в код.
             </p>
             <p className="text-stone-200 leading-relaxed mb-6 text-3xl font-extrabold">
               Каждая строчка кода, каждая анимация, каждый компонент — всё создавалось в реальном времени 
