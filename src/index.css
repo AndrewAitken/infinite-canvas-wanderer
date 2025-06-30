@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optimized YS Text Font Loading - only essential weights */
+/* Mobile-first font loading strategy */
 @font-face {
   font-family: 'YS Text';
   src: url('/YS Text-Regular.ttf') format('truetype');
@@ -20,12 +20,15 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'YS Text';
-  src: url('/YS Text-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+/* Bold font only loaded on larger screens */
+@media (min-width: 768px) {
+  @font-face {
+    font-family: 'YS Text';
+    src: url('/YS Text-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
 }
 
 /* Design system colors and variables */
@@ -101,39 +104,72 @@
     @apply bg-background text-foreground;
     font-family: 'YS Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: hsl(var(--background));
-    background-image: 
-      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
-    background-size: 20px 20px;
-    /* Optimize for mobile performance */
+    
+    /* Mobile-optimized font rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
+    
+    /* Mobile-specific optimizations */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    /* Desktop background pattern */
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
+    background-size: 20px 20px;
   }
 
   .dark body {
     background-color: #191817;
-    background-image: 
-      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
     background-size: 20px 20px;
   }
 
   /* Mobile-specific optimizations */
   @media (max-width: 768px) {
     body {
-      /* Disable background pattern on mobile for better performance */
-      background-image: none;
+      /* Remove background pattern on mobile for performance */
+      background-image: none !important;
+      
       /* Improve touch responsiveness */
       touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+      
+      /* Optimize scrolling performance */
+      -webkit-overflow-scrolling: touch;
+      
+      /* Reduce font weight on mobile to improve performance */
+      font-weight: 400;
     }
     
     .dark body {
-      background-image: none;
+      background-image: none !important;
+    }
+    
+    /* Disable hover effects on mobile */
+    .hover\:scale-110:hover {
+      transform: none !important;
+    }
+    
+    /* Optimize animations for mobile */
+    * {
+      animation-duration: 0.2s !important;
+      transition-duration: 0.2s !important;
+    }
+  }
+
+  /* Very small screens optimizations */
+  @media (max-width: 480px) {
+    body {
+      font-size: 14px;
     }
   }
 }
 
-/* Optimized animation for mobile */
+/* Mobile-optimized animations */
 @keyframes scale-from-zero {
   0% {
     transform: scale(0);
@@ -149,11 +185,11 @@
   }
 }
 
-/* Mobile-optimized animations */
+/* Simplified mobile animations */
 @media (max-width: 768px) {
   @keyframes scale-from-zero {
     0% {
-      transform: scale(0.8);
+      transform: scale(0.9);
       opacity: 0;
     }
     100% {
@@ -163,7 +199,7 @@
   }
 }
 
-/* Accessibility support */
+/* Accessibility and performance optimizations */
 @media (prefers-reduced-motion: reduce) {
   @keyframes scale-from-zero {
     0% {
@@ -178,5 +214,25 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Touch-specific utilities */
+@layer utilities {
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+  
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+  
+  .touch-pan-x-y {
+    touch-action: pan-x pan-y;
   }
 }

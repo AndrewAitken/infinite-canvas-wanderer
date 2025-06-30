@@ -11,17 +11,18 @@ import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, ge
 import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
 
-// Размеры сетки с учетом планшета
-const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
-const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
-const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
-const BUFFER_SIZE = 2; // Extra cells to render outside viewport
+// Mobile-optimized grid sizes
+const GRID_SIZE_DESKTOP = 400;
+const GRID_SIZE_TABLET = 320; // Reduced for better performance
+const GRID_SIZE_MOBILE = 280; // Further reduced for mobile
+const BUFFER_SIZE_DESKTOP = 2;
+const BUFFER_SIZE_MOBILE = 1; // Reduced buffer for mobile performance
 
-// Настройки автоскролла - отключаем на мобильных устройствах
+// Auto-scroll completely disabled on mobile for better performance
 const getAutoScrollConfig = (isMobile: boolean) => ({
-  speedX: isMobile ? 0 : 25, // Отключаем автоскролл на мобильных
+  speedX: isMobile ? 0 : 25,
   speedY: isMobile ? 0 : -20,
-  enabled: !isMobile, // Полностью отключаем на мобильных
+  enabled: !isMobile,
 });
 
 const InfiniteCanvas: React.FC = () => {
@@ -39,18 +40,19 @@ const InfiniteCanvas: React.FC = () => {
   } | null>(null);
   const [isGridAligned, setIsGridAligned] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
-  console.log(`📱 Device detection - Mobile: ${isMobile}, Tablet: ${isTablet}`);
+  console.log(`📱 Canvas render - Mobile: ${isMobile}, Tablet: ${isTablet}`);
   
   const allAlbums = getAllAlbums();
   const { animationState, startFlyingAnimation, setAnimationPhase, stopFlyingAnimation } = useFlyingAnimation();
   
-  // Определяем размер сетки в зависимости от устройства
+  // Mobile-optimized grid and buffer sizes
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
+  const bufferSize = isMobile ? BUFFER_SIZE_MOBILE : BUFFER_SIZE_DESKTOP;
   
-  // Автоскролл с учетом мобильных устройств
   const autoScrollConfig = getAutoScrollConfig(isMobile);
   const {
     offset: autoScrollOffset,
@@ -60,38 +62,55 @@ const InfiniteCanvas: React.FC = () => {
     setEnabled: setAutoScrollEnabled,
   } = useAutoScroll(autoScrollConfig);
 
-  // Перетаскивание с интеграцией автоскролла
+  // Mobile-optimized drag configuration
   const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag({
     externalOffset: autoScrollOffset,
     onDragStart: pauseAutoScroll,
     onDragEnd: resumeAutoScroll,
   });
 
-  // Update canvas size on window resize
+  // Debounced resize handler for better mobile performance
   useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+    
     const updateSize = () => {
       if (canvasRef.current) {
         const newSize = {
           width: window.innerWidth,
           height: window.innerHeight,
         };
-        console.log(`📐 Canvas size updated:`, newSize);
+        console.log(`📐 Canvas size updated (mobile: ${isMobile}):`, newSize);
         setCanvasSize(newSize);
       }
     };
     
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateSize, isMobile ? 150 : 100); // Longer debounce on mobile
+    };
+    
     updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
+    window.addEventListener('resize', debouncedResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updateSize, 200); // Wait for orientation change to complete
+    });
+    
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+      window.removeEventListener('orientationchange', updateSize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [isMobile]);
   
   const visibleItems = useVirtualization({
     offset,
     canvasSize,
     gridSize,
-    bufferSize: BUFFER_SIZE,
+    bufferSize,
     isGridAligned,
   });
+
+  console.log(`🎯 Rendering ${visibleItems.length} items (mobile: ${isMobile})`);
 
   const handleGridToggle = useCallback(() => {
     console.log(`🔄 Grid toggle - Aligned: ${!isGridAligned}`);
@@ -100,8 +119,8 @@ const InfiniteCanvas: React.FC = () => {
     
     setTimeout(() => {
       setIsTransitioning(false);
-    }, 800);
-  }, [isGridAligned]);
+    }, isMobile ? 400 : 800); // Faster transitions on mobile
+  }, [isGridAligned, isMobile]);
 
   // Приостанавливаем автоскролл при открытии панели
   useEffect(() => {
@@ -144,13 +163,13 @@ const InfiniteCanvas: React.FC = () => {
             );
           }
           setPendingAnimation(null);
-        }, 600);
+        }, isMobile ? 300 : 600); // Faster fallback on mobile
       }
     }
-  }, [pendingAnimation, startFlyingAnimation]);
+  }, [pendingAnimation, startFlyingAnimation, isMobile]);
 
   const handleAlbumClick = useCallback((imageUrl: string, clickPosition: { x: number; y: number }) => {
-    console.log(`🎨 Album clicked: ${imageUrl}`);
+    console.log(`🎨 Album clicked (mobile: ${isMobile}): ${imageUrl}`);
     
     const albumData = getAlbumData(imageUrl);
     const albumIndex = getAlbumIndex(imageUrl);
@@ -164,7 +183,7 @@ const InfiniteCanvas: React.FC = () => {
     setShowStaticImage(false);
     
     setPendingAnimation({ imageUrl, clickPosition });
-  }, []);
+  }, [isMobile]);
 
   const handleFlyingAnimationReachTarget = useCallback(() => {
     setShowStaticImage(true);
@@ -212,16 +231,21 @@ const InfiniteCanvas: React.FC = () => {
         ref={canvasRef}
         className={`fixed inset-0 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ${
           isPanelOpen ? 'backdrop-blur-sm bg-background/80' : ''
-        }`}
+        } ${isMobile ? 'touch-pan-x touch-pan-y' : ''}`}
         onMouseDown={!isMobile ? handleMouseDown : undefined}
         onTouchStart={isMobile ? handleTouchStart : undefined}
-        style={{ cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab' }}
+        style={{ 
+          cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab',
+          WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
+          touchAction: isMobile ? 'pan-x pan-y' : 'auto'
+        }}
       >
         <div
           className="relative"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
-            transition: isDragging || isMomentum ? 'none' : 'transform 0.3s ease-out',
+            transition: isDragging || isMomentum ? 'none' : `transform ${isMobile ? '0.2s' : '0.3s'} ease-out`,
+            willChange: isDragging || isMomentum ? 'transform' : 'auto', // Optimize for mobile
           }}
         >
           {visibleItems.map((item) => {
