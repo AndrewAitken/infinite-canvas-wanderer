@@ -13,7 +13,7 @@ const About: React.FC = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={200}>
-          <h1 className="text-5xl mb-8 text-foreground font-extrabold">Как мы сделали RFD MUSEUM</h1>
+          <h1 className="mb-8 text-foreground font-extrabold text-4xl">Как мы сделали RFD MUSEUM</h1>
         </ScrollReveal>
 
         <ScrollReveal delay={400}>
@@ -37,8 +37,8 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={800}>
             <section>
-              <h2 className="text-3xl font-semibold mb-8 text-foreground">Под капотом</h2>
-              <div className="bg-card p-8 rounded-xl border border-border">
+              <h2 className="text-3xl mb-8 text-foreground font-extrabold">Под капотом</h2>
+              <div className="bg-card p-8 border border-border rounded-[40px]">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-xl font-medium mb-4 text-foreground">Основа</h3>
@@ -78,9 +78,9 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={1200}>
             <section>
-              <h2 className="mb-8 text-foreground font-extrabold text-3xl">Интересное</h2>
+              <h2 className="text-3xl mb-8 text-foreground font-extrabold">Интересное</h2>
               <div className="space-y-6">
-                <div className="bg-card p-6 rounded-xl border border-border">
+                <div className="bg-card p-8 border border-border rounded-[40px]">
                   <h3 className="text-xl font-medium mb-3 text-foreground">Виртуализация бесконечного канваса</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Система отображает только видимые элементы, позволяя показывать тысячи обложек 
@@ -88,7 +88,7 @@ const About: React.FC = () => {
                     при прокрутке.
                   </p>
                 </div>
-                <div className="bg-card p-6 rounded-xl border border-border">
+                <div className="bg-card p-8 border border-border rounded-[40px]">
                   <h3 className="text-xl font-medium mb-3 text-foreground">Алгоритм Poisson Disk Sampling</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Математический алгоритм для создания естественного размещения элементов 
@@ -96,7 +96,7 @@ const About: React.FC = () => {
                     место в пространстве.
                   </p>
                 </div>
-                <div className="bg-card p-6 rounded-xl border border-border">
+                <div className="bg-card p-8 border border-border rounded-[40px]">
                   <h3 className="text-xl font-medium mb-3 text-foreground">Детерминированная рандомизация</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Позиции и анимации генерируются псевдослучайно, но остаются стабильными 
@@ -122,7 +122,7 @@ const About: React.FC = () => {
           <ScrollReveal delay={1600}>
             <section>
               <h2 className="mb-8 text-foreground font-extrabold text-3xl">Визуал</h2>
-              <div className="bg-card p-8 rounded-xl border border-border">
+              <div className="bg-card p-8 border border-border rounded-[40px]">
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
@@ -165,8 +165,8 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={2000}>
             <section>
-              <h2 className="mb-8 text-foreground font-extrabold text-3xl">Производительность</h2>
-              <div className="bg-card p-8 rounded-xl border border-border">
+              <h2 className="mb-8 text-foreground font-extrabold text-3xl">Ещё интересное</h2>
+              <div className="bg-card p-8 border border-border rounded-[40px]">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-xl font-medium mb-4 text-foreground">Оптимизации</h3>
