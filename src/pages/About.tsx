@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -205,11 +204,6 @@ const About: React.FC = () => {
             <p className="text-foreground leading-relaxed mb-6 text-3xl font-extrabold">
               RFD MUSEUM — это больше, чем просто галерея. Это демонстрация возможностей 
               современных веб-технологий и искусственного интеллекта.
-            </p>
-            
-            <p className="text-foreground leading-relaxed mb-6 text-3xl font-extrabold">
-              Это пример того, как ИИ может стать креативным партнёром в создании 
-              по-настоящему инновационных интерфейсов.
             </p>
           </ScrollReveal>
 
