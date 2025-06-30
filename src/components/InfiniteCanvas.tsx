@@ -11,17 +11,17 @@ import { getAlbumData, Album, getAlbumIndex, getAllAlbums, getNextAlbumIndex, ge
 import { useIsMobile } from '../hooks/use-mobile';
 import { useIsTablet } from '../hooks/use-tablet';
 
-// Размеры сетки с учетом планшета
-const GRID_SIZE_DESKTOP = 400; // 248px элемент + ~152px отступы (минимум 100px)
-const GRID_SIZE_TABLET = 312; // 248px элемент + ~64px отступы (минимум 56px)
-const GRID_SIZE_MOBILE = 346; // 250px элемент + ~96px отступы (минимум 48px горизонтально)
-const BUFFER_SIZE = 2; // Extra cells to render outside viewport
+// Grid sizes for different devices
+const GRID_SIZE_DESKTOP = 400;
+const GRID_SIZE_TABLET = 312;
+const GRID_SIZE_MOBILE = 346;
+const BUFFER_SIZE = 2;
 
-// Настройки автоскролла - отключаем на мобильных устройствах
+// Auto-scroll configuration - disabled on mobile
 const getAutoScrollConfig = (isMobile: boolean) => ({
-  speedX: isMobile ? 0 : 25, // Отключаем автоскролл на мобильных
+  speedX: isMobile ? 0 : 25,
   speedY: isMobile ? 0 : -20,
-  enabled: !isMobile, // Полностью отключаем на мобильных
+  enabled: !isMobile,
 });
 
 const InfiniteCanvas: React.FC = () => {
@@ -47,10 +47,8 @@ const InfiniteCanvas: React.FC = () => {
   const allAlbums = getAllAlbums();
   const { animationState, startFlyingAnimation, setAnimationPhase, stopFlyingAnimation } = useFlyingAnimation();
   
-  // Определяем размер сетки в зависимости от устройства
   const gridSize = isMobile ? GRID_SIZE_MOBILE : isTablet ? GRID_SIZE_TABLET : GRID_SIZE_DESKTOP;
   
-  // Автоскролл с учетом мобильных устройств
   const autoScrollConfig = getAutoScrollConfig(isMobile);
   const {
     offset: autoScrollOffset,
@@ -60,7 +58,7 @@ const InfiniteCanvas: React.FC = () => {
     setEnabled: setAutoScrollEnabled,
   } = useAutoScroll(autoScrollConfig);
 
-  // Перетаскивание с интеграцией автоскролла
+  // Universal drag handlers that work on both desktop and mobile
   const { offset, isDragging, isMomentum, handleMouseDown, handleTouchStart } = useDrag({
     externalOffset: autoScrollOffset,
     onDragStart: pauseAutoScroll,
@@ -103,11 +101,11 @@ const InfiniteCanvas: React.FC = () => {
     }, 800);
   }, [isGridAligned]);
 
-  // Приостанавливаем автоскролл при открытии панели
+  // Pause auto-scroll when panel is open
   useEffect(() => {
     if (isPanelOpen) {
       pauseAutoScroll();
-    } else if (!isMobile) { // Возобновляем только если не мобильное устройство
+    } else if (!isMobile) {
       resumeAutoScroll();
     }
   }, [isPanelOpen, pauseAutoScroll, resumeAutoScroll, isMobile]);
@@ -206,6 +204,17 @@ const InfiniteCanvas: React.FC = () => {
     setPendingAnimation(null);
   }, []);
 
+  // Universal event handler that works for both mouse and touch
+  const handlePointerStart = useCallback((e: React.PointerEvent) => {
+    console.log('👆 Pointer start:', e.pointerType);
+    
+    if (e.pointerType === 'mouse') {
+      handleMouseDown(e as any);
+    } else if (e.pointerType === 'touch') {
+      handleTouchStart(e as any);
+    }
+  }, [handleMouseDown, handleTouchStart]);
+
   return (
     <>
       <div
@@ -213,9 +222,13 @@ const InfiniteCanvas: React.FC = () => {
         className={`fixed inset-0 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ${
           isPanelOpen ? 'backdrop-blur-sm bg-background/80' : ''
         }`}
-        onMouseDown={!isMobile ? handleMouseDown : undefined}
-        onTouchStart={isMobile ? handleTouchStart : undefined}
-        style={{ cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab' }}
+        onPointerDown={handlePointerStart}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        style={{ 
+          cursor: isDragging ? 'grabbing' : isMomentum ? 'grabbing' : 'grab',
+          touchAction: 'none' // Prevent default touch behaviors
+        }}
       >
         <div
           className="relative"

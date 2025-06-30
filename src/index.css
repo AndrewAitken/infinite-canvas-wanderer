@@ -108,6 +108,13 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
+    /* Mobile touch optimizations */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .dark body {
@@ -124,12 +131,38 @@
       background-image: none;
       /* Improve touch responsiveness */
       touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
     }
     
     .dark body {
       background-image: none;
     }
+    
+    /* Optimize mobile scrolling and touch */
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+  /* Prevent unwanted selections and callouts */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in specific areas */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 }
 
