@@ -1,5 +1,4 @@
-
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 
 interface CoverSquareProps {
@@ -38,9 +37,49 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   isTransitioning = false
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
   
-  // Array of RFD album cover images
-  const albumCovers = ['/RFD 06.09.2024.jpg', '/RFD01111024.jpg', '/RFD03102024.jpg', '/RFD04042025.jpg', '/RFD08112024-1.jpg', '/RFD08112024.jpg', '/RFD13122024.jpg', '/RFD14022025.jpg', '/RFD14032025.jpg', '/RFD17012025.jpg', '/RFD181024.jpg', '/RFD21032025.jpg', '/RFD22112024.jpg', '/RFD23082024.jpg', '/RFD24012025.jpg', '/RFD251024.jpg', '/RFD27092024.jpg', '/RFD28032025.jpg', '/RFD29112024.jpg', '/RFD30082024.jpg', '/RFD31012025.jpg', '/RFD_20.06.2025.jpg'];
+  // Array of RFD album cover images from covers folder
+  const albumCovers = [
+    '/covers/06.06.2025.jpg',
+    '/covers/16.05.2025.jpg', 
+    '/covers/2.jpg',
+    '/covers/25.04.2025.jpg',
+    '/covers/30.05.2025.jpg',
+    '/covers/Frame 21.jpg',
+    '/covers/Frame 22.jpg',
+    '/covers/RFD 06.09.2024.jpg',
+    '/covers/RFD01111024.jpg',
+    '/covers/RFD03102024.jpg',
+    '/covers/RFD04042025.jpg',
+    '/covers/RFD08112024-1.jpg',
+    '/covers/RFD08112024.jpg',
+    '/covers/RFD13122024.jpg',
+    '/covers/RFD14022025.jpg',
+    '/covers/RFD14032025.jpg',
+    '/covers/RFD17012025.jpg',
+    '/covers/RFD181024.jpg',
+    '/covers/RFD21032025.jpg',
+    '/covers/RFD22112024.jpg',
+    '/covers/RFD23082024.jpg',
+    '/covers/RFD24012025.jpg',
+    '/covers/RFD251024.jpg',
+    '/covers/RFD27092024.jpg',
+    '/covers/RFD28032025.jpg',
+    '/covers/RFD29112024.jpg',
+    '/covers/RFD30082024.jpg',
+    '/covers/RFD31012025.jpg',
+    '/covers/RFD_20.06.2025.jpg',
+    '/covers/rfd_12.07.2024.jpg',
+    '/covers/rfd_16.08.2024.jpg',
+    '/covers/rfd_19.07.2024.jpg',
+    '/covers/rfd_2.08.2024.jpg',
+    '/covers/rfd_21.06.2024.jpg',
+    '/covers/rfd_25.07.2024.jpg',
+    '/covers/rfd_28.06.2024.jpg'
+  ];
 
   // Improved album cover selection with point index
   const getAlbumCover = (gx: number, gy: number, pIndex: number) => {
@@ -92,9 +131,29 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
 
   const albumCover = getAlbumCover(gridX, gridY, pointIndex);
   const appearAnimation = useAppearAnimation({
-    gridX: gridX + pointIndex, // Уникальный seed для анимации
+    gridX: gridX + pointIndex,
     gridY: gridY + pointIndex * 2
   });
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    console.warn(`Failed to load image: ${albumCover}`);
+    setIsLoading(false);
+    
+    if (retryCount < 2) {
+      setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+        setImageError(false);
+        setIsLoading(true);
+      }, 1000 * (retryCount + 1));
+    } else {
+      setImageError(true);
+    }
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -129,8 +188,32 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
       }} onClick={handleClick} className="rounded-xl shadow-lg 
                    transition-all duration-300 ease-out
                    hover:scale-110 hover:shadow-xl cursor-pointer
-                   overflow-hidden">
-        <img src={albumCover} alt={`Album cover ${gridX},${gridY}-${pointIndex}`} className="w-full h-full object-cover" draggable={false} loading="lazy" />
+                   overflow-hidden relative">
+        
+        {isLoading && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-xl flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        
+        {imageError ? (
+          <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 rounded-xl flex items-center justify-center">
+            <div className="text-center text-gray-600">
+              <div className="text-2xl mb-2">🎵</div>
+              <div className="text-sm">RFD</div>
+            </div>
+          </div>
+        ) : (
+          <img 
+            src={`${albumCover}?retry=${retryCount}`}
+            alt={`Album cover ${gridX},${gridY}-${pointIndex}`} 
+            className="w-full h-full object-cover" 
+            draggable={false} 
+            loading="lazy"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
       </div>
     </div>
   );

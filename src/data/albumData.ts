@@ -8,40 +8,82 @@ export interface Album {
 }
 
 export const albumData: Record<string, Album> = {
-  '/RFD 06.09.2024.jpg': {
+  '/covers/RFD 06.09.2024.jpg': {
     id: '1',
     title: '#1',
     artist: 'RFD',
     description: '#1',
-    imageUrl: '/RFD 06.09.2024.jpg'
+    imageUrl: '/covers/RFD 06.09.2024.jpg'
   },
-  '/RFD01111024.jpg': {
+  '/covers/RFD01111024.jpg': {
     id: '2',
     title: '#2',
     artist: 'RFD',
     description: '#2',
-    imageUrl: '/RFD01111024.jpg'
+    imageUrl: '/covers/RFD01111024.jpg'
   },
-  '/RFD03102024.jpg': {
+  '/covers/RFD03102024.jpg': {
     id: '3',
     title: '#3',
     artist: 'RFD',
     description: '#3',
-    imageUrl: '/RFD03102024.jpg'
+    imageUrl: '/covers/RFD03102024.jpg'
   },
-  '/16.05.2025.jpg': {
+  '/covers/16.05.2025.jpg': {
     id: '4',
     title: '#4',
     artist: 'RFD',
     description: '#4',
-    imageUrl: '/16.05.2025.jpg'
+    imageUrl: '/covers/16.05.2025.jpg'
   },
-  '/RFD22112024.jpg': {
+  '/covers/RFD22112024.jpg': {
     id: '5',
     title: '#5',
     artist: 'RFD',
     description: '#5',
-    imageUrl: '/RFD22112024.jpg'
+    imageUrl: '/covers/RFD22112024.jpg'
+  },
+  '/covers/06.06.2025.jpg': {
+    id: '6',
+    title: '#6',
+    artist: 'RFD',
+    description: '#6',
+    imageUrl: '/covers/06.06.2025.jpg'
+  },
+  '/covers/2.jpg': {
+    id: '7',
+    title: '#7',
+    artist: 'RFD',
+    description: '#7',
+    imageUrl: '/covers/2.jpg'
+  },
+  '/covers/25.04.2025.jpg': {
+    id: '8',
+    title: '#8',
+    artist: 'RFD',
+    description: '#8',
+    imageUrl: '/covers/25.04.2025.jpg'
+  },
+  '/covers/30.05.2025.jpg': {
+    id: '9',
+    title: '#9',
+    artist: 'RFD',
+    description: '#9',
+    imageUrl: '/covers/30.05.2025.jpg'
+  },
+  '/covers/Frame 21.jpg': {
+    id: '10',
+    title: '#10',
+    artist: 'RFD',
+    description: '#10',
+    imageUrl: '/covers/Frame 21.jpg'
+  },
+  '/covers/Frame 22.jpg': {
+    id: '11',
+    title: '#11',
+    artist: 'RFD',
+    description: '#11',
+    imageUrl: '/covers/Frame 22.jpg'
   }
 };
 
