@@ -9,8 +9,65 @@ const MusicPlayer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
   const [audioError, setAudioError] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<string>('default');
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+
+  // Check if Permissions API is supported
+  const isPermissionsAPISupported = 'permissions' in navigator;
+
+  // Request media permissions
+  const requestMediaPermission = async (): Promise<boolean> => {
+    if (!isPermissionsAPISupported) {
+      console.log('Permissions API not supported, proceeding with direct play attempt');
+      return true;
+    }
+
+    try {
+      // Try to query autoplay permission
+      const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      setPermissionStatus(permission.state);
+      
+      if (permission.state === 'granted') {
+        return true;
+      } else if (permission.state === 'prompt') {
+        toast({
+          title: "Разрешение на воспроизведение",
+          description: "Нажмите play для запроса разрешения на воспроизведение музыки",
+        });
+        return true;
+      } else {
+        toast({
+          title: "Разрешение отклонено",
+          description: "Разрешите воспроизведение музыки в настройках браузера",
+          variant: "destructive",
+        });
+        return false;
+      }
+    } catch (error) {
+      console.log('Permission query failed, proceeding anyway:', error);
+      return true;
+    }
+  };
+
+  // Setup Media Session API
+  const setupMediaSession = () => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Flawed Mangoes Swimming',
+        artist: 'Unknown Artist',
+        album: 'Background Music',
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        togglePlayback();
+      });
+
+      navigator.mediaSession.setActionHandler('pause', () => {
+        togglePlayback();
+      });
+    }
+  };
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -18,6 +75,9 @@ const MusicPlayer: React.FC = () => {
 
     const handleEnded = () => {
       setIsPlaying(false);
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
     };
 
     const handleCanPlay = () => {
@@ -32,7 +92,7 @@ const MusicPlayer: React.FC = () => {
       setIsPlaying(false);
       toast({
         title: "Ошибка загрузки",
-        description: "Не удалось загрузить аудиофайл. Проверьте подключение к интернету.",
+        description: "Не удалось загрузить аудиофайл",
         variant: "destructive",
       });
     };
@@ -41,16 +101,35 @@ const MusicPlayer: React.FC = () => {
       setIsLoading(true);
     };
 
+    const handlePlay = () => {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
+    };
+
+    const handlePause = () => {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+    };
+
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('error', handleError);
     audio.addEventListener('loadstart', handleLoadStart);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    // Setup media session
+    setupMediaSession();
 
     return () => {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('error', handleError);
       audio.removeEventListener('loadstart', handleLoadStart);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
     };
   }, [toast]);
 
@@ -65,10 +144,19 @@ const MusicPlayer: React.FC = () => {
         audio.pause();
         setIsPlaying(false);
       } else {
+        // Request permission before first play
+        if (!hasPlayedOnce) {
+          const hasPermission = await requestMediaPermission();
+          if (!hasPermission) {
+            setIsLoading(false);
+            return;
+          }
+        }
+
         await audio.play();
         setIsPlaying(true);
         
-        // Показать уведомление только при первом успешном запуске
+        // Show success notification only on first successful play
         if (!hasPlayedOnce) {
           setHasPlayedOnce(true);
           toast({
@@ -81,11 +169,28 @@ const MusicPlayer: React.FC = () => {
       console.error('Playback error:', error);
       setIsPlaying(false);
       
-      toast({
-        title: "Ошибка воспроизведения",
-        description: "Не удалось запустить музыку. Попробуйте еще раз.",
-        variant: "destructive",
-      });
+      // Handle different types of errors
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          toast({
+            title: "Воспроизведение заблокировано",
+            description: "Разрешите автоматическое воспроизведение в настройках браузера",
+            variant: "destructive",
+          });
+        } else if (error.name === 'NotSupportedError') {
+          toast({
+            title: "Формат не поддерживается",
+            description: "Ваш браузер не поддерживает данный аудиоформат",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Ошибка воспроизведения",
+            description: "Не удалось запустить музыку. Попробуйте еще раз.",
+            variant: "destructive",
+          });
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +202,7 @@ const MusicPlayer: React.FC = () => {
         ref={audioRef} 
         src="/Flawed Mangoes Swimming.mp3" 
         loop 
-        preload="auto"
+        preload="metadata"
       />
       <Button
         onClick={togglePlayback}
