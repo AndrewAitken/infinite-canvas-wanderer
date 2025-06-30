@@ -8,26 +8,32 @@ import useSound from 'use-sound';
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
+  const [audioError, setAudioError] = useState(false);
   const { toast } = useToast();
 
-  // Primary audio file with fallback
-  const [play, { stop, isLoading, error }] = useSound('/bgRFD2.mp3', {
+  // Primary audio file
+  const [play, { stop }] = useSound('/bgRFD2.mp3', {
     loop: true,
     volume: 0.7,
     onload: () => {
-      console.log('✅ Audio loaded successfully');
+      console.log('✅ Primary audio loaded successfully');
+      setAudioError(false);
     },
     onloaderror: () => {
       console.log('❌ Primary file failed, trying fallback');
+      setAudioError(true);
     }
   });
 
   // Fallback audio file
-  const [playFallback, { stop: stopFallback, isLoading: isLoadingFallback, error: errorFallback }] = useSound('/bgRFD.mp3', {
+  const [playFallback, { stop: stopFallback }] = useSound('/bgRFD.mp3', {
     loop: true,
     volume: 0.7,
     onload: () => {
       console.log('✅ Fallback audio loaded successfully');
+    },
+    onloaderror: () => {
+      console.log('❌ Fallback file also failed');
     }
   });
 
@@ -72,17 +78,15 @@ const MusicPlayer: React.FC = () => {
         console.log('▶️ Starting audio playback');
         
         // Try primary file first
-        if (!error) {
+        if (!audioError) {
           play();
           setIsPlaying(true);
           console.log('✅ Playing primary file');
-        } else if (!errorFallback) {
+        } else {
           // If primary failed, try fallback
           playFallback();
           setIsPlaying(true);
           console.log('✅ Playing fallback file');
-        } else {
-          throw new Error('Both audio files failed to load');
         }
 
         // Show success notification only on first successful play
@@ -106,13 +110,9 @@ const MusicPlayer: React.FC = () => {
     }
   };
 
-  const currentlyLoading = isLoading || isLoadingFallback;
-  const hasAudioError = error && errorFallback;
-
   return (
     <Button
       onClick={togglePlayback}
-      disabled={currentlyLoading || hasAudioError}
       size="icon"
       variant="outline"
       className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-white/30 backdrop-blur-md border-2 border-gray-100 hover:bg-white/40 hover:border-gray-200 dark:bg-stone-800/30 dark:border-stone-700 dark:hover:bg-stone-800/40 dark:hover:border-stone-600 transition-all duration-200"
@@ -121,9 +121,7 @@ const MusicPlayer: React.FC = () => {
         backdropFilter: 'blur(12px)'
       }}
     >
-      {currentlyLoading ? (
-        <div className="w-6 h-6 border-2 border-gray-700 dark:border-white border-t-transparent rounded-full animate-spin" />
-      ) : isPlaying ? (
+      {isPlaying ? (
         <Pause className="w-6 h-6 text-gray-700 dark:text-white" />
       ) : (
         <Play className="w-6 h-6 text-gray-700 dark:text-white ml-0.5" />
