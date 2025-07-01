@@ -22,13 +22,8 @@ const About: React.FC = () => {
 
         <div className="space-y-20">
           <ScrollReveal delay={600} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Этот проект — галерея музыкальных обложек RFD. 
-              Вместо обычной разработки решили попробовать новый подход с ИИ.
-            </p>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Описывали на русском языке что хотим, а Lovable AI сразу писал код и показывал результат.
-            </p>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">Это интерактивная галерея-музей обложек RFD. Мы решили попробовать поэкспериментировать и создать такой проект с помощью вайбкодинга и без отрисовки макетов в Figma.</p>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">Описывали все задачи на русском языке, а Lovable сразу писал код и показывал результат.</p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
               Получилась галерея, где можно листать обложки, слушать музыку 
               и переключаться между светлой и тёмной темами.
@@ -64,14 +59,8 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1000} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Основная задача — показать много обложек без тормозов. 
-              Сделали виртуализацию: показываем только видимые картинки.
-            </p>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Для размещения обложек используется алгоритм Poisson Disk Sampling, который расставляет их 
-              естественно, но не случайно — каждый раз в одних местах.
-            </p>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">Основная задача — интересно и в движении показать все обложки. Сделали виртуализацию: показываем только видимые картинки и они зацикливается при исчезали с экрана.</p>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">Для размещения обложек в пространстве используется алгоритм Poisson Disk Sampling, который расставляет их естественно, но не случайно — каждый раз в одних местах.</p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
               Картинки появляются мгновенно при попадании в область видимости без всяких задержек.
             </p>
@@ -81,21 +70,21 @@ const About: React.FC = () => {
             <section>
               <h2 className="text-3xl mb-8 text-foreground font-bold">Как это работает</h2>
               <div className="space-y-6">
-                <div className="bg-card p-6 border border-border rounded-2xl">
+                <div className="bg-card p-8 border border-border rounded-3xl">
                   <h3 className="text-lg font-medium mb-3 text-foreground">Виртуализация</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Показываем только видимые обложки. Остальные создаются при прокрутке. 
                     Поэтому можно листать много картинок без зависаний.
                   </p>
                 </div>
-                <div className="bg-card p-6 border border-border rounded-2xl">
+                <div className="bg-card p-8 border border-border rounded-3xl">
                   <h3 className="text-lg font-medium mb-3 text-foreground">Poisson Disk Sampling</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Алгоритм расставляет обложки так, чтобы они не налезали друг на друга, 
                     но выглядели естественно. У каждой своё фиксированное место.
                   </p>
                 </div>
-                <div className="bg-card p-6 border border-border rounded-2xl">
+                <div className="bg-card p-8 border border-border rounded-3xl">
                   <h3 className="text-lg font-medium mb-3 text-foreground">Momentum Scrolling</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Реализована инерция при перетаскивании — галерея продолжает двигаться 
@@ -107,19 +96,15 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1400} stagger={true}>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">С Web Audio API было проще — браузеры не любят автопроигрывание. Поэтому сделали кнопку включения и паузы (хотя хотелось бы на фоне включать).</p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
-              С Web Audio API было проще — браузеры не любят автопроигрывание. 
-              Поэтому сделали уведомления, которые помогают включить звук.
-            </p>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Плеер появляется только когда нужен и выглядит аккуратно.
-            </p>
+          </p>
           </ScrollReveal>
 
           <ScrollReveal delay={1600}>
             <section>
-              <h2 className="mb-8 text-foreground font-bold text-3xl">Что получилось</h2>
-              <div className="bg-card p-6 border border-border rounded-2xl">
+              <h2 className="mb-8 text-foreground font-bold text-3xl">Что в итоге получилось</h2>
+              <div className="bg-card p-8 border border-border rounded-3xl">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
@@ -147,10 +132,7 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={1800} stagger={true}>
-            <p className="text-foreground leading-relaxed mb-6 text-xl">
-              Интерфейс продуман для удобства. Используем CSS Grid и Flexbox 
-              для адаптивной вёрстки, которая раньше требовала сложного кода.
-            </p>
+            <p className="text-foreground leading-relaxed mb-6 text-xl">Используем CSS Grid и Flexbox для адаптивной вёрстки, которая раньше требовала сложного кода.</p>
             <p className="text-foreground leading-relaxed mb-6 text-xl">
               CSS Custom Properties обеспечивают плавное переключение тем — каждый элемент меняется синхронно.
             </p>
@@ -158,7 +140,7 @@ const About: React.FC = () => {
 
           <ScrollReveal delay={2000}>
             <section>
-              <h2 className="mb-8 text-foreground font-bold text-3xl">Техническая реализация</h2>
+              <h2 className="mb-8 text-foreground font-bold text-3xl">Как этот работает</h2>
               <div className="bg-card p-6 border border-border rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -185,7 +167,7 @@ const About: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={2200}>
-            <p className="text-foreground leading-relaxed mb-6 text-xl text-center">
+            <p className="text-foreground leading-relaxed mb-6 text-center text-3xl font-extrabold">
               RFD MUSEUM — галерея, созданная с помощью ИИ за несколько часов.
             </p>
           </ScrollReveal>
