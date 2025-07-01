@@ -89,5 +89,5 @@ export const useVirtualization = ({
     }
 
     return items;
-  }, [offset, canvasSize, gridSize, bufferSize, isGridAligned]);
+  }, [offset.x, offset.y, canvasSize.width, canvasSize.height, gridSize, bufferSize, isGridAligned]);
 };

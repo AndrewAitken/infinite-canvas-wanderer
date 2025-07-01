@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, memo } from 'react';
 import { useAppearAnimation } from '../hooks/useAppearAnimation';
 import SimpleImage from './SimpleImage';
 
@@ -173,4 +173,4 @@ const CoverSquare: React.FC<CoverSquareProps> = ({
   );
 };
 
-export default CoverSquare;
+export default memo(CoverSquare);

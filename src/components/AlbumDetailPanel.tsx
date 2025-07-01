@@ -54,12 +54,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
 
   // Handle panel animation completion
   const handleAnimationEnd = () => {
-    console.log('Panel animation completed');
     if (onPanelReady) {
-      // Увеличиваем задержку для полной стабилизации
       setTimeout(() => {
-        const position = imageRef.current?.getBoundingClientRect();
-        console.log('Image position after panel ready:', position);
         onPanelReady();
       }, 100);
     }
@@ -69,27 +65,18 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
     getImagePosition: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
-        console.log('Getting precise image position:', { 
-          left: rect.left, 
-          top: rect.top, 
-          width: rect.width, 
-          height: rect.height,
-          centerX: rect.left + rect.width / 2,
-          centerY: rect.top + rect.height / 2
-        });
-        
-        // Возвращаем точный центр с небольшой коррекцией
         return {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2
+          x: rect.left,
+          y: rect.top,
+          width: rect.width,
+          height: rect.height
         };
       }
-      return null;
+      return { x: 0, y: 0, width: 0, height: 0 };
     },
     getImageSize: () => {
       if (imageRef.current) {
         const rect = imageRef.current.getBoundingClientRect();
-        console.log('Getting precise image size:', { width: rect.width, height: rect.height });
         return {
           width: rect.width,
           height: rect.height
@@ -131,11 +118,8 @@ const AlbumDetailPanel = forwardRef<AlbumDetailPanelRef, AlbumDetailPanelProps>(
             transition: 'opacity 200ms ease-out'
           }}
           onLoad={() => {
-            // Дополнительная проверка после загрузки изображения
-            console.log('Image loaded, final position check');
             if (onPanelReady && imageRef.current) {
               const rect = imageRef.current.getBoundingClientRect();
-              console.log('Image loaded position:', rect);
             }
           }}
         />

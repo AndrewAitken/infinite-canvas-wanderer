@@ -71,18 +71,6 @@ const FlyingImageAnimation: React.FC<FlyingImageAnimationProps> = ({
   const endX = Math.round(endPosition.x - finalWidth / 2);
   const endY = Math.round(endPosition.y - finalHeight / 2);
 
-  console.log('Flying animation precise calculations:', {
-    originalSize,
-    targetImageSize,
-    scale,
-    finalSize: { width: finalWidth, height: finalHeight },
-    positions: {
-      start: { x: startX, y: startY },
-      end: { x: endX, y: endY },
-      translation: { x: endX - startX, y: endY - startY }
-    }
-  });
-
   return (
     <div
       className="fixed z-[100] pointer-events-none"

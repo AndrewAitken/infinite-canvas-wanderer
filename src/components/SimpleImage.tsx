@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 
 interface SimpleImageProps {
   src: string;
@@ -32,7 +32,6 @@ const SimpleImage: React.FC<SimpleImageProps> = ({
   };
 
   const handleError = () => {
-    console.warn(`Failed to load image: ${src}`);
     setHasError(true);
     onError?.();
   };
@@ -59,4 +58,4 @@ const SimpleImage: React.FC<SimpleImageProps> = ({
   );
 };
 
-export default SimpleImage;
+export default memo(SimpleImage);
