@@ -178,9 +178,7 @@ const About: React.FC = () => {
                 <img src="/lovable-uploads/0a7fd895-cc6a-4687-bdd6-32846b9cd638.png" alt="AntoshkinBaskirov" className="w-auto h-16 rounded-full mx-auto mb-4 object-cover" />
                 <h3 className="text-xl font-medium text-foreground">AntoshkinBashkirov</h3>
               </div>
-              <p className="text-muted-foreground">
-                Создано с помощью Lovable AI
-              </p>
+              
             </div>
           </ScrollReveal>
         </div>
