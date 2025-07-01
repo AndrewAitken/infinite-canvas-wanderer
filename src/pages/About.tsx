@@ -17,7 +17,7 @@ const About: React.FC = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={400}>
-          <p className="text-muted-foreground mb-16 leading-relaxed text-xl">Галерея обложек RFD, сделанная с помощью ИИ</p>
+          <p className="text-muted-foreground mb-16 leading-relaxed text-base">Интерактивная галерея обложек RFD</p>
         </ScrollReveal>
 
         <div className="space-y-20">
@@ -141,7 +141,7 @@ const About: React.FC = () => {
           <ScrollReveal delay={2000}>
             <section>
               <h2 className="mb-8 text-foreground font-bold text-3xl">Как этот работает</h2>
-              <div className="bg-card p-6 border border-border rounded-2xl">
+              <div className="bg-card p-8 border border-border rounded-3xl">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-lg font-medium mb-3 text-foreground">Производительность</h3>
